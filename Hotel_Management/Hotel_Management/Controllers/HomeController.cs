@@ -2,7 +2,7 @@ using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using Data;
+using Data.Models;
 
 namespace Hotel_Management.Controllers
 {
