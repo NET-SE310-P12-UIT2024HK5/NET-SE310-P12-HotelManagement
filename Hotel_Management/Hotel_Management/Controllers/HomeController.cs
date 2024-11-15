@@ -1,6 +1,8 @@
 using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
+using Data;
 
 namespace Hotel_Management.Controllers
 {
@@ -13,9 +15,16 @@ namespace Hotel_Management.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        async public Task<IActionResult> Index()
         {
-            return View();
+            HttpClient client = new HttpClient();
+            var data = await client.GetAsync("https://localhost:7287/WeatherForecast");
+
+            var res = await data.Content.ReadAsStringAsync();
+
+            var dataJson = JsonConvert.DeserializeObject<List<WeatherForecast>>(res);
+
+            return View(dataJson);
         }
 
         public IActionResult Privacy()
