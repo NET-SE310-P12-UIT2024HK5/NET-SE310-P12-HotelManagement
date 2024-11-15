@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Data;
 
 namespace Hotel_Management_API.Controllers
 {
