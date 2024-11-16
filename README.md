@@ -21,4 +21,4 @@ Repository cho phần đồ án cuối kỳ - ứng dụng quản lý khách s�
 * **Mã lớp:** SE310.P12
 * **Giảng viên**: Nguyễn Trịnh Đông
 
-Đồ án cuối kì môn công nghệ .NET (SE310.P12) 
+## Đồ án cuối kì môn công nghệ .NET (SE310.P12) 
