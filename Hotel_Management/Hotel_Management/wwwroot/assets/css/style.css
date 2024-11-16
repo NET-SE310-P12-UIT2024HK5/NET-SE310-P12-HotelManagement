@@ -797,8 +797,8 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
 }
 
 .page-item.active .page-link {
-    background-color: #009688;
-    border-color: #009688;
+    background-color: #2563EB;
+    border-color: #2563EB;
 }
 
 .dropdown-menu {
