@@ -12,5 +12,9 @@ namespace Hotel_Management.Controllers
         {
             return View();
         }
+        public IActionResult Create()
+        {
+            return View();
+        }
     }
 }

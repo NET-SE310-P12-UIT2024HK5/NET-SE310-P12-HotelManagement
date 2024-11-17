@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/datatables/datatables.min.css">
     <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
@@ -18,12 +19,7 @@
 <body>
     <div class="main-wrapper">
         <div class="header">
-            <div class="header-left">
-                <a href="index.html" class="logo"> <img src="assets/img/hotel_logo.png" width="50" height="70" alt="logo"> <span class="logoclass">HOTEL</span> </a>
-                <a href="index.html" class="logo logo-small"> <img src="assets/img/hotel_logo.png" alt="Logo" width="30" height="30"> </a>
-            </div>
-            <a href="javascript:void(0);" id="toggle_btn"> <i class="fe fe-text-align-left"></i> </a>
-            <a class="mobile_btn" id="mobile_btn"> <i class="fas fa-bars"></i> </a>
+            <div class="header-left"> <a href="index.html" class="logo"> <img src="assets/img/hotel_logo.png" width="50" height="70" alt="logo"> <span class="logoclass">HOTEL</span> </a> <a href="index.html" class="logo logo-small"> <img src="assets/img/hotel_logo.png" alt="Logo" width="30" height="30"> </a> </div> <a href="javascript:void(0);" id="toggle_btn"> <i class="fe fe-text-align-left"></i> </a> <a class="mobile_btn" id="mobile_btn"> <i class="fas fa-bars"></i> </a>
             <ul class="nav user-menu">
                 <li class="nav-item dropdown has-arrow">
                     <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"> <span class="user-img"><img class="rounded-circle" src="assets/img/profiles/avatar-01.jpg" width="31" alt="Soeng Souy"></span> </a>
@@ -34,9 +30,7 @@
                                 <h6>Soeng Souy</h6>
                                 <p class="text-muted mb-0">Administrator</p>
                             </div>
-                        </div>
-                        <a class="dropdown-item" href="profile.html">My Profile</a> <a class="dropdown-item" href="settings.html">Account Settings</a>
-                        <a class="dropdown-item" href="login.html">Logout</a>
+                        </div> <a class="dropdown-item" href="profile.html">My Profile</a> <a class="dropdown-item" href="settings.html">Account Settings</a> <a class="dropdown-item" href="login.html">Logout</a>
                     </div>
                 </li>
             </ul>
@@ -54,6 +48,7 @@
                             <a href="#"><i class="far fa-money-bill-alt"></i> <span> Accounts </span> <span class="menu-arrow"></span></a>
                             <ul class="submenu_class" style="display: none;">
                                 <li><a href="invoices.html">Invoices </a></li>
+                                <li><a href="payments.html">Payments </a></li>
                                 <li><a href="expenses.html">Expenses </a></li>
                             </ul>
                         </li>
@@ -70,12 +65,10 @@
             </div>
         </div>
         <div class="page-wrapper">
-            <div class="content container-fluid">
-                <div class="page-header">
-                    <div class="row align-items-center">
-                        <div class="col">
-                            <h3 class="page-title mt-5">Edit Invoice</h3>
-                        </div>
+            <div class="content mt-5">
+                <div class="row mt-5">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">Create New Invoice</h4>
                     </div>
                 </div>
                 <div class="row">
@@ -172,7 +165,7 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                    </div>                                   
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -186,8 +179,10 @@
     <script src="~/assets/js/popper.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
     <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
     <script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
     <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/assets/plugins/datatables/datatables.min.js"></script>
     <script src="~/assets/js/script.js"></script>
     <script>
         $(function () {
