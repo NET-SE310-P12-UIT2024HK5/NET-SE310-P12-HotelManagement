@@ -3962,9 +3962,9 @@ card-title {
 
 .buttonedit {
     float: right;
-    border-color: #009688;
+    border-color: #2563EB !important;
     height: 45px;
-    background: #009688;
+    background: #2563EB !important;
 }
 
 .buttonedit1 {
@@ -3976,7 +3976,6 @@ card-title {
 }
 
 .veiwbutton {
-/*    font-size: .9rem;*/
     background: #2563EB !important;
     border-color: #2563EB !important;
 }
