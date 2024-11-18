@@ -22,9 +22,12 @@
 		<div class="header">
 			<div class="header-left">
 				<a href="/Home/Index" class="logo"><span class="logoclass">HOTEL</span> </a>
+				@* Toggle 1 *@
+				<a href="javascript:void(0);" id="toggle_btn" class="toggle_btn_1"> <i class="fe fe-text-align-left"></i> </a>
 			</div>
 			
-			<a href="javascript:void(0);" id="toggle_btn"> <i class="fe fe-text-align-left"></i> </a>
+			@* Toggle 2 *@
+			<a href="javascript:void(0);" id="toggle_btn" class="toggle_btn_2"> <i class="fe fe-text-align-left"></i> </a>
 			<a class="mobile_btn" id="mobile_btn"> <i class="fas fa-bars"></i> </a>
 			<ul class="nav user-menu">
 				<li class="nav-item dropdown has-arrow">
@@ -43,7 +46,7 @@
 				</li>
 			</ul>
 
-			@* End Header *@
+		@* End Header *@
 
 		</div>
 		@* Start Sidebar *@
@@ -55,7 +58,7 @@
 						<li> <a href="/Home/Index"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a> </li>
 						<li class="list-divider"></li>
 						<li class="menu"> <a href="/Booking/Index"><i class="fas fa-suitcase"></i> <span> Booking </span></a></li>
-						<li class="menu"> <a href="all-customer.html"><i class="fas fa-user"></i> <span> Customers </span></a></li>
+						<li class="menu"> <a href="/Customer/Index"><i class="fas fa-user"></i> <span> Customers </span></a></li>
 						<li class="menu"> <a href="all-rooms.html"><i class="fas fa-key"></i> <span> Rooms </span></a></li>
 						<li class="menu"> <a href="/Invoice/Index"><i class="far fa-money-bill-alt"></i> <span> Invoice </span></a></li>
 					</ul>
