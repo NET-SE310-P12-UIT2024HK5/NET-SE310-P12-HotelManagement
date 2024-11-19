@@ -112,34 +112,64 @@
                             <div class="row">
                                 <div class="col-md-12 col-sm-12">
                                     <div class="table-responsive">
-                                        <table class="table table-hover table-white">
+                                        <table class="table table-hover table-white" id="invoiceTable">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 5%">#</th>
-                                                    <th style="width: 25%">Room ID</th>
-                                                    <th style="width: 20%">Unit Cost</th>
-                                                    <th style="width: 15%">Quantity</th>
-                                                    <th style="width: 25%">Amount</th>
-                                                    <th style="width: 10%"> </th>
+                                                    <th class="text-center" style="width: 5%">#</th>
+                                                    <th class="text-center" style="width: 25%">Room ID</th>
+                                                    <th class="text-center" style="width: 20%">Unit Cost</th>
+                                                    <th class="text-center" style="width: 15%">Quantity</th>
+                                                    <th class="text-center" style="width: 25%">Amount</th>
+                                                    <th class="text-center" style="width: 10%">Actions</th>
+
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td>1</td>
-                                                    <td> <input class="form-control" type="text" style="width:100%"> </td>
-                                                    <td> <input class="form-control" type="text" style="width:100%"> </td>
-                                                    <td> <input class="form-control" type="number" style="width:100%"> </td>
-                                                    <td> <input class="form-control" readonly="" type="text" style="width:100%"> </td>
-                                                    <td><a href="javascript:void(0)" class="text-success font-18" title="Add"><i class="fas fa-plus"></i></a></td>
-
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td> <input class="form-control" type="text" style="width:100%"> </td>
-                                                    <td> <input class="form-control" type="text" style="width:100%"> </td>
-                                                    <td> <input class="form-control" type="number" style="width:100%"> </td>
-                                                    <td> <input class="form-control" readonly="" type="text" style="width:100%"> </td>
-                                                    <td><a href="javascript:void(0)" class="text-danger font-18" title="Remove"><i class="fas fa-trash-alt"></i></a></td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                                                </div>
+                                                                <input class="form-control room-id" type="text" placeholder="Enter Room ID">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                                                                </div>
+                                                                <input class="form-control unit-cost" type="text" placeholder="Enter Unit Cost">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                </div>
+                                                                <input class="form-control quantity" type="number" placeholder="Enter Quantity">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                                </div>
+                                                                <input class="form-control amount" readonly="" type="text" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0)" class="text-success font-18 add-row" title="Add"><i class="fas fa-plus"></i></a>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -152,16 +182,25 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td class="text-right">Total</td>
-                                                    <td style="text-align: right; padding-right: 30px;width: 230px">0 </td>
+                                                    <td class="text-right"> Total: </td>
+                                                    <td id="totalAmount" style="text-align: right; padding-right: 30px;width: 230px">$0.00</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" class="text-right"> Discount % </td>
-                                                    <td style="text-align: right; padding-right: 30px;width: 230px"> <input class="form-control text-right" type="text"> </td>
+                                                    <td colspan="5" class="text-right"> Discount: </td>
+                                                    <td style="text-align: right; padding-right: 30px;width: 230px">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                                                </div>
+                                                                <input id="discount" class="form-control text-right" type="text" placeholder="0">
+                                                            </div>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" style="text-align: right; font-weight: bold"> Grand Total </td>
-                                                    <td style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px"> $ 0.00 </td>
+                                                    <td colspan="5" style="text-align: right; font-weight: bold"> Grand Total: </td>
+                                                    <td id="grandTotal" style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px"> $ 0.00 </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -171,7 +210,14 @@
                         </form>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary ">Save Invoice</button>
+                <div class="text-left">
+                    <button type="button" class="btn btn-primary btn-success">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-primary btn-danger" onclick="window.location.href='@Url.Action("Index")'">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>

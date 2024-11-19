@@ -172,4 +172,124 @@
 			return false;
 		}
 	});
+	$(document).on('click', '.add-row', function () {
+		var newRow = `<tr>
+        <td></td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                                                </div>
+                                                                <input class="form-control room-id" type="text" placeholder="Enter Room ID">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                                                                </div>
+                                                                <input class="form-control unit-cost" type="text" placeholder="Enter Unit Cost">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                </div>
+                                                                <input class="form-control quantity" type="number" placeholder="Enter Quantity">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                                </div>
+                                                                <input class="form-control amount" readonly="" type="text" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0)" class="text-success font-18 add-row" title="Add"><i class="fas fa-plus"></i></a>
+														<a href="javascript:void(0)" class="text-danger font-18 remove-row" title="Remove"><i class="fas fa-trash"></i></a>
+                                                    </td>
+    </tr>`;
+		$('#invoiceTable tbody').append(newRow);
+		updateRowActions();
+	});
+
+	$(document).on('click', '.remove-row', function () {
+		$(this).closest('tr').remove();
+		updateRowActions();
+	});
+
+	function updateRowActions() {
+		$('#invoiceTable tbody tr').each(function (index, row) {
+			$(row).find('td:first').text(index + 1);
+			$(row).find('.add-row').show();
+			$(row).find('.remove-row').show();
+		});
+		// Ensure the first row always has the remove button hidden
+		$('#invoiceTable tbody tr:first').find('.remove-row').hide();
+		// Ensure the last row always has the add button hidden
+		if ($('#invoiceTable tbody tr').length > 1) {
+			$('#invoiceTable tbody tr:last').find('.add-row').hide();
+		}
+		// Ensure the middle rows have add action
+		$('#invoiceTable tbody tr').not(':first').not(':last').each(function () {
+			$(this).find('.add-row').show();
+			$(this).find('.remove-row').hide();
+		});
+	}
+	// Initialize the table with the correct actions
+	updateRowActions();
+
+	$(document).on('input', '.unit-cost, .quantity', function () {
+		var $row = $(this).closest('tr');
+		var calculatorunitCost = parseFloat($row.find('.unit-cost').val()) || 0;
+		var calculatorquantity = parseInt($row.find('.quantity').val()) || 0;
+
+		var amount = calculatorunitCost * calculatorquantity;
+		$row.find('.amount').val(formatNumber(amount.toFixed(2)) + ' $');
+	});
+	
+	function calculateGrandTotal() {
+		var totalAmount = 0;
+		$('#invoiceTable tbody tr').each(function () {
+			var amount = parseFloat($(this).find('.amount').val().replace(/,/g, '').replace('$', '')) || 0;
+			totalAmount += amount;
+		});
+
+		var discount = parseFloat($('#discount').val()) || 0;
+		if (isNaN(discount) || discount < 0 || discount > 100) {
+			discount = '';
+			alert('Discount must be between 0 and 100.');
+			$('#discount').val(discount);
+		}
+		var grandTotal = totalAmount - (totalAmount * (discount / 100));
+
+		$('#totalAmount').text('$ ' +formatNumber(totalAmount.toFixed(2)));
+		$('#grandTotal').text('$ ' + formatNumber(grandTotal.toFixed(2)));
+	}
+	function formatNumber(num) {
+		return new Intl.NumberFormat('en-US').format(num);
+	}
+
+	$(document).on('input', '#discount', function () {
+		calculateGrandTotal();
+	});
+
+	$(document).ready(function () {
+		function updateGrandTotal() {
+			calculateGrandTotal();
+			requestAnimationFrame(updateGrandTotal);
+		}
+		requestAnimationFrame(updateGrandTotal); // Start the update loop
+	});
 })(jQuery);
