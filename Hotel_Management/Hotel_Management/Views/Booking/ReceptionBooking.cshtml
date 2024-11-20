@@ -46,7 +46,7 @@
 				</li>
 			</ul>
 
-		@* End Header *@
+			@* End Header *@
 
 		</div>
 		@* Start Sidebar *@
@@ -77,7 +77,7 @@
 						<div class="col">
 							<div class="mt-5">
 								<h4 class="card-title float-left mt-2">Bookings</h4>
-								<a href="add-booking.html" class="btn btn-primary float-right veiwbutton ">Add Booking</a>
+								
 							</div>
 						</div>
 					</div>
@@ -97,7 +97,7 @@
 												<th>Check Out</th>
 												<th>Total Price</th>
 												<th>Status</th>
-												<th class="text-right">Actions</th>
+												
 											</tr>
 										</thead>
 										<tbody>
@@ -116,12 +116,6 @@
 												<td>
 													<div class="actions"> <a href="#" class="btn btn-sm bg-success-light mr-2">Confirmed</a> </div>
 												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="edit-booking.html"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a> <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a> </div>
-													</div>
-												</td>
 											</tr>
 											<tr>
 												<td>BKG-0002</td>
@@ -138,12 +132,7 @@
 												<td>
 													<div class="actions"> <a href="#" class="btn btn-sm bg-danger-light mr-2">Cancelled</a> </div>
 												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="edit-booking.html"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a> <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a> </div>
-													</div>
-												</td>
+												
 											</tr>
 											<tr>
 												<td>BKG-0003</td>
@@ -159,12 +148,6 @@
 												<td>1.200.000</td>
 												<td>
 													<div class="actions"> <a href="#" class="btn btn-sm bg-warning-light mr-2">Pending</a> </div>
-												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right"> <a class="dropdown-item" href="edit-booking.html"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a> <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a> </div>
-													</div>
 												</td>
 											</tr>
 										</tbody>
@@ -191,7 +174,7 @@
 			</div>
 		</div>
 
-		
+
 
 	</div>
 	<script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
@@ -206,27 +189,27 @@
 	<script src="~/assets/js/script.js"></script>
 
 	@* <script>
-		$(document).ready(function () {
-			// Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
-			function toggleButtons() {
-				if ($('body').hasClass('mini-sidebar')) {
-					$('.toggle_btn_1').show(); // Hiện nút Toggle 1
-					$('.toggle_btn_2').hide(); // Ẩn nút Toggle 2
-				} else {
-					$('.toggle_btn_1').hide(); // Ẩn nút Toggle 1
-					$('.toggle_btn_2').show(); // Hiện nút Toggle 2
-				}
-			}
+	$(document).ready(function () {
+	// Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
+	function toggleButtons() {
+	if ($('body').hasClass('mini-sidebar')) {
+	$('.toggle_btn_1').show(); // Hiện nút Toggle 1
+	$('.toggle_btn_2').hide(); // Ẩn nút Toggle 2
+	} else {
+	$('.toggle_btn_1').hide(); // Ẩn nút Toggle 1
+	$('.toggle_btn_2').show(); // Hiện nút Toggle 2
+	}
+	}
 
-			// Gọi hàm kiểm tra ngay khi load trang
-			toggleButtons();
+	// Gọi hàm kiểm tra ngay khi load trang
+	toggleButtons();
 
-			// Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-			$(document).on('click', '.toggle_btn_1, .toggle_btn_2', function () {
-				$('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
-				toggleButtons(); // Cập nhật trạng thái nút
-			});
-		});
+	// Thêm sự kiện click để thay đổi trạng thái mini-sidebar
+	$(document).on('click', '.toggle_btn_1, .toggle_btn_2', function () {
+	$('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
+	toggleButtons(); // Cập nhật trạng thái nút
+	});
+	});
 	</script> *@
 </body>
 
