@@ -1,7 +1,12 @@
+using Hotel_Management.Middleware;
+using Microsoft.AspNetCore.Http;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -19,6 +24,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseMiddleware<RoleMiddleWare>();
 
 app.MapControllerRoute(
     name: "default",
