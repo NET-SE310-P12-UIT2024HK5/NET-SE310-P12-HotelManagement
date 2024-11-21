@@ -801,8 +801,8 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
 }
 
 .page-item.active .page-link {
-    background-color: #009688;
-    border-color: #009688;
+    background-color: #2563EB;
+    border-color: #2563EB;
 }
 
 .dropdown-menu {
@@ -3968,9 +3968,9 @@ card-title {
 
 .buttonedit {
     float: right;
-    border-color: #009688;
+    border-color: #2563EB !important;
     height: 45px;
-    background: #009688;
+    background: #2563EB !important;
 }
 
 .buttonedit1 {
@@ -3982,14 +3982,13 @@ card-title {
 }
 
 .veiwbutton {
-    font-size: .9rem;
-    background: #009688;
-    border-color: #009688;
+    background: #2563EB !important;
+    border-color: #2563EB !important;
 }
 
 .search_button {
-    background: #009688;
-    border-color: #009688;
+    background: #2563EB !important;
+    border-color: #2563EB !important;
 }
 
 section.pricing {

@@ -1,0 +1,212 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>Hotel Dashboard Template</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+</head>
+
+<body>
+    <div class="main-wrapper">
+        <div class="page-wrapper">
+            <div class="content mt-5">
+                <div class="row mt-5">
+                    <div class="col-sm-12">
+                        <h4 class="page-title">Edit Invoice</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form>
+                            <div class="row mt-5">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Invoice ID</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
+                                            </div>
+                                            <input class="form-control" readonly="" type="text" value="1">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Booking ID</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-book"></i></span>
+                                            </div>
+                                            <input class="form-control" readonly="" type="text" value="2">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Date</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                            </div>
+                                            <input class="form-control datetimepicker" type="text" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                                            </div>
+                                            <select class="form-control">
+                                                <option>Select</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Paid">Paid</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-white" id="invoiceTable">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center" style="width: 5%">#</th>
+                                                    <th class="text-center" style="width: 25%">Room ID</th>
+                                                    <th class="text-center" style="width: 20%">Unit Cost</th>
+                                                    <th class="text-center" style="width: 15%">Quantity</th>
+                                                    <th class="text-center" style="width: 25%">Amount</th>
+                                                    <th class="text-center" style="width: 10%">Actions</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
+                                                                </div>
+                                                                <input class="form-control room-id" type="text" placeholder="Enter Room ID">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                                                                </div>
+                                                                <input class="form-control unit-cost" type="text" placeholder="Enter Unit Cost">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                </div>
+                                                                <input class="form-control quantity" type="number" placeholder="Enter Quantity">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                                                                </div>
+                                                                <input class="form-control amount" readonly="" type="text" placeholder="Amount">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0)" class="text-success font-18 add-row" title="Add"><i class="fas fa-plus"></i></a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-white">
+                                            <tbody>
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td class="text-right"> Total: </td>
+                                                    <td id="totalAmount" style="text-align: right; padding-right: 30px;width: 230px">$0.00</td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" class="text-right"> Discount: </td>
+                                                    <td style="text-align: right; padding-right: 30px;width: 230px">
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                                                </div>
+                                                                <input id="discount" class="form-control text-right" type="text" placeholder="0">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="5" style="text-align: right; font-weight: bold"> Grand Total: </td>
+                                                    <td id="grandTotal" style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px"> $ 0.00 </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-left">
+                    <button type="button" class="btn btn-primary btn-success">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-primary btn-danger" onclick="window.location.href='@Url.Action("Index")'">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/moment.min.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/assets/plugins/datatables/datatables.min.js"></script>
+    <script src="~/assets/js/script.js"></script>
+    <script>
+        $(function () {
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+
+            });
+        });
+    </script>
+</body>
+</html>
