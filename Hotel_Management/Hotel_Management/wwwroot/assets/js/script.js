@@ -335,5 +335,8 @@
 
     $(document).ready(function () {
         $('.datatable').DataTable();
-    });
+	});
+	function navigateToEdit() {
+		window.location.href = '/Rooms/Edit';
+	}
 })(jQuery);
