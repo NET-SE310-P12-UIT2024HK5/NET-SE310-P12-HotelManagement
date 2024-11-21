@@ -35,12 +35,12 @@
                             <div class="row formtype">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Customer Name:</label>
+                                        <label>Booking ID:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="Enter customer name">
+                                            <input type="text" class="form-control" placeholder="Enter booking ID">
                                         </div>
                                     </div>
                                 </div>
@@ -82,11 +82,11 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 10%;">Invoice ID</th>
-                                                <th style="width: 10%; text-align: center;">Booking ID</th>
-                                                <th style="width: 20%; text-align: center;">Total Amount</th>
-                                                <th style="width: 20%; text-align: center;">Status</th>
-                                                <th style="width: 20%; text-align: center;">Date</th>
-                                                <th style="width: 10%;">Actions</th>
+                                                <th style="width: 15%; text-align: center;">Booking ID</th>
+                                                <th style="width: 25%; text-align: center;">Total Amount</th>
+                                                <th style="width: 25%; text-align: center;">Status</th>
+                                                <th style="width: 25%; text-align: center;">Date</th>
+                                                @* <th style="width: 10%;">Actions</th> *@
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -95,50 +95,22 @@
                                                 <td style="text-align: center;">2</td>
                                                 <td style="text-align: center;">$3200</td>
                                                 <td style="text-align: center;">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
-                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
-                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
-                                                        </div>
+                                                    <div class="status">
+                                                        <span class="btn btn-sm bg-success-light mr-2">Paid</span>
                                                     </div>
                                                 </td>
-                                                <td style="text-align: center;">15 Oct 2024</td>
-                                                <td class="text-right">
-                                                    <div class="dropdown dropdown-action">
-                                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="/Invoice/Edit"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                <td style="text-align: center;">15 Oct 2024</td>                                              
                                             </tr>
                                             <tr>
                                                 <td>2</td>
                                                 <td style="text-align: center;">1</td>
                                                 <td style="text-align: center;">$2500</td>
                                                 <td style="text-align: center;">
-                                                    <div class="dropdown">
-                                                        <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
-                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
-                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
-                                                        </div>
+                                                    <div class="status">
+                                                        <span class="btn btn-sm bg-success-light mr-2">Paid</span>
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center;">16 Oct 2024</td>
-                                                <td class="text-right">
-                                                    <div class="dropdown dropdown-action">
-                                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="/Invoice/Edit"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
-                                                        </div>
-                                                    </div>
-                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -164,7 +136,6 @@
             </div>
         </div>
     </div>
-    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script src="~/assets/js/popper.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
@@ -174,14 +145,5 @@
     <script src="~/assets/plugins/morris/morris.min.js"></script>
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
-    <script>
-        $(function () {
-            $('#datetimepicker3').datetimepicker({
-                format: 'LT'
-
-            });
-        });
-    </script>
 </body>
-
 </html>

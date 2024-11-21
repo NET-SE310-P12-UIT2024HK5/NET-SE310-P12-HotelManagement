@@ -294,23 +294,24 @@
 		requestAnimationFrame(updateGrandTotal); // Start the update loop
 	});
 
-	$(document).ready(function () {
-		$('.dropdown-menu .dropdown-item').on('click', function (e) {
-			e.preventDefault();
-			var newStatus = $(this).data('status');
-			var dropdownToggle = $(this).closest('.dropdown').find('.dropdown-toggle');
-			dropdownToggle.text(newStatus);
-			dropdownToggle.removeClass('bg-success-light bg-warning-light bg-danger-light');
-			if (newStatus === 'Paid') {
-				dropdownToggle.addClass('bg-success-light');
-			} else if (newStatus === 'Pending') {
-				dropdownToggle.addClass('bg-warning-light');
-			} else if (newStatus === 'Cancelled') {
-				dropdownToggle.addClass('bg-danger-light');
-			}
-			// Add your AJAX call here to update the status in the backend
-		});
-	});
+	//$(document).ready(function () {
+	//	$('.dropdown-menu .dropdown-item').on('click', function (e) {
+	//		e.preventDefault();
+	//		var newStatus = $(this).data('status');
+	//		var dropdownToggle = $(this).closest('.dropdown').find('.dropdown-toggle');
+	//		dropdownToggle.text(newStatus);
+	//		dropdownToggle.removeClass('bg-success-light bg-warning-light bg-danger-light');
+	//		if (newStatus === 'Paid') {
+	//			dropdownToggle.addClass('bg-success-light');
+	//		} else if (newStatus === 'Pending') {
+	//			dropdownToggle.addClass('bg-warning-light');
+	//		} else if (newStatus === 'Cancelled') {
+	//			dropdownToggle.addClass('bg-danger-light');
+	//		}
+	//		// Add your AJAX call here to update the status in the backend
+	//	});
+	//});
+
 	$(document).ready(function () {
         // Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
         function toggleButtons() {
@@ -336,7 +337,45 @@
     $(document).ready(function () {
         $('.datatable').DataTable();
 	});
-	function navigateToEdit() {
-		window.location.href = '/Rooms/Edit';
+	function changeRoomStatus(element) {
+		var newStatus = element.getAttribute('data-status');
+		var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
+		dropdownToggle.textContent = newStatus;
+
+		// Update the button class based on the new status
+		dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
+		if (newStatus === 'Available') {
+			dropdownToggle.classList.add('bg-success-light');
+		} else if (newStatus === 'Occupied') {
+			dropdownToggle.classList.add('bg-danger-light');
+		} else if (newStatus === 'Under Maintainance/Cleaning') {
+			dropdownToggle.classList.add('bg-warning-light');
+		} else if (newStatus === 'Unavailable') {
+			dropdownToggle.classList.add('bg-danger-light');
+		}
+
+		// Add your AJAX call here to update the status in the backend if needed
 	}
+
+	// Ensure the function is globally accessible
+	window.changeRoomStatus = changeRoomStatus;
+
+	function changeStatus(element) {
+		var newStatus = element.getAttribute('data-status');
+		var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
+		dropdownToggle.textContent = newStatus;
+
+		// Update the button class based on the new status
+		dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
+		if (newStatus === 'Paid') {
+			dropdownToggle.classList.add('bg-success-light');
+		} else if (newStatus === 'Pending') {
+			dropdownToggle.classList.add('bg-warning-light');
+		} else if (newStatus === 'Cancelled') {
+			dropdownToggle.classList.add('bg-danger-light');
+		}
+		// Add your AJAX call here to update the status in the backend if needed
+	}
+	// Ensure the function is globally accessible
+	window.changeStatus = changeStatus;
 })(jQuery);

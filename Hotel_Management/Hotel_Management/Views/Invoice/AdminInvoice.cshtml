@@ -7,17 +7,16 @@
     <title>Hotel Management</title>
     <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.png">
     <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
-    <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
     <link rel="stylesheet" href="~/assets/plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
     <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
-    <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
 </head>
 
 <body>
-    <div class="main-wrapper">      
+    <div class="main-wrapper">
         <div class="page-wrapper">
             <div class="content container-fluid">
                 <div class="page-header">
@@ -35,12 +34,12 @@
                             <div class="row formtype">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Customer Name:</label>
+                                        <label>Booking ID:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="Enter customer name">
+                                            <input type="text" class="form-control" placeholder="Enter booking ID">
                                         </div>
                                     </div>
                                 </div>
@@ -98,9 +97,9 @@
                                                     <div class="dropdown">
                                                         <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
                                                         <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
-                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
-                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
+                                                            <a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
+                                                            <a class="dropdown-item" href="javascript:void(0);" data-status="Paid" onclick="changeStatus(this)">Paid</a>
+                                                            <a class="dropdown-item" href="javascript:void(0);" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -123,9 +122,9 @@
                                                     <div class="dropdown">
                                                         <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
                                                         <div class="dropdown-menu">
-                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
-                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
-                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
+                                                            <a class="dropdown-item" href="#" data-status="Pending" onclick="changeStatus(this)">Pending</a>
+                                                            <a class="dropdown-item" href="#" data-status="Paid" onclick="changeStatus(this)">Paid</a>
+                                                            <a class="dropdown-item" href="#" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -164,7 +163,6 @@
             </div>
         </div>
     </div>
-    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script src="~/assets/js/popper.min.js"></script>
     <script src="~/assets/js/bootstrap.min.js"></script>
@@ -175,13 +173,24 @@
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
     <script>
-        $(function () {
-            $('#datetimepicker3').datetimepicker({
-                format: 'LT'
+        function changeStatus(element) {
+            var newStatus = element.getAttribute('data-status');
+            var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
+            dropdownToggle.textContent = newStatus;
 
-            });
-        });
+            // Update the button class based on the new status
+            dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
+            if (newStatus === 'Paid') {
+                dropdownToggle.classList.add('bg-success-light');
+            } else if (newStatus === 'Pending') {
+                dropdownToggle.classList.add('bg-warning-light');
+            } else if (newStatus === 'Cancelled') {
+                dropdownToggle.classList.add('bg-danger-light');
+            }
+            // Add your AJAX call here to update the status in the backend if needed
+        }
+        // Ensure the function is globally accessible
+        window.changeStatus = changeStatus;
     </script>
 </body>
-
 </html>

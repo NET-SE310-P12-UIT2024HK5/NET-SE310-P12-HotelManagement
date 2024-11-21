@@ -4,17 +4,39 @@ namespace Hotel_Management.Controllers
 {
     public class RoomsController : Controller
     {
-        public IActionResult Index()
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<RoomsController> _logger;
+        public RoomsController(HttpClient httpClient, ILogger<RoomsController> logger)
         {
-            return View();
+            _httpClient = httpClient;
+            _logger = logger;
         }
-        public IActionResult Create()
+
+
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var role = HttpContext.Items["Role"]?.ToString();
+
+            // Kiểm tra role và điều hướng đến view tương ứng
+            if (role == "Admin")
+            {
+                return RedirectToAction("AdminRooms");
+            }
+            else if (role == "Reception")
+            {
+                return RedirectToAction("ReceptionRooms");
+            }
+
+            return View("Error"); // Nếu role không hợp lệ
         }
-        public IActionResult Edit()
+
+        public IActionResult AdminRooms()
         {
-            return View();
+            return View(); // Trả về danh sách sản phẩm cho Admin
+        }
+        public IActionResult ReceptionRooms()
+        {
+            return View(); // Trả về danh sách sản phẩm cho Admin
         }
     }
 }
