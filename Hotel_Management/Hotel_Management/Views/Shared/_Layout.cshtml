@@ -1,45 +1,89 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Hotel_Management</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Hotel_Management.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>Hotel Dashboard Template</title>
+    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
+    <link rel="stylehseet" href="https://cdn.oesmith.co.uk/morris-0.5.1.css">
+    <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
 </head>
 <body>
-    @* <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hotel_Management</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header> *@
-    <div class="">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="main-wrapper">
+		@*Start Header*@
+		<div class="header">
+			<div class="header-left">
+				<a href="/Home/Index" class="logo"><span class="logoclass">HOTEL</span> </a>
+				@* Toggle 1 *@
+				<a href="javascript:void(0);" id="toggle_btn" class="toggle_btn_1"> <i class="fe fe-text-align-left"></i> </a>
+			</div>
+
+			@* Toggle 2 *@
+			<a href="javascript:void(0);" id="toggle_btn" class="toggle_btn_2"> <i class="fe fe-text-align-left"></i> </a>
+			<a class="mobile_btn" id="mobile_btn"> <i class="fas fa-bars"></i> </a>
+			<ul class="nav user-menu">
+				<li class="nav-item dropdown has-arrow">
+					<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown"> <span class="user-img"><img class="rounded-circle" src="" width="31" alt="Soeng Souy"></span> </a>
+					<div class="dropdown-menu">
+						<div class="user-header">
+							<div class="avatar avatar-sm"> <img src="" alt="User Image" class="avatar-img rounded-circle"> </div>
+							<div class="user-text">
+								<h6>Soeng Souy</h6>
+								<p class="text-muted mb-0">Administrator</p>
+							</div>
+						</div>
+						<a class="dropdown-item" href="profile.html">My Profile</a> <a class="dropdown-item" href="settings.html">Account Settings</a>
+						<a class="dropdown-item" href="login.html">Logout</a>
+					</div>
+				</li>
+			</ul>
+
+			@* End Header *@
+
+		</div>
+		@* Start Sidebar *@
+		<div class="sidebar" id="sidebar">
+			<div class="sidebar-inner slimscroll">
+				<div id="sidebar-menu" class="sidebar-menu">
+					<ul>
+						<li> <a href="/Home/Index"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a> </li>
+						<li class="list-divider"></li>
+						<li class="menu"> <a href="/Booking/Index"><i class="fas fa-suitcase"></i> <span> Booking </span></a></li>
+						<li class="menu"> <a href="/FoodAndBeverage/Index"><i class="fa fa-hamburger"></i> <span> Food And Beverage </span></a></li>
+						<li class="menu"> <a href="/Customer/Index"><i class="fas fa-user"></i> <span> Customers </span></a></li>
+						<li class="menu"> <a href="all-rooms.html"><i class="fas fa-key"></i> <span> Rooms </span></a></li>
+						<li class="menu"> <a href="/Invoice/Index"><i class="far fa-money-bill-alt"></i> <span> Invoice </span></a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		@* End Sidebar *@
+
+		@* Start Content *@
+		<div class="">
+			<main role="main" class="pb-3">
+				@RenderBody()
+			</main>
+		</div>
     </div>
 
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+	<script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+	<script src="~/assets/js/jquery-3.5.1.min.js"></script>
+	<script src="~/assets/js/popper.min.js"></script>
+	<script src="~/assets/js/bootstrap.min.js"></script>
+	<script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+	<script src="~/assets/plugins/raphael/raphael.min.js"></script>
+	<script src="~/assets/plugins/morris/morris.min.js"></script>
+	<script src="~/assets/js/chart.morris.js"></script>
+	<script src="~/assets/js/script.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

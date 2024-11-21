@@ -2,17 +2,16 @@
 
 namespace Hotel_Management.Controllers
 {
-    public class BookingController : Controller
+    public class FoodAndBeverageController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<BookingController> _logger;
-        public BookingController(HttpClient httpClient, ILogger<BookingController> logger)
+        private readonly ILogger<FoodAndBeverageController> _logger;
+
+        public FoodAndBeverageController(HttpClient httpClient, ILogger<FoodAndBeverageController> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
         }
-
-
         public async Task<IActionResult> Index()
         {
             var role = HttpContext.Items["Role"]?.ToString();
@@ -20,21 +19,21 @@ namespace Hotel_Management.Controllers
             // Kiểm tra role và điều hướng đến view tương ứng
             if (role == "Admin")
             {
-                return RedirectToAction("AdminBooking");
+                return RedirectToAction("AdminFoodAndBeverage");
             }
             else if (role == "Reception")
             {
-                return RedirectToAction("ReceptionBooking");
+                return RedirectToAction("ReceptionFoodAndBeverage");
             }
 
             return View("Error"); // Nếu role không hợp lệ
         }
 
-        public IActionResult AdminBooking()
+        public IActionResult AdminFoodAndBeverage()
         {
             return View(); // Trả về danh sách sản phẩm cho Admin
         }
-        public IActionResult ReceptionBooking()
+        public IActionResult ReceptionFoodAndBeverage()
         {
             return View(); // Trả về danh sách sản phẩm cho Admin
         }

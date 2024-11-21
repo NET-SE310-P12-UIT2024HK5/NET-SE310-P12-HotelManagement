@@ -457,18 +457,22 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
 }
 
 .btn-primary {
-    background-color: #009688;
-    border: 1px solid #009688;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
 }
 
     .btn-primary:hover, .btn-primary:focus, .btn-primary.active, .btn-primary:active, .open > .dropdown-toggle.btn-primary {
-        background: #009688;
-        border-color: #009688;
+        color: #fff;
+        background-color: #0069d9;
+        border-color: #0062cc;
     }
 
         .btn-primary.active.focus, .btn-primary.active:focus, .btn-primary.active:hover, .btn-primary.focus:active, .btn-primary:active:focus, .btn-primary:active:hover, .open > .dropdown-toggle.btn-primary.focus, .open > .dropdown-toggle.btn-primary:focus, .open > .dropdown-toggle.btn-primary:hover {
-            background-color: #04f;
-            border: 1px solid #04f;
+            color: #fff;
+            background-color: #0069d9;
+            border-color: #0062cc;
+            box-shadow: 0 0 0 .2rem rgba(38, 143, 255, .5);
         }
 
         .btn-primary.active:not(:disabled):not(.disabled), .btn-primary:active:not(:disabled):not(.disabled), .show > .btn-primary.dropdown-toggle {
@@ -825,7 +829,7 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
 
 .card {
     border: 0;
-    border-radius: 0;
+    border-radius: 20px;
     margin-bottom: 1.875rem;
 }
 
@@ -855,6 +859,7 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
 .card .card-header {
     background-color: #fff;
     border-bottom: 1px solid #eaeaea;
+    border-radius: 20px 20px 0 0;
 }
 
     .card .card-header .card-title {
@@ -2084,6 +2089,7 @@ html.menu-opened {
 
 .booking_card {
     padding: 1.75rem !important;
+    border-radius:20;
 }
 
 .title_menu {

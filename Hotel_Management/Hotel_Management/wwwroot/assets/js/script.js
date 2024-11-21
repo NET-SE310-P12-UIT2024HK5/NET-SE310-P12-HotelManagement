@@ -311,4 +311,29 @@
 			// Add your AJAX call here to update the status in the backend
 		});
 	});
+	$(document).ready(function () {
+        // Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
+        function toggleButtons() {
+            if ($('body').hasClass('mini-sidebar')) {
+                $('.toggle_btn_1').show(); // Hiện nút Toggle 1
+                $('.toggle_btn_2').hide(); // Ẩn nút Toggle 2
+            } else {
+                $('.toggle_btn_1').hide(); // Ẩn nút Toggle 1
+                $('.toggle_btn_2').show(); // Hiện nút Toggle 2
+            }
+        }
+
+        // Gọi hàm kiểm tra ngay khi load trang
+        toggleButtons();
+
+        // Thêm sự kiện click để thay đổi trạng thái mini-sidebar
+        $(document).on('click', '#toggle_btn', function () {
+            $('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
+            toggleButtons(); // Cập nhật trạng thái nút
+        });
+    });
+
+    $(document).ready(function () {
+        $('.datatable').DataTable();
+    });
 })(jQuery);
