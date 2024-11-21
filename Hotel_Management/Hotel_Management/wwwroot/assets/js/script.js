@@ -327,10 +327,7 @@
         toggleButtons();
 
         // Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-        $(document).on('click', '#toggle_btn', function () {
-            $('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
-            toggleButtons(); // Cập nhật trạng thái nút
-        });
+       
     });
 
     $(document).ready(function () {
