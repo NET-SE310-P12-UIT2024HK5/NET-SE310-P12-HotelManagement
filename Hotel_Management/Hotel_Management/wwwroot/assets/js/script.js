@@ -340,3 +340,28 @@
 		window.location.href = '/Rooms/Edit';
 	}
 })(jQuery);
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Lấy tất cả các link phân trang
+    const pageLinks = document.querySelectorAll('.pagination .page-link');
+
+    pageLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Xóa active class từ tất cả các page item
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Thêm active class vào page item được click
+            if (!this.parentElement.classList.contains('disabled')) {
+                this.parentElement.classList.add('active');
+
+                // Ở đây bạn có thể thêm code để load dữ liệu mới
+                // Ví dụ: loadPage(this.textContent);
+            }
+        });
+    });
+});

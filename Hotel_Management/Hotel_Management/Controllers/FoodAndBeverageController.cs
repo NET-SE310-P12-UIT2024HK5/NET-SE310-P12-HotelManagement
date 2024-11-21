@@ -6,8 +6,9 @@ namespace Hotel_Management.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<FoodAndBeverageController> _logger;
+		private const int PageSize = 6;
 
-        public FoodAndBeverageController(HttpClient httpClient, ILogger<FoodAndBeverageController> logger)
+		public FoodAndBeverageController(HttpClient httpClient, ILogger<FoodAndBeverageController> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
