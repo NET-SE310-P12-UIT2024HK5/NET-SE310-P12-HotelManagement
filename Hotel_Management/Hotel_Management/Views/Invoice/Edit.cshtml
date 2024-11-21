@@ -75,29 +75,29 @@
                     <div class="col-sm-12">
                         <form>
                             <div class="row mt-5">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Invoice ID</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
                                             </div>
-                                            <input class="form-control" type="text" value="1">
+                                            <input class="form-control" readonly="" type="text" value="1">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Booking ID</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-book"></i></span>
                                             </div>
-                                            <input class="form-control" type="text" value="2">
+                                            <input class="form-control" readonly="" type="text" value="2">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Date</label>
                                         <div class="input-group">
@@ -105,6 +105,22 @@
                                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                             </div>
                                             <input class="form-control datetimepicker" type="text" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Status</label>
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                                            </div>
+                                            <select class="form-control">
+                                                <option>Select</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Paid">Paid</option>
+                                                <option value="Cancelled">Cancelled</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -182,11 +198,11 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                    <td class="text-right">Total</td>
+                                                    <td class="text-right"> Total: </td>
                                                     <td id="totalAmount" style="text-align: right; padding-right: 30px;width: 230px">$0.00</td>
                                                 </tr>
                                                 <tr>
-                                                    <td colspan="5" class="text-right"> Discount % </td>
+                                                    <td colspan="5" class="text-right"> Discount: </td>
                                                     <td style="text-align: right; padding-right: 30px;width: 230px">
                                                         <div class="form-group">
                                                             <div class="input-group">
@@ -232,11 +248,11 @@
     <script src="~/assets/js/script.js"></script>
     <script>
         $(function () {
-                $('#datetimepicker3').datetimepicker({
-                    format: 'LT'
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
 
-                });
             });
+        });
     </script>
 </body>
 </html>

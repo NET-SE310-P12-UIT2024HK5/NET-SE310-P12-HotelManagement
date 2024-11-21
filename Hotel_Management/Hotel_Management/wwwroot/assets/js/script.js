@@ -255,6 +255,7 @@
 		var calculatorunitCost = parseFloat($row.find('.unit-cost').val()) || 0;
 		var calculatorquantity = parseInt($row.find('.quantity').val()) || 0;
 
+
 		var amount = calculatorunitCost * calculatorquantity;
 		$row.find('.amount').val(formatNumber(amount.toFixed(2)) + ' $');
 	});
@@ -291,5 +292,23 @@
 			requestAnimationFrame(updateGrandTotal);
 		}
 		requestAnimationFrame(updateGrandTotal); // Start the update loop
+	});
+
+	$(document).ready(function () {
+		$('.dropdown-menu .dropdown-item').on('click', function (e) {
+			e.preventDefault();
+			var newStatus = $(this).data('status');
+			var dropdownToggle = $(this).closest('.dropdown').find('.dropdown-toggle');
+			dropdownToggle.text(newStatus);
+			dropdownToggle.removeClass('bg-success-light bg-warning-light bg-danger-light');
+			if (newStatus === 'Paid') {
+				dropdownToggle.addClass('bg-success-light');
+			} else if (newStatus === 'Pending') {
+				dropdownToggle.addClass('bg-warning-light');
+			} else if (newStatus === 'Cancelled') {
+				dropdownToggle.addClass('bg-danger-light');
+			}
+			// Add your AJAX call here to update the status in the backend
+		});
 	});
 })(jQuery);

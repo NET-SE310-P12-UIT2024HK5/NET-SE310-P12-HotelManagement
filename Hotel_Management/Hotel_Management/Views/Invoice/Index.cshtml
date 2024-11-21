@@ -85,7 +85,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>From</label>
+                                        <label>From:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
@@ -96,7 +96,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>To</label>
+                                        <label>To:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
@@ -134,10 +134,17 @@
                                                 <td style="text-align: center;">2</td>
                                                 <td style="text-align: center;">$3200</td>
                                                 <td style="text-align: center;">
-                                                    <div class="actions"> <a href="#" class="btn btn-sm bg-success-light mr-2">Paid</a> </div>
+                                                    <div class="dropdown">
+                                                        <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
+                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
+                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td style="text-align: center;">15 Oct 2024</td>
-                                                <td class ="text-right">
+                                                <td class="text-right">
                                                     <div class="dropdown dropdown-action">
                                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
                                                         <div class="dropdown-menu dropdown-menu-right">
@@ -152,7 +159,14 @@
                                                 <td style="text-align: center;">1</td>
                                                 <td style="text-align: center;">$2500</td>
                                                 <td style="text-align: center;">
-                                                    <div class="actions"> <a href="#" class="btn btn-sm bg-danger-light mr-2">Pending</a> </div>
+                                                    <div class="dropdown">
+                                                        <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" data-status="Pending">Pending</a>
+                                                            <a class="dropdown-item" href="#" data-status="Paid">Paid</a>
+                                                            <a class="dropdown-item" href="#" data-status="Cancelled">Cancelled</a>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td style="text-align: center;">16 Oct 2024</td>
                                                 <td class="text-right">
