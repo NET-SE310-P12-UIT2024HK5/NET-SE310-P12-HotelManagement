@@ -61,7 +61,7 @@
                                 <hr>
                                 <div class="d-flex justify-content-between">
                                     <h5>Total:</h5>
-                                    <h5 id="orderTotal">$0.00</h5>
+                                    <h5 id="orderTotal">0.00 ₫</h5>
                                 </div>
                                 <button class="btn btn-success w-100 mt-3" onclick="submitOrder()">
                                     Submit Order
@@ -73,67 +73,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ... scripts similar to AdminFoodAndBeverage.cshtml ... -->
-    <!-- Add Reception specific JavaScript -->
-    <script>
-        let currentOrder = [];
-
-        function addToOrder(item) {
-            const existingItem = currentOrder.find(i => i.id === item.id);
-            if (existingItem) {
-                existingItem.quantity = (existingItem.quantity || 1) + 1;
-            } else {
-                currentOrder.push({ ...item, quantity: 1 });
-            }
-            updateOrderDisplay();
-        }
-
-        function updateOrderDisplay() {
-            const orderItemsDiv = document.getElementById('orderItems');
-            const orderTotalElement = document.getElementById('orderTotal');
-            let total = 0;
-
-            orderItemsDiv.innerHTML = currentOrder.map(item => {
-                const itemTotal = item.price * (item.quantity || 1);
-                total += itemTotal;
-                return `
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <div>
-                                    <span class="fw-bold">${item.name}</span> x ${item.quantity}
-                                </div>
-                                <div>
-                                    $${itemTotal.toFixed(2)}
-                                    <button class="btn btn-sm btn-danger ms-2" onclick="removeFromOrder(${item.id})">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-            }).join('');
-
-            orderTotalElement.textContent = `$${total.toFixed(2)}`;
-        }
-
-        function removeFromOrder(itemId) {
-            currentOrder = currentOrder.filter(item => item.id !== itemId);
-            updateOrderDisplay();
-        }
-
-        function submitOrder() {
-            if (currentOrder.length === 0) {
-                alert('Please add items to your order first');
-                return;
-            }
-
-            // Here you would typically send the order to your server
-            console.log('Submitting order:', currentOrder);
-            // TODO: Implement actual order submission
-            alert('Order submitted successfully!');
-            currentOrder = [];
-            updateOrderDisplay();
-        }
-    </script>
 
     <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
