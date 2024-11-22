@@ -23,7 +23,6 @@
 					<div class="row align-items-center">
 						<div class="col">
 							<h3 class="page-title mt-5">Rooms</h3>
-							@* <a href="/Rooms/Create" class="btn btn-primary float-right veiwbutton ">Add Room</a> *@
 						</div>
 					</div>
 				</div>
@@ -35,7 +34,7 @@
 									<table class="datatable table table-stripped table-hover table-center mb-0">
 										<thead>
 											<tr>
-												<th style="width: 12.5%;">Room ID/#.</th>
+												<th style="width: 12.5%; text-align: center;">Room ID/#.</th>
 												<th style="width: 25%; text-align: center;">Room Type</th>
 												<th style="width: 25%; text-align: center;">Unit Price</th>
 												<th style="width: 25%; text-align: center;">Status</th>
@@ -54,7 +53,6 @@
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Unavailable" onclick="changeRoomStatus(this)">Unavailable</a>
 														</div>
 													</div>
 												</td>
@@ -79,7 +77,6 @@
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Unavailable" onclick="changeRoomStatus(this)">Unavailable</a>
 														</div>
 													</div>
 												</td>
@@ -104,7 +101,6 @@
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
 															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Unavailable" onclick="changeRoomStatus(this)">Unavailable</a>
 														</div>
 													</div>
 												</td>
@@ -117,32 +113,7 @@
 														</div>
 													</div>
 												</td>
-											</tr>
-											<tr>
-												<td>4</td>
-												<td style="text-align: center;">Suite</td>
-												<td style="text-align: center;">1,000,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-danger-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Unavailable</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Unavailable" onclick="changeRoomStatus(this)">Unavailable</a>
-														</div>
-													</div>
-												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
-														</div>
-													</div>
-												</td>
-											</tr>
+											</tr>										
 										</tbody>
 									</table>
 								</div>
@@ -172,7 +143,7 @@
 												<span class="input-group-text"><i class="fas fa-bed"></i></span>
 											</div>
 											<select class="form-control" name="room_type" required>
-												<option value="">Select</option>
+												<option value="" disabled selected>Select</option>
 												<option value="Single">Single</option>
 												<option value="Double">Double</option>
 												<option value="King/Queen">King/Queen</option>
@@ -181,25 +152,25 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<label><b>Unit Price</b></label>
+										<label><b>Hourly Rate</b></label>
 										<div class="input-group">
 											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+												<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 											</div>
-											<input class="form-control" type="text" placeholder="Enter Unit Price">
+											<input class="form-control" type="text" placeholder="Enter Hourly Rate">
 										</div>
-									</div><div class="form-group">
+									</div>
+									<div class="form-group">
 										<label><b>Status</b></label>
 										<div class="input-group">
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
 											</div>
 											<select class="form-control" name="status" required>
-												<option value="">Select</option>
-												<option value="Available" selected>Available</option>
+												<option value="" disabled selected>Select</option>
+												<option value="Available">Available</option>
 												<option value="Occupied">Occupied</option>
-												<option value="Under Maintenance">Under Maintenance</option>
-												<option value="Unavailable">Unavailable</option>
+												<option value="Under Maintenance">Under Maintenance/Cleaning</option>
 											</select>
 										</div>
 									</div>
@@ -256,7 +227,7 @@
 														<span class="input-group-text"><i class="fas fa-bed"></i></span>
 													</div>
 													<select class="form-control" id="sel1" name="sellist1">
-														<option>Select</option>
+														<option value="" disabled selected>Select</option>
 														<option>Single</option>
 														<option>Double</option>
 														<option>King/Queen</option>
@@ -272,7 +243,7 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
 													</div>
-													<input class="form-control" type="text" placeholder="Enter Unit Price">
+													<input class="form-control" type="text" placeholder="Enter Hourly Rate">
 												</div>
 											</div>
 										</div>
@@ -284,11 +255,10 @@
 														<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
 													</div>
 													<select class="form-control" id="sel2" name="sellist1">
-														<option>Select</option>
+														<option value="" disabled selected>Select</option>
 														<option>Available</option>
 														<option>Occupied</option>
-														<option>Under Maintenance</option>
-														<option>Unavailable</option>
+														<option>Under Maintenance/Cleaning</option>														
 													</select>
 												</div>
 											</div>

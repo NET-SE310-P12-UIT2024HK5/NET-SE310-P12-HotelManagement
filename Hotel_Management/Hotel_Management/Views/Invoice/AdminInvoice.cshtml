@@ -23,7 +23,10 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <div class="mt-5">
-                                <h4 class="card-title float-left mt-2">Invoices</h4> <a href="/Invoice/Create" class="btn btn-primary float-right veiwbutton">Create New Invoice</a>
+                                <h4 class="card-title float-left mt-2">Invoices</h4>
+                                <a href="/Invoice/Create" class="btn btn-primary float-right veiwbutton">
+                                    <i class="fas fa-plus"></i> Create Invoice
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -34,12 +37,12 @@
                             <div class="row formtype">
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Booking ID:</label>
+                                        <label>Invoice ID:</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                             </div>
-                                            <input type="text" class="form-control" placeholder="Enter booking ID">
+                                            <input type="text" class="form-control" placeholder="Enter invoice ID">
                                         </div>
                                     </div>
                                 </div>
@@ -66,7 +69,12 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <div class="form-group"> <label>&nbsp;</label> <a href="#" class="btn btn-success btn-block mt-0 search_button"> Search </a> </div>
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <a href="#" class="btn btn-success btn-block mt-0 search_button">
+                                            <i class="fas fa-search"></i> Search
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -80,19 +88,17 @@
                                     <table class="datatable table table-stripped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 10%;">Invoice ID</th>
-                                                <th style="width: 10%; text-align: center;">Booking ID</th>
+                                                <th style="width: 20%; text-align: center;">Invoice ID</th>
                                                 <th style="width: 20%; text-align: center;">Total Amount</th>
                                                 <th style="width: 20%; text-align: center;">Status</th>
                                                 <th style="width: 20%; text-align: center;">Date</th>
-                                                <th style="width: 10%;">Actions</th>
+                                                <th style="width: 20%; text-align: center;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>1</td>
-                                                <td style="text-align: center;">2</td>
-                                                <td style="text-align: center;">$3200</td>
+                                                <td style="text-align: center;">1</td>
+                                                <td style="text-align: center;">1,000,000</td>
                                                 <td style="text-align: center;">
                                                     <div class="dropdown">
                                                         <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
@@ -115,12 +121,11 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>2</td>
-                                                <td style="text-align: center;">1</td>
-                                                <td style="text-align: center;">$2500</td>
+                                                <td style="text-align: center;">2</td>
+                                                <td style="text-align: center;">2,000,000</td>
                                                 <td style="text-align: center;">
                                                     <div class="dropdown">
-                                                        <a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Paid</a>
+                                                        <a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pending</a>
                                                         <div class="dropdown-menu">
                                                             <a class="dropdown-item" href="#" data-status="Pending" onclick="changeStatus(this)">Pending</a>
                                                             <a class="dropdown-item" href="#" data-status="Paid" onclick="changeStatus(this)">Paid</a>
@@ -129,6 +134,30 @@
                                                     </div>
                                                 </td>
                                                 <td style="text-align: center;">16 Oct 2024</td>
+                                                <td class="text-right">
+                                                    <div class="dropdown dropdown-action">
+                                                        <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a class="dropdown-item" href="/Invoice/Edit"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
+                                                            <a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: center;">3</td>
+                                                <td style="text-align: center;">3,000,000</td>
+                                                <td style="text-align: center;">
+                                                    <div class="dropdown">
+                                                        <a href="#" class="btn btn-sm bg-danger-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Cancelled</a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#" data-status="Pending" onclick="changeStatus(this)">Pending</a>
+                                                            <a class="dropdown-item" href="#" data-status="Paid" onclick="changeStatus(this)">Paid</a>
+                                                            <a class="dropdown-item" href="#" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style="text-align: center;">17 Oct 2024</td>
                                                 <td class="text-right">
                                                     <div class="dropdown dropdown-action">
                                                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
@@ -172,25 +201,5 @@
     <script src="~/assets/plugins/morris/morris.min.js"></script>
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
-    <script>
-        function changeStatus(element) {
-            var newStatus = element.getAttribute('data-status');
-            var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
-            dropdownToggle.textContent = newStatus;
-
-            // Update the button class based on the new status
-            dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
-            if (newStatus === 'Paid') {
-                dropdownToggle.classList.add('bg-success-light');
-            } else if (newStatus === 'Pending') {
-                dropdownToggle.classList.add('bg-warning-light');
-            } else if (newStatus === 'Cancelled') {
-                dropdownToggle.classList.add('bg-danger-light');
-            }
-            // Add your AJAX call here to update the status in the backend if needed
-        }
-        // Ensure the function is globally accessible
-        window.changeStatus = changeStatus;
-    </script>
 </body>
 </html>

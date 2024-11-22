@@ -43,37 +43,50 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>1</td>
+												<td style="text-align: center;">1</td>
 												<td style="text-align: center;">Single</td>
 												<td style="text-align: center;">250,000</td>
 												<td style="text-align: center;">
-													<div class="actions"> <a href="#" class="btn btn-sm bg-success-light mr-2">Available</a> </div>
+													<div class="dropdown">
+														<a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Available</a>
+														<div class="dropdown-menu">
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
+														</div>
+													</div>
 												</td>
 											</tr>
 											<tr>
-												<td>2</td>
+												<td style="text-align: center;">2</td>
 												<td style="text-align: center;">Double</td>
 												<td style="text-align: center;">500,000</td>
 												<td style="text-align: center;">
-													<div class="actions"> <a href="#" class="btn btn-sm bg-danger-light mr-2">Occupied</a> </div>
+													<div class="dropdown">
+														<a href="#" class="btn btn-sm bg-danger-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Occupied</a>
+														<div class="dropdown-menu">
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
+														</div>
+													</div>
 												</td>
 											</tr>
 											<tr>
-												<td>3</td>
+												<td style="text-align: center;">3</td>
 												<td style="text-align: center;">King/Queen</td>
 												<td style="text-align: center;">750,000</td>
 												<td style="text-align: center;">
-													<div class="actions"> <a href="#" class="btn btn-sm bg-warning-light mr-2">Under Maintainance/Cleaning</a> </div>
+													<div class="dropdown">
+														<a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Under Maintainance/Cleaning</a>
+														<div class="dropdown-menu">
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
+															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
+														</div>
+													</div>
 												</td>
-											</tr>
-											<tr>
-												<td>4</td>
-												<td style="text-align: center;">Suite</td>
-												<td style="text-align: center;">1,000,000</td>
-												<td style="text-align: center;">
-													<div class="actions"> <a href="#" class="btn btn-sm bg-danger-light mr-2">Unavailable</a> </div>
-												</td>
-											</tr>
+											</tr>										
 										</tbody>
 									</table>
 								</div>

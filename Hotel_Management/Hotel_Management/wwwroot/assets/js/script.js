@@ -174,14 +174,19 @@
 	});
 	$(document).on('click', '.add-row', function () {
 		var newRow = `<tr>
-        <td></td>
-                                                    <td>
+        <td class="text-center"></td>
+                                                   <td>
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                                                 </div>
-                                                                <input class="form-control room-id" type="text" placeholder="Enter Room ID">
+                                                                <select class="form-control room-id">
+                                                                    <option value="" disabled selected>Select</option>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -189,9 +194,9 @@
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                                                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                 </div>
-                                                                <input class="form-control unit-cost" type="text" placeholder="Enter Unit Cost">
+                                                                <input class="form-control unit-cost" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -199,9 +204,19 @@
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
                                                                 </div>
-                                                                <input class="form-control quantity" type="number" placeholder="Enter Quantity">
+                                                                <input class="form-control quantity" type="number" placeholder="Enter Duration">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-utensils"></i></span>
+                                                                </div>
+                                                                <input class="form-control services-fee" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -211,14 +226,14 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                                                 </div>
-                                                                <input class="form-control amount" readonly="" type="text" placeholder="Amount">
+                                                                <input class="form-control amount" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>
+                                                    <td class="text-center"">
                                                         <a href="javascript:void(0)" class="text-success font-18 add-row" title="Add"><i class="fas fa-plus"></i></a>
 														<a href="javascript:void(0)" class="text-danger font-18 remove-row" title="Remove"><i class="fas fa-trash"></i></a>
-                                                    </td>
+                                                    </td>                                               
     </tr>`;
 		$('#invoiceTable tbody').append(newRow);
 		updateRowActions();
@@ -254,8 +269,6 @@
 		var $row = $(this).closest('tr');
 		var calculatorunitCost = parseFloat($row.find('.unit-cost').val()) || 0;
 		var calculatorquantity = parseInt($row.find('.quantity').val()) || 0;
-
-
 		var amount = calculatorunitCost * calculatorquantity;
 		$row.find('.amount').val(formatNumber(amount.toFixed(2)) + ' $');
 	});
@@ -275,11 +288,11 @@
 		}
 		var grandTotal = totalAmount - (totalAmount * (discount / 100));
 
-		$('#totalAmount').text('$ ' +formatNumber(totalAmount.toFixed(2)));
-		$('#grandTotal').text('$ ' + formatNumber(grandTotal.toFixed(2)));
+		$('#totalAmount').text(formatNumber(totalAmount.toFixed(2)) + ' VND');
+		$('#grandTotal').text(formatNumber(grandTotal.toFixed(2)) + ' VND');
 	}
 	function formatNumber(num) {
-		return new Intl.NumberFormat('en-US').format(num);
+		return new Intl.NumberFormat('vi-VN').format(num);
 	}
 
 	$(document).on('input', '#discount', function () {
@@ -293,24 +306,6 @@
 		}
 		requestAnimationFrame(updateGrandTotal); // Start the update loop
 	});
-
-	//$(document).ready(function () {
-	//	$('.dropdown-menu .dropdown-item').on('click', function (e) {
-	//		e.preventDefault();
-	//		var newStatus = $(this).data('status');
-	//		var dropdownToggle = $(this).closest('.dropdown').find('.dropdown-toggle');
-	//		dropdownToggle.text(newStatus);
-	//		dropdownToggle.removeClass('bg-success-light bg-warning-light bg-danger-light');
-	//		if (newStatus === 'Paid') {
-	//			dropdownToggle.addClass('bg-success-light');
-	//		} else if (newStatus === 'Pending') {
-	//			dropdownToggle.addClass('bg-warning-light');
-	//		} else if (newStatus === 'Cancelled') {
-	//			dropdownToggle.addClass('bg-danger-light');
-	//		}
-	//		// Add your AJAX call here to update the status in the backend
-	//	});
-	//});
 
 	$(document).ready(function () {
         // Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
@@ -350,8 +345,6 @@
 			dropdownToggle.classList.add('bg-danger-light');
 		} else if (newStatus === 'Under Maintainance/Cleaning') {
 			dropdownToggle.classList.add('bg-warning-light');
-		} else if (newStatus === 'Unavailable') {
-			dropdownToggle.classList.add('bg-danger-light');
 		}
 
 		// Add your AJAX call here to update the status in the backend if needed
@@ -359,23 +352,24 @@
 
 	// Ensure the function is globally accessible
 	window.changeRoomStatus = changeRoomStatus;
-
-	function changeStatus(element) {
-		var newStatus = element.getAttribute('data-status');
-		var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
-		dropdownToggle.textContent = newStatus;
-
-		// Update the button class based on the new status
-		dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
-		if (newStatus === 'Paid') {
-			dropdownToggle.classList.add('bg-success-light');
-		} else if (newStatus === 'Pending') {
-			dropdownToggle.classList.add('bg-warning-light');
-		} else if (newStatus === 'Cancelled') {
-			dropdownToggle.classList.add('bg-danger-light');
-		}
-		// Add your AJAX call here to update the status in the backend if needed
-	}
-	// Ensure the function is globally accessible
-	window.changeStatus = changeStatus;
 })(jQuery);
+
+
+function changeStatus(element) {
+	var newStatus = element.getAttribute('data-status');
+	var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
+	dropdownToggle.textContent = newStatus;
+
+	// Update the button class based on the new status
+	dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
+	if (newStatus === 'Paid') {
+		dropdownToggle.classList.add('bg-success-light');
+	} else if (newStatus === 'Pending') {
+		dropdownToggle.classList.add('bg-warning-light');
+	} else if (newStatus === 'Cancelled') {
+		dropdownToggle.classList.add('bg-danger-light');
+	}
+	// Add your AJAX call here to update the status in the backend if needed
+}
+// Ensure the function is globally accessible
+window.changeStatus = changeStatus;
