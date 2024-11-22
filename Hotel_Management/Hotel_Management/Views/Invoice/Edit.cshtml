@@ -29,29 +29,18 @@
                     <div class="col-sm-12">
                         <form>
                             <div class="row mt-5">
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Invoice ID</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-file-invoice"></i></span>
+                                                <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                             </div>
                                             <input class="form-control" readonly="" type="text" value="1">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Booking ID</label>
-                                        <div class="input-group">
-                                            <div class="input-group-prepend">
-                                                <span class="input-group-text"><i class="fas fa-book"></i></span>
-                                            </div>
-                                            <input class="form-control" readonly="" type="text" value="2">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Date</label>
                                         <div class="input-group">
@@ -62,7 +51,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label>Status</label>
                                         <div class="input-group">
@@ -70,8 +59,8 @@
                                                 <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
                                             </div>
                                             <select class="form-control">
-                                                <option>Select</option>
-                                                <option value="Pending">Pending</option>
+                                                <option value="" disabled selected>Select</option>
+                                                <option value="Pending" selected>Pending</option>
                                                 <option value="Paid">Paid</option>
                                                 <option value="Cancelled">Cancelled</option>
                                             </select>
@@ -85,25 +74,31 @@
                                         <table class="table table-hover table-white" id="invoiceTable">
                                             <thead>
                                                 <tr>
-                                                    <th class="text-center" style="width: 5%">#</th>
-                                                    <th class="text-center" style="width: 25%">Room ID</th>
-                                                    <th class="text-center" style="width: 20%">Unit Cost</th>
-                                                    <th class="text-center" style="width: 15%">Quantity</th>
-                                                    <th class="text-center" style="width: 25%">Amount</th>
-                                                    <th class="text-center" style="width: 10%">Actions</th>
+                                                    <th class="text-center" style="width: 10%">#</th>
+                                                    <th class="text-center" style="width: 16%"> Booking ID</th>
+                                                    <th class="text-center" style="width: 16%"> Hourly Rate</th>
+                                                    <th class="text-center" style="width: 16%"> Duration</th>
+                                                    <th class="text-center" style="width: 16%"> Services Fee</th>
+                                                    <th class="text-center" style="width: 16%"> Amount</th>
+                                                    <th class="text-center" style="width: 10%"> Actions</th>
 
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>1</td>
+                                                    <td class="text-center">1</td>
                                                     <td>
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                                                 </div>
-                                                                <input class="form-control room-id" type="text" placeholder="Enter Room ID">
+                                                                <select class="form-control room-id">
+                                                                    <option value="" disabled selected>Select</option>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -111,9 +106,9 @@
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-coins"></i></span>
+                                                                    <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                 </div>
-                                                                <input class="form-control unit-cost" type="text" placeholder="Enter Unit Cost">
+                                                                <input class="form-control unit-cost" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -121,9 +116,19 @@
                                                         <div class="form-group">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                                    <span class="input-group-text"><i class="fas fa-clock"></i></span>
                                                                 </div>
-                                                                <input class="form-control quantity" type="number" placeholder="Enter Quantity">
+                                                                <input class="form-control quantity" type="number" placeholder="Enter Duration">
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><i class="fas fa-utensils"></i></span>
+                                                                </div>
+                                                                <input class="form-control services-fee" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -133,11 +138,11 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                                                 </div>
-                                                                <input class="form-control amount" readonly="" type="text" placeholder="Amount">
+                                                                <input class="form-control amount" readonly="" type="text" placeholder="">
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td>
+                                                    <td class="text-center">
                                                         <a href="javascript:void(0)" class="text-success font-18 add-row" title="Add"><i class="fas fa-plus"></i></a>
                                                     </td>
                                                 </tr>
@@ -153,7 +158,7 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td class="text-right"> Total: </td>
-                                                    <td id="totalAmount" style="text-align: right; padding-right: 30px;width: 230px">$0.00</td>
+                                                    <td id="totalAmount" style="text-align: right; padding-right: 30px;width: 230px">0.00 VND</td>
                                                 </tr>
                                                 <tr>
                                                     <td colspan="5" class="text-right"> Discount: </td>
@@ -170,7 +175,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td colspan="5" style="text-align: right; font-weight: bold"> Grand Total: </td>
-                                                    <td id="grandTotal" style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px"> $ 0.00 </td>
+                                                    <td id="grandTotal" style="text-align: right; padding-right: 30px; font-weight: bold; font-size: 16px;width: 230px"> 0.00 VND</td>
                                                 </tr>
                                             </tbody>
                                         </table>
