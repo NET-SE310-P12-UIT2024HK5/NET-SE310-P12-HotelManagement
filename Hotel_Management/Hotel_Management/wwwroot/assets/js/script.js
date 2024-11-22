@@ -323,10 +323,7 @@
         toggleButtons();
 
         // Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-        $(document).on('click', '#toggle_btn', function () {
-            $('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
-            toggleButtons(); // Cập nhật trạng thái nút
-        });
+       
     });
 
     $(document).ready(function () {
@@ -373,3 +370,156 @@ function changeStatus(element) {
 }
 // Ensure the function is globally accessible
 window.changeStatus = changeStatus;
+
+/*document.addEventListener('DOMContentLoaded', function () {
+    // Lấy tất cả các link phân trang
+    const pageLinks = document.querySelectorAll('.pagination .page-link');
+
+    pageLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            
+
+            // Xóa active class từ tất cả các page item
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Thêm active class vào page item được click
+            if (!this.parentElement.classList.contains('disabled')) {
+                this.parentElement.classList.add('active');
+
+                // Ở đây bạn có thể thêm code để load dữ liệu mới
+                // Ví dụ: loadPage(this.textContent);
+            }
+        });
+    });
+});*/
+
+document.addEventListener('DOMContentLoaded', function () {
+	// Hàm load dữ liệu trang mới
+	const isReception = document.body.getAttribute('data-is-reception') === 'true';
+	const controllerEndpoint = isReception ? 'ReceptionFoodAndBeverage' : 'AdminFoodAndBeverage';
+    function loadPage(page) {
+        // Hiển thị loading indicator (nếu cần)
+        const cardBody = document.querySelector('.booking_card');
+        cardBody.style.opacity = '0.5';
+
+
+		// Sử dụng endpoint tương ứng với view hiện tại
+		fetch(`/FoodAndBeverage/${controllerEndpoint}?page=${page}`, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			}
+		})
+        .then(response => response.text())
+        .then(html => {
+            // Cập nhật nội dung
+            cardBody.innerHTML = html;
+            cardBody.style.opacity = '1';
+            
+            // Cập nhật URL mà không reload trang
+			history.pushState({ page: page }, '', `/FoodAndBeverage/${controllerEndpoint}?page=${page}`);
+            
+            // Khởi tạo lại event listeners cho các nút phân trang mới
+			initPaginationHandlers();
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            cardBody.style.opacity = '1';
+        });
+    }
+
+    // Hàm khởi tạo event handlers cho phân trang
+    function initPaginationHandlers() {
+        const pageLinks = document.querySelectorAll('.pagination .page-link');
+        pageLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Kiểm tra nếu nút không bị disable
+                if (!this.parentElement.classList.contains('disabled')) {
+                    const page = this.getAttribute('data-page');
+                    if (page) {
+                        loadPage(page);
+                    }
+                }
+            });
+        });
+    }
+
+    // Xử lý nút Back/Forward của trình duyệt
+    window.addEventListener('popstate', function (e) {
+        if (e.state && e.state.page) {
+            loadPage(e.state.page);
+        }
+    });
+
+    // Khởi tạo handlers lần đầu
+    initPaginationHandlers();
+});
+
+let currentOrder = [];
+
+function addToOrder(item) {
+	// Convert JSON string back to an object
+	const parsedItem = typeof item === 'string' ? JSON.parse(item) : item;
+
+	const existingItem = currentOrder.find(i => i.id === parsedItem.id);
+	if (existingItem) {
+		existingItem.quantity = (existingItem.quantity || 1) + 1;
+	} else {
+		currentOrder.push({ ...parsedItem, quantity: 1 });
+	}
+	updateOrderDisplay();
+}
+
+function updateOrderDisplay() {
+	const orderItemsDiv = document.getElementById('orderItems');
+	const orderTotalElement = document.getElementById('orderTotal');
+	let total = 0;
+
+	orderItemsDiv.innerHTML = currentOrder.map(item => {
+		const itemTotal = item.price * (item.quantity || 1);
+		total += itemTotal;
+
+		// Định dạng giá tiền sang VNĐ
+		const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemTotal);
+
+		return `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span class="fw-bold">${item.name}</span> x ${item.quantity}
+                </div>
+                <div>
+                    ${formattedPrice}
+                    <button class="btn btn-sm btn-danger ms-2" onclick="removeFromOrder(${item.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+	}).join('');
+
+	// Hiển thị tổng giá trị đơn hàng
+	orderTotalElement.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
+}
+
+
+function removeFromOrder(itemId) {
+	currentOrder = currentOrder.filter(item => item.id !== itemId);
+	updateOrderDisplay();
+}
+
+function submitOrder() {
+	if (currentOrder.length === 0) {
+		alert('Please add items to your order first');
+		return;
+	}
+
+	// Typically, you would send the order to the server here
+	console.log('Submitting order:', currentOrder);
+	alert('Order submitted successfully!');
+	currentOrder = [];
+	updateOrderDisplay();
+}
