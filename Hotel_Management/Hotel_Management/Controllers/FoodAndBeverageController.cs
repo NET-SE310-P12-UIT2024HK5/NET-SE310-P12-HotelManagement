@@ -20,19 +20,19 @@ namespace Hotel_Management.Controllers
 
         private static List<FoodAndBeverageItem> _items = new List<FoodAndBeverageItem>
         {
-		    new FoodAndBeverageItem { Id = 1, Name = "Pama Paw Salad1", Price = 52.45m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 2, Name = "Caesar Salad2", Price = 48.99m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 3, Name = "Greek Salad3", Price = 45.50m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 4, Name = "Cobb Salad4", Price = 54.99m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 5, Name = "Nicoise Salad5", Price = 51.25m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 6, Name = "Waldorf Salad6", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 7, Name = "7", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 8, Name = "8", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-            new FoodAndBeverageItem { Id = 9, Name = "d9", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 10, Name = "Waldorf Salad6", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 11, Name = "Waldorf Salad7", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 12, Name = "Waldorf Salad8", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
-			new FoodAndBeverageItem { Id = 13, Name = "Waldorf Salad9", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+		    new FoodAndBeverageItem { Id = 1, Name = "Pama Paw Salad1", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 2, Name = "Caesar Salad2", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 3, Name = "Greek Salad3", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 4, Name = "Cobb Salad4", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 5, Name = "Nicoise Salad5", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 6, Name = "Waldorf Salad6", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 7, Name = "7", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 8, Name = "8", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+            new FoodAndBeverageItem { Id = 9, Name = "d9", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 10, Name = "Waldorf Salad6", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 11, Name = "Waldorf Salad7", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 12, Name = "Waldorf Salad8", Price = 4150000, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 13, Name = "Waldorf Salad9", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
 		};
         public async Task<IActionResult> Index()
         {
