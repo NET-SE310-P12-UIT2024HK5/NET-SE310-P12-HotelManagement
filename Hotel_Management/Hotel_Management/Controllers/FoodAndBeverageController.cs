@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
+using Data.Models;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Hotel_Management.Controllers
 {
@@ -6,13 +10,30 @@ namespace Hotel_Management.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<FoodAndBeverageController> _logger;
-		private const int PageSize = 6;
+		private const int pageSize = 6;
 
 		public FoodAndBeverageController(HttpClient httpClient, ILogger<FoodAndBeverageController> logger)
         {
             _httpClient = httpClient;
             _logger = logger;
         }
+
+        private static List<FoodAndBeverageItem> _items = new List<FoodAndBeverageItem>
+        {
+		    new FoodAndBeverageItem { Id = 1, Name = "Pama Paw Salad1", Price = 52.45m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 2, Name = "Caesar Salad2", Price = 48.99m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 3, Name = "Greek Salad3", Price = 45.50m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 4, Name = "Cobb Salad4", Price = 54.99m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 5, Name = "Nicoise Salad5", Price = 51.25m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 6, Name = "Waldorf Salad6", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 7, Name = "7", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 8, Name = "8", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+            new FoodAndBeverageItem { Id = 9, Name = "d9", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 10, Name = "Waldorf Salad6", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 11, Name = "Waldorf Salad7", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 12, Name = "Waldorf Salad8", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+			new FoodAndBeverageItem { Id = 13, Name = "Waldorf Salad9", Price = 49.75m, ImageUrl = "https://via.placeholder.com/150" },
+		};
         public async Task<IActionResult> Index()
         {
             var role = HttpContext.Items["Role"]?.ToString();
@@ -30,59 +51,64 @@ namespace Hotel_Management.Controllers
             return View("Error"); // Nếu role không hợp lệ
         }
 
-		public async Task<IActionResult> AdminFoodAndBeverage(int page = 1)
-		{
-			try
+        public IActionResult AdminFoodAndBeverage(int page = 1)
+        {
+
+
+			var totalItems = _items.Count;
+			var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+			var paginatedItems = _items
+				.Skip((page - 1) * pageSize)
+				.Take(pageSize)
+				.ToList();
+
+			ViewBag.CurrentPage = page;
+			ViewBag.TotalPages = totalPages;
+			ViewBag.TotalItems = totalItems;
+            ViewBag.IsReception = false;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
 			{
-				// Giả sử bạn lấy dữ liệu từ API
-				var response = await _httpClient.GetAsync($"api/foodandbeverage?page={page}&pageSize={PageSize}");
-				if (response.IsSuccessStatusCode)
+				// Nếu là Ajax request, trả về partial view
+				return PartialView("_FoodAndBeverageList", new
 				{
-					var result = await response.Content.ReadFromJsonAsync<PaginatedList<FoodAndBeverageItem>>();
-
-					// Truyền dữ liệu phân trang vào ViewBag
-					ViewBag.CurrentPage = page;
-					ViewBag.TotalPages = result.TotalPages;
-					ViewBag.HasPreviousPage = result.HasPreviousPage;
-					ViewBag.HasNextPage = result.HasNextPage;
-					ViewBag.TotalItems = result.TotalItems;
-
-					return View(result.Items);
-				}
-
-				return View("Error");
+					Items = paginatedItems,
+					CurrentPage = page,
+					TotalPages = totalPages,
+					TotalItems = totalItems
+				});
 			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error fetching food and beverage items");
-				return View("Error");
-			}
+
+			return View(paginatedItems);
 		}
-		public async Task<IActionResult> ReceptionFoodAndBeverage(int page = 1)
-		{
-			try
-			{
-				var response = await _httpClient.GetAsync($"api/foodandbeverage?page={page}&pageSize={PageSize}");
-				if (response.IsSuccessStatusCode)
-				{
-					var result = await response.Content.ReadFromJsonAsync<PaginatedList<FoodAndBeverageItem>>();
+        public IActionResult ReceptionFoodAndBeverage(int page = 1)
+        {
+            _logger.LogInformation($"Requested Page: {page}");
+            var totalItems = _items.Count;
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+            var paginatedItems = _items
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+            .ToList();
 
-					ViewBag.CurrentPage = page;
-					ViewBag.TotalPages = result.TotalPages;
-					ViewBag.HasPreviousPage = result.HasPreviousPage;
-					ViewBag.HasNextPage = result.HasNextPage;
-					ViewBag.TotalItems = result.TotalItems;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.IsReception = true;  // Flag để phân biệt view Reception
 
-					return View(result.Items);
-				}
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_FoodAndBeverageList", new
+                {
+                    Items = paginatedItems,
+                    CurrentPage = page,
+                    TotalPages = totalPages,
+                    TotalItems = totalItems
+                });
+            }
 
-				return View("Error");
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error fetching food and beverage items");
-				return View("Error");
-			}
-		}
-	}
+            return View(paginatedItems);
+        }
+    }
 }

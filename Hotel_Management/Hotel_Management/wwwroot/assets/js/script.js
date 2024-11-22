@@ -339,13 +339,13 @@
 })(jQuery);
 
 
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
     // Lấy tất cả các link phân trang
     const pageLinks = document.querySelectorAll('.pagination .page-link');
 
     pageLinks.forEach(link => {
         link.addEventListener('click', function (e) {
-            e.preventDefault();
+            
 
             // Xóa active class từ tất cả các page item
             document.querySelectorAll('.page-item').forEach(item => {
@@ -361,4 +361,68 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+});*/
+
+document.addEventListener('DOMContentLoaded', function () {
+	// Hàm load dữ liệu trang mới
+	const isReception = document.body.getAttribute('data-is-reception') === 'true';
+	const controllerEndpoint = isReception ? 'ReceptionFoodAndBeverage' : 'AdminFoodAndBeverage';
+    function loadPage(page) {
+        // Hiển thị loading indicator (nếu cần)
+        const cardBody = document.querySelector('.booking_card');
+        cardBody.style.opacity = '0.5';
+
+
+		// Sử dụng endpoint tương ứng với view hiện tại
+		fetch(`/FoodAndBeverage/${controllerEndpoint}?page=${page}`, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			}
+		})
+        .then(response => response.text())
+        .then(html => {
+            // Cập nhật nội dung
+            cardBody.innerHTML = html;
+            cardBody.style.opacity = '1';
+            
+            // Cập nhật URL mà không reload trang
+			history.pushState({ page: page }, '', `/FoodAndBeverage/${controllerEndpoint}?page=${page}`);
+            
+            // Khởi tạo lại event listeners cho các nút phân trang mới
+			initPaginationHandlers();
+
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            cardBody.style.opacity = '1';
+        });
+    }
+
+    // Hàm khởi tạo event handlers cho phân trang
+    function initPaginationHandlers() {
+        const pageLinks = document.querySelectorAll('.pagination .page-link');
+        pageLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // Kiểm tra nếu nút không bị disable
+                if (!this.parentElement.classList.contains('disabled')) {
+                    const page = this.getAttribute('data-page');
+                    if (page) {
+                        loadPage(page);
+                    }
+                }
+            });
+        });
+    }
+
+    // Xử lý nút Back/Forward của trình duyệt
+    window.addEventListener('popstate', function (e) {
+        if (e.state && e.state.page) {
+            loadPage(e.state.page);
+        }
+    });
+
+    // Khởi tạo handlers lần đầu
+    initPaginationHandlers();
 });
