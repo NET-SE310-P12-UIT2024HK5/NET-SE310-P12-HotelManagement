@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.Controllers
 {
@@ -11,7 +12,28 @@ namespace Hotel_Management.Controllers
             _httpClient = httpClient;
             _logger = logger;
         }
-        public async Task<IActionResult> Index()
+
+		public static class FakeDatabase
+		{
+			public static List<Customer> Customers { get; } = new List<Customer>
+			{
+				new Customer { CustomerID = 1, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
+				new Customer { CustomerID = 2, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
+				new Customer { CustomerID = 3, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
+				new Customer { CustomerID = 4, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
+				new Customer { CustomerID = 5, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
+				new Customer { CustomerID = 6, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
+				new Customer { CustomerID = 7, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
+				new Customer { CustomerID = 8, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
+				new Customer { CustomerID = 9, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
+				new Customer { CustomerID = 10, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
+				new Customer { CustomerID = 11, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
+				new Customer { CustomerID = 12, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
+			};
+		}
+
+
+		public async Task<IActionResult> Index()
         {
             var role = HttpContext.Items["Role"]?.ToString();
 
@@ -30,11 +52,12 @@ namespace Hotel_Management.Controllers
 
         public IActionResult AdminCustomer()
         {
-            return View(); // Trả về danh sách sản phẩm cho Admin
-        }
+			return View();
+		}
         public IActionResult ReceptionCustomer()
         {
-            return View(); // Trả về danh sách sản phẩm cho Admin
-        }
+			var customers = FakeDatabase.Customers.ToList(); // Directly use the list of Customer objects
+			return View(customers);
+		}
     }
 }

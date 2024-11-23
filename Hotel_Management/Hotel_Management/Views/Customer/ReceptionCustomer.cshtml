@@ -1,4 +1,4 @@
-﻿
+﻿@model List<Data.Models.Customer>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,14 +26,14 @@
 					<div class="row align-items-center">
 						<div class="col">
 							<div class="mt-5">
-								<h4 class="card-title float-left mt-2">Bookings</h4>
+								<h4 class="card-title float-left mt-2">Customer</h4>
 
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-12">
+					<div class="col-sm-8">
 						<div class="card card-table">
 							<div class="card-body booking_card">
 								<div class="table-responsive">
@@ -49,57 +49,67 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>CUS-0001</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2">
-															<img class="avatar-img rounded-circle"
-																 src="~/assets/img/profiles/avatar-03.jpg"
-																 alt="User Image">
-														</a>
-														<a href="profile.html">To Vinh Tien <span>#0001</span></a>
-													</h2>
-												</td>
-												<td>0123456789</td>
-												<td>tientv@gmail.com</td>
-												<td>089200010000</td>
-											</tr>
-											<tr>
-												<td>CUS-0002</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2">
-															<img class="avatar-img rounded-circle"
-																 src="~/assets/img/profiles/avatar-03.jpg"
-																 alt="User Image">
-														</a>
-														<a href="profile.html">Tran Nhat Tan <span>#0002</span></a>
-													</h2>
-												</td>
-												<td>0123456789</td>
-												<td>tientv@gmail.com</td>
-												<td>089200010000</td>
-											</tr>
-											<tr>
-												<td>CUS-0003</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2">
-															<img class="avatar-img rounded-circle"
-																 src="~/assets/img/profiles/avatar-03.jpg"
-																 alt="User Image">
-														</a>
-														<a href="profile.html">Le Van Teo <span>#0003</span></a>
-													</h2>
-												</td>
-												<td>0123456789</td>
-												<td>tientv@gmail.com</td>
-												<td>089200010000</td>
-											</tr>
+											@foreach (var customer in Model)
+											{
+												<tr>
+													<td>@("CUS-" + customer.CustomerID.ToString("D4"))</td>
+													<td>
+														<h2 class="table-avatar">
+															<a href="profile.html" class="avatar avatar-sm mr-2">
+																<img class="avatar-img rounded-circle" src="~/assets/img/profiles/avatar-03.jpg" alt="User Image">
+															</a>
+															<a href="profile.html">@customer.FullName <span>#@customer.CustomerID</span></a>
+														</h2>
+													</td>
+													<td>@customer.PhoneNumber</td>
+													<td>@customer.Email</td>
+													<td>@customer.CCCD</td>
+												</tr>
+											}
 										</tbody>
 									</table>
 								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Add Customer Form Column - 40% -->
+					<div class="col-lg-4">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title"><b>Add New Customer</b></h4>
+							</div>
+							<div class="card-body">
+								<form action="#" method="post">
+									<div class="form-group">
+										<label><b>Customer Name</b></label>
+										<input type="text" class="form-control" name="customer_name" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Phone Number</b></label>
+										<input type="text" class="form-control" name="phone_number" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>National ID</b></label>
+										<input type="text" class="form-control" name="national_id" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Email</b></label>
+										<input type="text" class="form-control" name="email" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Data of birth</b></label>
+										<input type="text" class="form-control" name="phone_number" required>
+									</div>
+
+									<div class="container text-right">
+										<button type="submit" class="btn btn-primary">Add Customer</button>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -135,29 +145,6 @@
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
 
-	@* <script>
-	$(document).ready(function () {
-	// Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
-	function toggleButtons() {
-	if ($('body').hasClass('mini-sidebar')) {
-	$('.toggle_btn_1').show(); // Hiện nút Toggle 1
-	$('.toggle_btn_2').hide(); // Ẩn nút Toggle 2
-	} else {
-	$('.toggle_btn_1').hide(); // Ẩn nút Toggle 1
-	$('.toggle_btn_2').show(); // Hiện nút Toggle 2
-	}
-	}
-
-	// Gọi hàm kiểm tra ngay khi load trang
-	toggleButtons();
-
-	// Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-	$(document).on('click', '.toggle_btn_1, .toggle_btn_2', function () {
-	$('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
-	toggleButtons(); // Cập nhật trạng thái nút
-	});
-	});
-	</script> *@
 </body>
 
 
