@@ -1,4 +1,4 @@
-﻿
+﻿@model List<Data.Models.Booking>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,91 +32,111 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="row">
-					<div class="col-sm-12">
+					<div class="col-sm-8">
 						<div class="card card-table">
 							<div class="card-body booking_card">
 								<div class="table-responsive">
 									<table class="datatable table table-stripped table table-hover table-center mb-0">
+										<colgroup>
+											<col style="width: 10%;">
+											<col style="width: 30%;">
+											<col style="width: 20%;">
+											<col style="width: 20%;">
+										</colgroup>
 										<thead>
 											<tr>
 												<th>Booking ID</th>
 												<th>Customer</th>
-												<th>Room Number</th>
+												@* <th>Room Number</th> *@
 												<th>Check In</th>
 												<th>Check Out</th>
-												<th>Total Price</th>
+												@* <th>Total Price</th> *@
 												<th>Status</th>
-
+												
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td>BKG-0001</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="~/assets/img/profiles/avatar-03.jpg" alt="User Image"></a>
-														<a href="profile.html">To Vinh Tien <span>#0001</span></a>
-													</h2>
-												</td>
-												<td>307</td>
-												<td>09-11-2024</td>
-												<td>09-11-2024</td>
-												<td>3.000.000</td>
-												<td>
-													<div class="actions"> <a href="#" class="btn btn-sm bg-success-light mr-2">Confirmed</a> </div>
-												</td>
-											</tr>
-											<tr>
-												<td>BKG-0002</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="~/assets/img/profiles/avatar-04.jpg" alt="User Image"></a>
-														<a href="profile.html">Tran Nhat Tan <span>#0002</span></a>
-													</h2>
-												</td>
-												<td>309</td>
-												<td>09-11-2024</td>
-												<td>10-11-2024</td>
-												<td>800.000</td>
-												<td>
-													<div class="actions"> <a href="#" class="btn btn-sm bg-danger-light mr-2">Cancelled</a> </div>
-												</td>
-
-											</tr>
-											<tr>
-												<td>BKG-0003</td>
-												<td>
-													<h2 class="table-avatar">
-														<a href="profile.html" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="~/assets/img/profiles/avatar-04.jpg" alt="User Image"></a>
-														<a href="profile.html">Nguyen Van Teo <span>#0003</span></a>
-													</h2>
-												</td>
-												<td>310</td>
-												<td>09-11-2024</td>
-												<td>12-11-2024</td>
-												<td>1.200.000</td>
-												<td>
-													<div class="actions"> <a href="#" class="btn btn-sm bg-warning-light mr-2">Pending</a> </div>
-												</td>
-											</tr>
+											@foreach (var booking in Model)
+											{
+												<tr>
+													<td>@booking.BookingID</td>
+													<td>@booking.CustomerName</td>
+													<td>@booking.CheckInDate?.ToString("yyyy-MM-dd")</td>
+													<td>@booking.CheckOutDate?.ToString("yyyy-MM-dd")</td>
+													@* <td>@booking.Status</td> *@
+													<td>
+														<div class="dropdown">
+															<a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pending</a>
+															<div class="dropdown-menu">
+																<a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
+																<a class="dropdown-item" href="javascript:void(0);" data-status="Confirm" onclick="changeStatus(this)">Confirm</a>
+																<a class="dropdown-item" href="javascript:void(0);" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
+															</div>
+														</div>
+													</td>
+												</tr>
+											}
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-			<div id="delete_asset" class="modal fade delete-modal" role="dialog">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-body text-center">
-							<img src="assets/img/sent.png" alt="" width="50" height="46">
-							<h3 class="delete_class">Are you sure want to delete this Booking?</h3>
-							<div class="m-t-20">
-								<a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-								<button type="submit" class="btn btn-danger">Delete</button>
+
+					<!-- Add Booking Form Column - 40% -->
+					<div class="col-lg-4">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title"><b>Add New Booking</b></h4>
+							</div>
+							<div class="card-body">
+								<form action="#" method="post">
+									<div class="form-group">
+										<label><b>Customer Name</b></label>
+										<input type="text" class="form-control" name="customer_name" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Room Number</b></label>
+										<select class="form-control" name="room_number" required>
+											<option value="">Select Room</option>
+											<option value="307">307</option>
+											<option value="309">309</option>
+											<option value="310">310</option>
+										</select>
+									</div>
+
+									<div class="form-group">
+										<label><b>Check In Date</b></label>
+										<input type="date" class="form-control" name="check_in" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Check Out Date</b></label>
+										<input type="date" class="form-control" name="check_out" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Total Price</b></label>
+										<input type="text" class="form-control" name="total_price" required>
+									</div>
+
+									<div class="form-group">
+										<label><b>Status</b></label>
+										<select class="form-control" name="status" required>
+											<option value="">Select Status</option>
+											<option value="confirmed">Confirmed</option>
+											<option value="pending">Pending</option>
+											<option value="cancelled">Cancelled</option>
+										</select>
+									</div>
+
+									<div class="container text-right">
+										<button type="submit" class="btn btn-primary">Add Booking</button>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -137,30 +157,6 @@
 	<script src="~/assets/plugins/morris/morris.min.js"></script>
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
-
-	@* <script>
-	$(document).ready(function () {
-	// Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
-	function toggleButtons() {
-	if ($('body').hasClass('mini-sidebar')) {
-	$('.toggle_btn_1').show(); // Hiện nút Toggle 1
-	$('.toggle_btn_2').hide(); // Ẩn nút Toggle 2
-	} else {
-	$('.toggle_btn_1').hide(); // Ẩn nút Toggle 1
-	$('.toggle_btn_2').show(); // Hiện nút Toggle 2
-	}
-	}
-
-	// Gọi hàm kiểm tra ngay khi load trang
-	toggleButtons();
-
-	// Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-	$(document).on('click', '.toggle_btn_1, .toggle_btn_2', function () {
-	$('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
-	toggleButtons(); // Cập nhật trạng thái nút
-	});
-	});
-	</script> *@
 </body>
 
 

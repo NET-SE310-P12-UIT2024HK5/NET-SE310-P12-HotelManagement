@@ -359,7 +359,7 @@ function changeStatus(element) {
 
 	// Update the button class based on the new status
 	dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
-	if (newStatus === 'Paid') {
+	if (newStatus === 'Paid' || newStatus === 'Confirm') {
 		dropdownToggle.classList.add('bg-success-light');
 	} else if (newStatus === 'Pending') {
 		dropdownToggle.classList.add('bg-warning-light');
