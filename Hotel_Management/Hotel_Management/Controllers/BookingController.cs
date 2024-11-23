@@ -52,8 +52,14 @@ namespace Hotel_Management.Controllers
 
 		public IActionResult AdminBooking()
 		{
-			return View(); // Trả về danh sách sản phẩm cho Admin
-		}
+            foreach (var booking in FakeDatabase.Bookings)
+            {
+                var customer = FakeDatabase.Customers.FirstOrDefault(c => c.CustomerID == booking.CustomerID);
+                booking.CustomerName = customer?.FullName;
+            }
+
+            return View(FakeDatabase.Bookings);
+        }
 		public IActionResult ReceptionBooking()
 		{
 			foreach (var booking in FakeDatabase.Bookings)
@@ -64,6 +70,12 @@ namespace Hotel_Management.Controllers
 
 			return View(FakeDatabase.Bookings);
 		}
+
+		public IActionResult Edit()
+		{
+			return View();
+		}
+
 		[HttpPost]
 		public IActionResult UpdateStatus(int bookingId, string status)
 		{

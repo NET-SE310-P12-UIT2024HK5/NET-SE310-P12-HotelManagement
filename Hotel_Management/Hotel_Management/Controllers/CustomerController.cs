@@ -52,12 +52,18 @@ namespace Hotel_Management.Controllers
 
         public IActionResult AdminCustomer()
         {
-			return View();
-		}
+            var customers = FakeDatabase.Customers.ToList(); // Directly use the list of Customer objects
+            return View(customers);
+        }
         public IActionResult ReceptionCustomer()
         {
 			var customers = FakeDatabase.Customers.ToList(); // Directly use the list of Customer objects
 			return View(customers);
 		}
+
+        public IActionResult Edit()
+        {
+            return View();
+        }
     }
 }
