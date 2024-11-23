@@ -21,9 +21,9 @@
                     {
                         <!-- Admin actions -->
                         <div class="btn-group w-100" role="group">
-                            <button class="btn btn-info btn-sm" onclick="editItem(@item.Id)">
+                            <a href="@Url.Action("Edit", "FoodAndBeverage", new { id = item.Id })" class="btn btn-info btn-sm">
                                 <i class="fas fa-edit"></i>
-                            </button>
+                            </a>
                             <button class="btn btn-danger btn-sm" onclick="deleteItem(@item.Id)">
                                 <i class="fas fa-trash"></i>
                             </button>
