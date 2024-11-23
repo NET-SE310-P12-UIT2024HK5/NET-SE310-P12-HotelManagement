@@ -37,59 +37,61 @@
                             <div class="card-body booking_card">
                                 <div class="table-responsive">
                                     <table class="datatable table table-stripped table table-hover table-center mb-0">
+                                        <colgroup>
+                                            <col style="width: 10%;">
+                                            <col style="width: 30%;">
+                                            <col style="width: 20%;">
+                                            <col style="width: 20%;">
+                                        </colgroup>
                                         <thead>
                                             <tr>
                                                 <th>Booking ID</th>
                                                 <th>Customer</th>
-                                                <th>Room Number</th>
+                                                @* <th>Room Number</th> *@
                                                 <th>Check In</th>
                                                 <th>Check Out</th>
-                                                <th>Total Price</th>
                                                 <th>Status</th>
                                                 <th class="text-right">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>BKG-0001</td>
-                                                <td>
-                                                    <h2 class="table-avatar">
-                                                        <a href="profile.html" class="avatar avatar-sm mr-2">
-                                                            <img class="avatar-img rounded-circle"
-                                                                 src="~/assets/img/profiles/avatar-03.jpg"
-                                                                 alt="User Image">
-                                                        </a>
-                                                        <a href="profile.html">To Vinh Tien <span>#0001</span></a>
-                                                    </h2>
-                                                </td>
-                                                <td>307</td>
-                                                <td>09-11-2024</td>
-                                                <td>09-11-2024</td>
-                                                <td>3,000,000</td>
-                                                <td>
-                                                    <div class="actions">
-                                                        <a href="#" class="btn btn-sm bg-success-light mr-2">Confirmed</a>
-                                                    </div>
-                                                </td>
-                                                <td class="text-right">
-                                                    <div class="dropdown dropdown-action">
-                                                        <a href="#" class="action-icon dropdown-toggle"
-                                                           data-toggle="dropdown" aria-expanded="false">
-                                                            <i class="fas fa-ellipsis-v ellipse_color"></i>
-                                                        </a>
-                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                            <a class="dropdown-item" href="edit-booking.html">
-                                                                <i class="fas fa-pencil-alt m-r-5"></i> Edit
-                                                            </a>
-                                                            <a class="dropdown-item" href="#" data-toggle="modal"
-                                                               data-target="#delete_asset">
-                                                                <i class="fas fa-trash-alt m-r-5"></i> Delete
-                                                            </a>
+                                            @foreach (var booking in Model)
+                                            {
+                                                <tr>
+                                                    <td>@booking.BookingID</td>
+                                                    <td>@booking.CustomerName</td>
+                                                    <td>@booking.CheckInDate?.ToString("yyyy-MM-dd")</td>
+                                                    <td>@booking.CheckOutDate?.ToString("yyyy-MM-dd")</td>
+                                                    @* <td>@booking.Status</td> *@
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pending</a>
+                                                            <div class="dropdown-menu">
+                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Confirm" onclick="changeStatus(this)">Confirm</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <!-- More rows can be added here -->
+                                                    <td class="text-right">
+                                                        <div class="dropdown dropdown-action">
+                                                            <a href="#" class="action-icon dropdown-toggle"
+                                                               data-toggle="dropdown" aria-expanded="false">
+                                                                <i class="fas fa-ellipsis-v ellipse_color"></i>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-right">
+                                                                <a class="dropdown-item" href="/Booking/Edit">
+                                                                    <i class="fas fa-pencil-alt m-r-5"></i> Edit
+                                                                </a>
+                                                                <a class="dropdown-item" href="#" data-toggle="modal"
+                                                                   data-target="#delete_asset">
+                                                                    <i class="fas fa-trash-alt m-r-5"></i> Delete
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    </td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
