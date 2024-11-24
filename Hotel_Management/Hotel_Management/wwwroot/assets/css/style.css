@@ -63,7 +63,6 @@ input, button, a {
     transition: all .4s ease;
     -moz-transition: all .4s ease;
     -o-transition: all .4s ease;
-    -ms-transition: all .4s ease;
     -webkit-transition: all .4s ease;
 }
 
@@ -1105,7 +1104,6 @@ a.bg-danger:focus, a.bg-danger:hover, button.bg-danger:focus, button.bg-danger:h
         transition: none 0s ease 0s;
         -moz-transition: none 0s ease 0s;
         -o-transition: none 0s ease 0s;
-        -ms-transition: none 0s ease 0s;
         -webkit-transition: none 0s ease 0s;
     }
 
@@ -1733,10 +1731,6 @@ html.menu-opened {
         color: #fff;
     }
 
-    .top-nav-search .form-control::-ms-input-placeholder {
-        color: #fff;
-    }
-
     .top-nav-search .form-control::placeholder {
         color: #fff;
     }
@@ -2089,7 +2083,7 @@ html.menu-opened {
 
 .booking_card {
     padding: 1.75rem !important;
-    border-radius:20;
+    border-radius: 20px;
 }
 
 .title_menu {
@@ -3674,7 +3668,6 @@ table.table-inbox tbody tr.checked {
 
     .btn-file input {
         cursor: pointer;
-        filter: alpha(opacity=0);
         font-size: 23px;
         height: 100%;
         margin: 0;
@@ -3981,7 +3974,7 @@ card-title {
     border-color: #009688;
 }
 
-.veiwbutton {
+.viewbutton {
     background: #2563EB !important;
     border-color: #2563EB !important;
 }
@@ -6398,12 +6391,12 @@ h3.page-sub-title {
     }
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-input[type="number"] {
+.no-spinner {
     -moz-appearance: textfield;
 }
