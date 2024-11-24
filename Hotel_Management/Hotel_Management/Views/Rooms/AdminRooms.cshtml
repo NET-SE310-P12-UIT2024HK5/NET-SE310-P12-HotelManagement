@@ -13,6 +13,7 @@
 	<link rel="stylesheet" href="~/assets/css/feathericon.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
 	<link rel="stylesheet" href="~/assets/css/style.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -61,7 +62,7 @@
 														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
 														<div class="dropdown-menu dropdown-menu-right">
 															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(1)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
 														</div>
 													</div>
 												</td>
@@ -85,7 +86,7 @@
 														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
 														<div class="dropdown-menu dropdown-menu-right">
 															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(2)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
 														</div>
 													</div>
 												</td>
@@ -104,16 +105,16 @@
 														</div>
 													</div>
 												</td>
-												<td class ="text-right">
+												<td class="text-right">
 													<div class="dropdown dropdown-action">
 														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
 														<div class="dropdown-menu dropdown-menu-right">
 															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" data-toggle="modal" data-target="#delete_asset"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(3)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
 														</div>
 													</div>
 												</td>
-											</tr>										
+											</tr>
 										</tbody>
 									</table>
 								</div>
@@ -126,14 +127,14 @@
 								<h4 class="card-title"><b>Add Room</b></h4>
 							</div>
 							<div class="card-body">
-								<form action="#" method="post">
-									<div class="form-group"> 
+								<form id="addRoomForm" action="#" method="post">
+									<div class="form-group">
 										<label><b>Room ID/#.</b></label>
-										<div class="input-group"> 
-											<div class="input-group-prepend"> 
-												<span class="input-group-text"><i class="fas fa-hashtag"></i></span> 
-											</div> 
-											<input class="form-control" type="text" value="1" readonly> 
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+											</div>
+											<input class="form-control" type="text" value="1" readonly required>
 										</div>
 									</div>
 									<div class="form-group">
@@ -157,7 +158,10 @@
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 											</div>
-											<input class="form-control" type="text" placeholder="Enter Hourly Rate">
+											<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
+											<div class="input-group-append">
+												<span class="input-group-text">VND</span>
+											</div>
 										</div>
 									</div>
 									<div class="form-group">
@@ -175,25 +179,11 @@
 										</div>
 									</div>
 									<div class="container text-right">
-										<button type="submit" class="btn btn-primary">
+										<button type="button" class="btn btn-primary" onclick="confirmSaveRoom(event, 'addRoomForm')">
 											<i class="fas fa-plus"></i> Add Room
 										</button>
 									</div>
 								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div id="delete_asset" class="modal fade delete-modal" role="dialog">
-					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content">
-							<div class="modal-body text-center">
-								<img src="~/assets/img/sent.png" alt="" width="50" height="46">
-								<h3 class="delete_class">Are you sure want to delete this Room?</h3>
-								<div class="m-t-20">
-									<a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-									<button type="submit" class="btn btn-danger">Delete</button>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -206,7 +196,7 @@
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 							<div class="modal-body">
-								<form>
+								<form id="editRoomForm">
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
@@ -215,7 +205,7 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
 													</div>
-													<input class="form-control" type="text" value="1" readonly>
+													<input class="form-control" type="text" value="1" readonly required>
 												</div>
 											</div>
 										</div>
@@ -226,7 +216,7 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-bed"></i></span>
 													</div>
-													<select class="form-control" id="sel1" name="sellist1">
+													<select class="form-control" id="sel1" name="sellist1" required>
 														<option value="" disabled selected>Select</option>
 														<option>Single</option>
 														<option>Double</option>
@@ -243,7 +233,10 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
 													</div>
-													<input class="form-control" type="text" placeholder="Enter Hourly Rate">
+													<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
+													<div class="input-group-append">
+														<span class="input-group-text">VND</span>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -254,18 +247,18 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
 													</div>
-													<select class="form-control" id="sel2" name="sellist1">
+													<select class="form-control" id="sel2" name="sellist1" required>
 														<option value="" disabled selected>Select</option>
 														<option>Available</option>
 														<option>Occupied</option>
-														<option>Under Maintenance/Cleaning</option>														
+														<option>Under Maintenance/Cleaning</option>
 													</select>
 												</div>
 											</div>
 										</div>
 									</div>
 									<div class="text-right">
-										<button type="button" class="btn btn-primary btn-success">
+										<button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
 											<i class="fas fa-save"></i> Save
 										</button>
 										<button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
@@ -289,5 +282,6 @@
 	<script src="~/assets/plugins/morris/morris.min.js"></script>
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>

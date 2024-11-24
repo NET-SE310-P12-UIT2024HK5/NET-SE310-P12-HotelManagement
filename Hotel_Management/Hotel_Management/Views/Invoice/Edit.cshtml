@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
     <link rel="stylesheet" type="text/css" href="~/assets/css/bootstrap-datetimepicker.min.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -27,7 +28,7 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <form>
+                        <form id="invoiceForm">
                             <div class="row mt-5">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -36,7 +37,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                             </div>
-                                            <input class="form-control" readonly="" type="text" value="1">
+                                            <input class="form-control no-spinner" readonly="" type="number" inputmode="numeric" value="1">
                                         </div>
                                     </div>
                                 </div>
@@ -47,7 +48,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
                                             </div>
-                                            <input class="form-control datetimepicker" type="text" value="@DateTime.Now.ToString("MM/dd/yyyy")">
+                                            <input type="date" class="form-control" id="invoiceDate" required>
                                         </div>
                                     </div>
                                 </div>
@@ -58,8 +59,7 @@
                                             <div class="input-group-prepend">
                                                 <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
                                             </div>
-                                            <select class="form-control">
-                                                <option value="" disabled selected>Select</option>
+                                            <select class="form-control" required>
                                                 <option value="Pending" selected>Pending</option>
                                                 <option value="Paid">Paid</option>
                                                 <option value="Cancelled">Cancelled</option>
@@ -81,7 +81,6 @@
                                                     <th class="text-center" style="width: 16%"> Services Fee</th>
                                                     <th class="text-center" style="width: 16%"> Amount</th>
                                                     <th class="text-center" style="width: 10%"> Actions</th>
-
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -93,7 +92,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-id-badge"></i></span>
                                                                 </div>
-                                                                <select class="form-control room-id">
+                                                                <select class="form-control room-id" required>
                                                                     <option value="" disabled selected>Select</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -108,7 +107,10 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                 </div>
-                                                                <input class="form-control unit-cost" readonly="" type="text" placeholder="">
+                                                                <input class="form-control unit-cost" type="number" inputmode="numeric" readonly="" placeholder="" value="1" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">VND</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -118,7 +120,10 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-clock"></i></span>
                                                                 </div>
-                                                                <input class="form-control quantity" type="number" placeholder="Enter Duration">
+                                                                <input class="form-control quantity" type="number" inputmode="numeric" placeholder="Enter Duration" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">H</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -128,7 +133,10 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-utensils"></i></span>
                                                                 </div>
-                                                                <input class="form-control services-fee" readonly="" type="text" placeholder="">
+                                                                <input class="form-control services-fee" readonly="" type="number" inputmode="numeric" value="1" placeholder="" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">VND</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -138,7 +146,10 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                                                 </div>
-                                                                <input class="form-control amount" readonly="" type="text" placeholder="">
+                                                                <input class="form-control amount" readonly="" type="number" inputmode="numeric" placeholder="" required>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text">VND</span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -168,7 +179,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-percentage"></i></span>
                                                                 </div>
-                                                                <input id="discount" class="form-control text-right" type="text" placeholder="0">
+                                                                <input id="discount" class="form-control no-spinner text-right" type="number" inputmode="numeric" placeholder="0">
                                                             </div>
                                                         </div>
                                                     </td>
@@ -186,7 +197,7 @@
                     </div>
                 </div>
                 <div class="text-left">
-                    <button type="button" class="btn btn-primary btn-success">
+                    <button type="submit" class="btn btn-primary btn-success" onclick="validateInvoiceForm(event)">
                         <i class="fas fa-save"></i> Save
                     </button>
                     <button type="button" class="btn btn-primary btn-danger" onclick="window.location.href='@Url.Action("Index")'">
@@ -205,13 +216,6 @@
     <script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/assets/plugins/datatables/datatables.min.js"></script>
     <script src="~/assets/js/script.js"></script>
-    <script>
-        $(function () {
-            $('#datetimepicker3').datetimepicker({
-                format: 'LT'
-
-            });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>

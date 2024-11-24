@@ -196,7 +196,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
                                                                 </div>
-                                                                <input class="form-control unit-cost" readonly="" type="text" placeholder="">
+                                                                <input class="form-control unit-cost" readonly="" type="number" inputmode="numeric" placeholder="" required>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -206,7 +206,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-clock"></i></span>
                                                                 </div>
-                                                                <input class="form-control quantity" type="number" placeholder="Enter Duration">
+                                                                <input class="form-control quantity" type="number" inputmode="numeric" placeholder="Enter Duration" required>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -216,7 +216,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-utensils"></i></span>
                                                                 </div>
-                                                                <input class="form-control services-fee" readonly="" type="text" placeholder="">
+                                                                <input class="form-control services-fee" readonly="" type="number" inputmode="numeric" placeholder="" required>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -226,7 +226,7 @@
                                                                 <div class="input-group-prepend">
                                                                     <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                                                                 </div>
-                                                                <input class="form-control amount" readonly="" type="text" placeholder="">
+                                                                <input class="form-control amount" readonly="" type="number" inputmode="numeric" placeholder="" required>
                                                             </div>
                                                         </div>
                                                     </td>
@@ -264,48 +264,6 @@
 	}
 	// Initialize the table with the correct actions
 	updateRowActions();
-
-	$(document).on('input', '.unit-cost, .quantity', function () {
-		var $row = $(this).closest('tr');
-		var calculatorunitCost = parseFloat($row.find('.unit-cost').val()) || 0;
-		var calculatorquantity = parseInt($row.find('.quantity').val()) || 0;
-		var amount = calculatorunitCost * calculatorquantity;
-		$row.find('.amount').val(formatNumber(amount.toFixed(2)) + ' $');
-	});
-	
-	function calculateGrandTotal() {
-		var totalAmount = 0;
-		$('#invoiceTable tbody tr').each(function () {
-			var amount = parseFloat($(this).find('.amount').val().replace(/,/g, '').replace('$', '')) || 0;
-			totalAmount += amount;
-		});
-
-		var discount = parseFloat($('#discount').val()) || 0;
-		if (isNaN(discount) || discount < 0 || discount > 100) {
-			discount = '';
-			alert('Discount must be between 0 and 100.');
-			$('#discount').val(discount);
-		}
-		var grandTotal = totalAmount - (totalAmount * (discount / 100));
-
-		$('#totalAmount').text(formatNumber(totalAmount.toFixed(2)) + ' VND');
-		$('#grandTotal').text(formatNumber(grandTotal.toFixed(2)) + ' VND');
-	}
-	function formatNumber(num) {
-		return new Intl.NumberFormat('vi-VN').format(num);
-	}
-
-	$(document).on('input', '#discount', function () {
-		calculateGrandTotal();
-	});
-
-	$(document).ready(function () {
-		function updateGrandTotal() {
-			calculateGrandTotal();
-			requestAnimationFrame(updateGrandTotal);
-		}
-		requestAnimationFrame(updateGrandTotal); // Start the update loop
-	});
 
 	$(document).ready(function () {
         // Hàm kiểm tra trạng thái mini-sidebar và ẩn/hiện nút
@@ -522,4 +480,174 @@ function submitOrder() {
 	alert('Order submitted successfully!');
 	currentOrder = [];
 	updateOrderDisplay();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+	var today = new Date().toISOString().split('T')[0];
+	document.getElementById('fromDate').value = today;
+	document.getElementById('toDate').value = today;	
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+	var today = new Date().toISOString().split('T')[0];
+	document.getElementById('invoiceDate').value = today;
+});
+
+function confirmInvoiceDelete(invoiceId) {
+	Swal.fire({
+		title: 'Are you sure?',
+		text: "You won't be able to revert this!",
+		icon: 'error',
+		showCancelButton: true,
+		confirmButtonColor: '#2563EB',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Yes, delete it!'
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// Call your delete function here
+			deleteInvoice(invoiceId);
+		}
+	})
+}
+
+function deleteInvoice(invoiceId) {
+	// Implement your delete logic here
+	console.log("Deleting invoice with ID:", invoiceId);
+	Swal.fire({
+		title: 'Deleted!',
+		text: 'The invoice has been deleted.',
+		icon: 'success',
+		confirmButtonText: 'OK',
+		confirmButtonColor: '#2563EB'
+	});
+}
+
+$(document).on('input', '.unit-cost, .quantity, .services-fee', function () {
+	var $row = $(this).closest('tr');
+	var unitCost = parseFloat($row.find('.unit-cost').val()) || 0;
+	var quantity = parseFloat($row.find('.quantity').val()) || 0;
+	var servicesFee = parseFloat($row.find('.services-fee').val()) || 0;
+	var amount = (unitCost * quantity) + servicesFee;
+	$row.find('.amount').val(amount.toFixed(2));
+});
+
+function calculateGrandTotal() {
+	var totalAmount = 0;
+	$('#invoiceTable tbody tr').each(function () {
+		var amount = parseFloat($(this).find('.amount').val().replace(/,/g, '').replace('$', '')) || 0;
+		totalAmount += amount;
+	});
+
+	var discount = parseFloat($('#discount').val()) || 0;
+	if (isNaN(discount) || discount < 0 || discount > 100) {
+		discount = '';
+		alert('Discount must be between 0 and 100.');
+		$('#discount').val(discount);
+	}
+	var grandTotal = totalAmount - (totalAmount * (discount / 100));
+
+	$('#totalAmount').text(formatNumber(totalAmount.toFixed(2)) + ' VND');
+	$('#grandTotal').text(formatNumber(grandTotal.toFixed(2)) + ' VND');
+}
+function formatNumber(num) {
+	return new Intl.NumberFormat('vi-VN').format(num);
+}
+
+$(document).on('input', '#discount', function () {
+	calculateGrandTotal();
+});
+
+$(document).ready(function () {
+	function updateGrandTotal() {
+		calculateGrandTotal();
+		requestAnimationFrame(updateGrandTotal);
+	}
+	requestAnimationFrame(updateGrandTotal); // Start the update loop
+});
+
+function validateInvoiceForm(event) {
+	event.preventDefault();
+	var form = document.getElementById('invoiceForm');
+	if (form.checkValidity()) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "Do you want to save the invoice?",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, save it!'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// Simulate form submission
+				Swal.fire({
+					title: 'Saved!',
+					text: 'The invoice has been saved.',
+					icon: 'success',
+					confirmButtonText: 'OK',
+					confirmButtonColor: '#2563EB'
+				});
+			}
+		});
+	} else {
+		form.reportValidity();
+	}
+}
+
+function confirmRoomDelete(roomId) {
+	Swal.fire({
+		title: 'Are you sure?',
+		text: "You won't be able to revert this!",
+		icon: 'error',
+		showCancelButton: true,
+		confirmButtonColor: '#2563EB',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Yes, delete it!'
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// Call your delete function here
+			deleteRoom(roomId);
+		}
+	})
+}
+
+function deleteRoom(roomId) {
+	// Implement your delete logic here
+	console.log("Deleting room with ID:", roomId);
+	Swal.fire({
+		title: 'Deleted!',
+		text: 'The room has been deleted.',
+		icon: 'success',
+		confirmButtonText: 'OK'
+	});
+}
+
+function confirmSaveRoom(event, formId) {
+	event.preventDefault();
+	var form = document.getElementById(formId);
+	if (form.checkValidity()) {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "Do you want to save this room?",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#2563EB',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, save it!'
+		}).then((result) => {
+			if (result.isConfirmed) {
+				// Simulate form submission
+				Swal.fire({
+					title: 'Saved!',
+					text: 'The room has been saved.',
+					icon: 'success',
+					confirmButtonText: 'OK'
+				}).then(() => {
+					form.submit();
+				});
+			}
+		});
+	} else {
+		form.reportValidity();
+	}
 }
