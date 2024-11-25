@@ -55,7 +55,7 @@
                                 <div class="form-group mb-4">
                                     <label for="bookingSelect" class="form-label">Select Booking:</label>
                                     <select class="form-control" id="bookingSelect" required>
-                                        <option value="">-- Select a Booking --</option>
+                                        <option value="" disabled selected>-- Select a Booking --</option>
                                         <option value="">1</option>
                                         <option value="">2</option>
                                     </select>
@@ -72,7 +72,7 @@
                                     <h5 id="orderTotal">0.00 ₫</h5>
                                 </div>
                                 <button class="btn btn-success w-100 mt-3" onclick="submitOrder()">
-                                    Submit Order
+                                    <i class="fas fa-check mr-2"></i>Submit Order
                                 </button>
                             </div>
                         </div>
