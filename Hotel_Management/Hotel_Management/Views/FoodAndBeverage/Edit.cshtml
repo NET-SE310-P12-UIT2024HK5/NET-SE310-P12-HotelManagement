@@ -37,7 +37,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Food Name <span class="text-danger">*</span></label>
+                                                <label><strong>Food Name</strong></label>
                                                 <input type="text" class="form-control" asp-for="Name" required>
                                                 <span asp-validation-for="Name" class="text-danger"></span>
                                             </div>
@@ -45,9 +45,9 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Category <span class="text-danger">*</span></label>
+                                                <label><strong>Category</strong></label>
                                                 <select class="form-control" asp-for="Category" required>
-                                                    <option value="" disabled selected>Select Category</option>
+                                                    <option value="" disabled selected>Select</option>
                                                     <option value="Food">Food</option>
                                                     <option value="Beverage">Beverage</option>
                                                     <option value="Dessert">Dessert</option>
@@ -60,7 +60,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Price <span class="text-danger">*</span></label>
+                                                <label><strong>Price</strong></label>
                                                 <input type="number" class="form-control no-spinner" asp-for="Price" min="0" required>
                                                 <span asp-validation-for="Price" class="text-danger"></span>
                                             </div>
@@ -68,8 +68,8 @@
 
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Status</label>
-                                                <select class="form-control" asp-for="IsAvailable">
+                                                <label><strong>Status</strong></label>
+                                                <select class="form-control" asp-for="IsAvailable" required>
                                                     <option value="true">Available</option>
                                                     <option value="false">Unavailable</option>
                                                 </select>
@@ -81,7 +81,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label>Description</label>
+                                                <label><strong>Description</strong></label>
                                                 <textarea class="form-control" asp-for="Description" rows="4"></textarea>
                                                 <span asp-validation-for="Description" class="text-danger"></span>
                                             </div>

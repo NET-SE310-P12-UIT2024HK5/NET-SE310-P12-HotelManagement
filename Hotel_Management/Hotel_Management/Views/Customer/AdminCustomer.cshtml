@@ -42,7 +42,7 @@
 
 											<tr>
 												<th style="width: 10%; text-align: center;">ID.</th>
-												<th style="width: 20%; text-align: center;">Full Name</th>
+												<th style="width: 20%; text-align: center;">Customer Name</th>
 												<th style="width: 20%; text-align: center;">Phone Number</th>
 												<th style="width: 20%; text-align: center;">Email</th>
 												<th style="width: 20%; text-align: center;">National ID</th>
@@ -54,11 +54,11 @@
 											@foreach (var customer in Model)
 											{
 												<tr>
-													<td>@(customer.CustomerID.ToString())</td>
-													<td>@customer.FullName</td>
-													<td>@customer.PhoneNumber</td>
-													<td>@customer.Email</td>
-													<td>@customer.CCCD</td>
+													<td class="text-center">@(customer.CustomerID.ToString())</td>
+													<td class="text-center">@customer.FullName</td>
+													<td class="text-center">@customer.PhoneNumber</td>
+													<td class="text-center">@customer.Email</td>
+													<td class="text-center">@customer.CCCD</td>
 													<td class="text-right">
 														<div class="dropdown dropdown-action">
 															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
@@ -103,11 +103,6 @@
 									<div class="form-group">
 										<label><b>Email</b></label>
 										<input type="text" class="form-control" name="email" required>
-									</div>
-
-									<div class="form-group">
-										<label><b>Date of birth</b></label>
-										<input type="date" class="form-control" name="date_of_birth" required>
 									</div>
 
 									<div class="container text-right">
@@ -188,17 +183,7 @@
 												</div>
 											</div>
 										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label>Date of Birth </label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fa fa-calendar"></i></span>
-													</div>
-													<input class="form-control" type="date">
-												</div>
-											</div>
-										</div>
+										
 									</div>
 									<div class="text-right">
 										<button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">

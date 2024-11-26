@@ -496,6 +496,19 @@ document.addEventListener('DOMContentLoaded', function () {
 	document.getElementById('invoiceDate').value = today;
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+	// Lấy ô input
+	var checkInInput = document.querySelector('input[name="check_in"]');
+	var checkOutInput = document.querySelector('input[name="check_out"]');
+	// Lấy ngày hiện tại
+	var today = new Date().toISOString().split('T')[0];
+	// Gán giá trị mặc định cho ô input
+	checkInInput.value = today;
+	checkOutInput.value = today;
+});
+
+
+
 function confirmInvoiceDelete(invoiceId) {
 	Swal.fire({
 		title: 'Are you sure?',
