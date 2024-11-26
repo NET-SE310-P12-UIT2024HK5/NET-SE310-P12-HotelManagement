@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
     <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
     <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 
 <body>
@@ -36,7 +37,7 @@
                         <div class="card card-table">
                             <div class="card-body booking_card">
                                 <div class="table-responsive">
-                                    <table class="datatable table table-stripped table table-hover table-center mb-0">
+                                    <table class="datatable table table-stripped table table-hover table-center mb-0 text-center">
                                         <colgroup>
                                             <col style="width: 10%;">
                                             <col style="width: 30%;">
@@ -60,8 +61,8 @@
                                                 <tr>
                                                     <td>@booking.BookingID</td>
                                                     <td>@booking.CustomerName</td>
-                                                    <td>@booking.CheckInDate?.ToString("yyyy-MM-dd")</td>
-                                                    <td>@booking.CheckOutDate?.ToString("yyyy-MM-dd")</td>
+                                                    <td>@booking.CheckInDate?.ToString("dd/MM/yyyy")</td>
+                                                    <td>@booking.CheckOutDate?.ToString("dd/MM/yyyy")</td>
                                                     @* <td>@booking.Status</td> *@
                                                     <td>
                                                         <div class="dropdown">
@@ -74,21 +75,13 @@
                                                         </div>
                                                     <td class="text-right">
                                                         <div class="dropdown dropdown-action">
-                                                            <a href="#" class="action-icon dropdown-toggle"
-                                                               data-toggle="dropdown" aria-expanded="false">
-                                                                <i class="fas fa-ellipsis-v ellipse_color"></i>
-                                                            </a>
+                                                            <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
                                                             <div class="dropdown-menu dropdown-menu-right">
-                                                                <a class="dropdown-item" href="/Booking/Edit">
-                                                                    <i class="fas fa-pencil-alt m-r-5"></i> Edit
-                                                                </a>
-                                                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                                                   data-target="#delete_asset">
-                                                                    <i class="fas fa-trash-alt m-r-5"></i> Delete
-                                                                </a>
+                                                                <a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editBookingModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
+                                                                <a class="dropdown-item" href="#" onclick="confirmRoomDelete(1)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
                                                             </div>
                                                         </div>
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -114,7 +107,7 @@
                                     <div class="form-group">
                                         <label><b>Room Number</b></label>
                                         <select class="form-control" name="room_number" required>
-                                            <option value="">Select Room</option>
+                                            <option value="" disabled selected>Select Room</option>
                                             <option value="307">307</option>
                                             <option value="309">309</option>
                                             <option value="310">310</option>
@@ -131,23 +124,104 @@
                                         <input type="date" class="form-control" name="check_out" required>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label><b>Total Price</b></label>
-                                        <input type="text" class="form-control" name="total_price" required>
-                                    </div>
 
                                     <div class="form-group">
                                         <label><b>Status</b></label>
                                         <select class="form-control" name="status" required>
-                                            <option value="">Select Status</option>
                                             <option value="confirmed">Confirmed</option>
-                                            <option value="pending">Pending</option>
+                                            <option value="pending" selected>Pending</option>
                                             <option value="cancelled">Cancelled</option>
                                         </select>
                                     </div>
 
                                     <div class="container text-right">
-                                        <button type="submit" class="btn btn-primary">Add Booking</button>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-plus mr-2"></i>Add Booking
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="editBookingModal" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Edit Booking</h4>
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="editRoomForm">
+                                    <div class="row formtype">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Booking ID/#</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                    </div>
+                                                    <input class="form-control" type="text" value="1" readonly required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Check In Date</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                    </div>
+                                                    <input class="form-control" type="date">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Customer Name</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                                    </div>
+                                                    <input class="form-control no-spinner" type="text" placeholder="Enter Customer Name" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Check Out Date</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                                    </div>
+                                                    <input class="form-control" type="date">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                                                    </div>
+                                                    <select class="form-control" id="sel2" name="sellist1" required>
+                                                        <option value="pending" selected>Peding</option>
+                                                        <option value="confirmed">Confirmed</option>
+                                                        <option value="cancelled">Cancelled</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
+                                            <i class="fas fa-save"></i> Save
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
                                     </div>
                                 </form>
                             </div>
@@ -186,6 +260,7 @@
     <script src="~/assets/plugins/morris/morris.min.js"></script>
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 
 </html>
