@@ -24,7 +24,7 @@ namespace Hotel_Management.Controllers
 
 			public static List<Booking> Bookings { get; } = new List<Booking>
 			{
-				new Booking { BookingID = 1, CustomerID = 1, CheckInDate = DateTime.Now.AddDays(-1), CheckOutDate = DateTime.Now.AddDays(2), Status = "Confirmed" },
+				new Booking { BookingID = 1, CustomerID = 2, CheckInDate = DateTime.Now.AddDays(-1), CheckOutDate = DateTime.Now.AddDays(2), Status = "Confirmed" },
 				new Booking { BookingID = 2, CustomerID = 2, CheckInDate = DateTime.Now, CheckOutDate = DateTime.Now.AddDays(3), Status = "Pending" },
 				new Booking { BookingID = 3, CustomerID = 3, CheckInDate = DateTime.Now.AddDays(2), CheckOutDate = DateTime.Now.AddDays(5), Status = "Cancelled" },
 				new Booking { BookingID = 4, CustomerID = 2, CheckInDate = DateTime.Now, CheckOutDate = DateTime.Now.AddDays(3), Status = "Pending" },

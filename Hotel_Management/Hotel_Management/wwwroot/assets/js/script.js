@@ -144,7 +144,7 @@
 			$('.sidebar .slimScrollDiv').height(rHeight);
 		});
 	}
-	$(document).on('click', '#toggle_btn', function () {
+	/*$(document).on('click', '#toggle_btn', function () {
 		if ($('body').hasClass('mini-sidebar')) {
 			$('body').removeClass('mini-sidebar');
 			$('.subdrop + ul').slideDown();
@@ -157,7 +157,7 @@
 			mL.redraw();
 		}, 300);
 		return false;
-	});
+	});*/
 	$(document).on('mouseover', function (e) {
 		e.stopPropagation();
 		if ($('body').hasClass('mini-sidebar') && $('#toggle_btn').is(':visible')) {
@@ -281,7 +281,10 @@
         toggleButtons();
 
         // Thêm sự kiện click để thay đổi trạng thái mini-sidebar
-       
+		$(document).on('click', '#toggle_btn', function () {
+			$('body').toggleClass('mini-sidebar'); // Thay đổi trạng thái mini-sidebar
+			toggleButtons(); // Cập nhật trạng thái nút
+		});
     });
 
     $(document).ready(function () {
