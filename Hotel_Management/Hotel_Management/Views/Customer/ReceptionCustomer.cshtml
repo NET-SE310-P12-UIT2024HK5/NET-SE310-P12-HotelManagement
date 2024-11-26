@@ -40,7 +40,7 @@
 										<thead>
 											<tr>
 												<th class="text-center">Customer ID</th>
-												<th class="text-center">Full Name</th>
+												<th class="text-center">Customer Name</th>
 												<th class="text-center">Phone Number</th>
 												<th class="text-center">Email</th>
 												<th class="text-center">National ID</th>
@@ -52,7 +52,7 @@
 											{
 												<tr>
 													<td class="text-center">@(customer.CustomerID.ToString())</td>
-													<td class="text-center"><strong>@customer.FullName </strong></td>
+													<td class="text-center">@customer.FullName</td>
 													<td class="text-center">@customer.PhoneNumber</td>
 													<td class="text-center">@customer.Email</td>
 													<td class="text-center">@customer.CCCD</td>
@@ -93,10 +93,6 @@
 										<input type="text" class="form-control" name="email" required>
 									</div>
 
-									<div class="form-group">
-										<label><b>Data of birth</b></label>
-										<input type="date" class="form-control" name="date_of_birth" required>
-									</div>
 
 									<div class="container text-right">
 										<button type="submit" class="btn btn-primary">
