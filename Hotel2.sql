@@ -85,21 +85,17 @@ CREATE TABLE BookingFoodServices (
 );
 
 -- B?ng Invoices
-CREATE TABLE Invoices (
+CREATE TABLE Invoice (
     InvoiceID INT PRIMARY KEY AUTO_INCREMENT,
-    BookingID INT,
     TotalAmount DECIMAL(10, 2),
-    PaymentMethod ENUM('Cash', 'CreditCard', 'DebitCard') NOT NULL,
-    PaymentStatus ENUM('Unpaid', 'Partial', 'Paid') DEFAULT 'Unpaid',
-    PaymentDate DATE,
-    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
+    PaymentStatus ENUM('Pending', 'Paid') DEFAULT 'Pending',
+    PaymentDate DATE
 );
 
--- Ví d? thêm d? li?u m?u
-INSERT INTO Users (Username, Password, FullName, Email, PhoneNumber, RoleID) VALUES 
-('admin', 'matkhau_da_ma_hoa', 'Qu?n Tr? Viên', 'admin@hotel.com', '0123456789', 1),
-('reception', 'matkhau_da_ma_hoa', 'Nhân Viên L? Tân', 'reception@hotel.com', '0987654321', 2);
-
-INSERT INTO Rooms (RoomNumber, RoomType, Price, MaxOccupancy, Status, Description) VALUES
-('101', 'Standard', 500000, 2, 'Available', 'Phòng tiêu chu?n, view thành ph?'),
-('202', 'Deluxe', 800000, 3, 'Available', 'Phòng cao c?p, view bi?n');
+CREATE TABLE InvoiceBookings (
+    InvoiceID INT,
+    BookingID INT,
+    FOREIGN KEY (InvoiceID) REFERENCES Invoice(InvoiceID),
+    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
+    PRIMARY KEY (InvoiceID, BookingID)
+);
