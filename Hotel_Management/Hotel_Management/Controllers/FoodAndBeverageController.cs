@@ -20,7 +20,7 @@ namespace Hotel_Management.Controllers
 
         private static List<FoodAndBeverageItem> _items = new List<FoodAndBeverageItem>
         {
-		    new FoodAndBeverageItem { Id = 1, Name = "Mì trộn", Price = 150000, ImageUrl = "https://tiki.vn/blog/wp-content/uploads/2023/07/mi-tron-thumbnail.jpg" },
+		    new FoodAndBeverageItem { Id = 1, Name = "Mì trộn", Price = 15000000, ImageUrl = "https://tiki.vn/blog/wp-content/uploads/2023/07/mi-tron-thumbnail.jpg" },
 			new FoodAndBeverageItem { Id = 2, Name = "Caesar Salad2", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
 			new FoodAndBeverageItem { Id = 3, Name = "Greek Salad3", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
 			new FoodAndBeverageItem { Id = 4, Name = "Cobb Salad4", Price = 150000, ImageUrl = "https://via.placeholder.com/150" },
