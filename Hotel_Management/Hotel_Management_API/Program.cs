@@ -1,4 +1,12 @@
+using Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<DatabaseContext>(provider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("HotelManagement");
+    return new DatabaseContext(connectionString);
+});
 
 // Add services to the container.
 
