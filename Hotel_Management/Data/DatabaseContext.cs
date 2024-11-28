@@ -1,20 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Data.SqlClient;
+using Data.Models;
 
 namespace Data
 {
-    public class DatabaseContext
+    public class DatabaseContext : DbContext
     {
-        private readonly string _connectionString;
+        // Khai báo DbSet cho các bảng (tables) trong cơ sở dữ liệu
+        public DbSet<Booking> Booking { get; set; }
+        public DbSet<Customer> Customer { get; set; }
+        public DbSet<Rooms> Rooms { get; set; }
+        // Bạn có thể khai báo thêm DbSet cho các bảng khác nếu cần
 
-        public DatabaseContext(string connectionString)
+        // Khởi tạo DatabaseContext với DbContextOptions (dùng trong Dependency Injection)
+        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+            : base(options)
         {
-            _connectionString = connectionString;
         }
 
-        public SqlConnection GetConnection()
+        // Cấu hình thêm các quy tắc (nếu cần)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            return new SqlConnection(_connectionString);
+            // Cấu hình cho các bảng, ví dụ: tên bảng, khoá chính, khoá ngoại, v.v.
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

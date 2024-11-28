@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model List<Data.Models.Booking>
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -48,7 +50,7 @@
                                             <tr>
                                                 <th>Booking ID</th>
                                                 <th>Customer</th>
-                                                @* <th>Room Number</th> *@
+                                                <th>Room Number</th>
                                                 <th>Check In</th>
                                                 <th>Check Out</th>
                                                 <th>Status</th>
@@ -61,18 +63,31 @@
                                                 <tr>
                                                     <td>@booking.BookingID</td>
                                                     <td>@booking.CustomerName</td>
+                                                    <td>@booking.RoomNumber</td>
                                                     <td>@booking.CheckInDate?.ToString("dd/MM/yyyy")</td>
                                                     <td>@booking.CheckOutDate?.ToString("dd/MM/yyyy")</td>
                                                     @* <td>@booking.Status</td> *@
                                                     <td>
                                                         <div class="dropdown">
-                                                            <a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pending</a>
+                                                            <a href="#" class="btn btn-sm
+                                                                @(
+                                                                    booking.Status == "Pending" ? "bg-warning-light" :
+                                                                    booking.Status == "Confirmed" ? "bg-success-light" :
+                                                                    booking.Status == "Cancelled" ? "bg-danger-light" :
+                                                                    "bg-secondary-light"
+                                                                )
+                                                                mr-2 dropdown-toggle"
+                                                               data-toggle="dropdown"
+                                                               aria-expanded="false">
+                                                                @booking.Status
+                                                            </a>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-status="Confirm" onclick="changeStatus(this)">Confirm</a>
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
                                                             </div>
                                                         </div>
+
                                                     <td class="text-right">
                                                         <div class="dropdown dropdown-action">
                                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
