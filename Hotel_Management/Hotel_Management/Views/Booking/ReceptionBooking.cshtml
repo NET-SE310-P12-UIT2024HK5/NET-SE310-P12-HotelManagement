@@ -49,10 +49,9 @@
 											<tr>
 												<th class="text-center">Booking ID</th>
 												<th class="text-center">Customer</th>
-												@* <th>Room Number</th> *@
+												<th class="text-center">Room Number</th>
 												<th class="text-center">Check In</th>
 												<th class="text-center">Check Out</th>
-												@* <th>Total Price</th> *@
 												<th class="text-center">Status</th>
 												
 											</tr>
@@ -63,12 +62,24 @@
 												<tr>
 													<td class="text-center">@booking.BookingID</td>
 													<td class="text-center">@booking.CustomerName</td>
+													<td class="text-center">@booking.RoomNumber</td>
 													<td class="text-center">@booking.CheckInDate?.ToString("dd/MM/yyyy")</td>
 													<td class="text-center">@booking.CheckOutDate?.ToString("dd/MM/yyyy")</td>
 													@* <td>@booking.Status</td> *@
 													<td>
 														<div class="dropdown">
-															<a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Pending</a>
+															<a href="#" class="btn btn-sm
+                                                                @(
+                                                                    booking.Status == "Pending" ? "bg-warning-light" :
+                                                                    booking.Status == "Confirmed" ? "bg-success-light" :
+                                                                    booking.Status == "Cancelled" ? "bg-danger-light" :
+                                                                    "bg-secondary-light"
+                                                                )
+                                                                mr-2 dropdown-toggle"
+															   data-toggle="dropdown"
+															   aria-expanded="false">
+																@booking.Status
+															</a>
 															<div class="dropdown-menu">
 																<a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
 																<a class="dropdown-item" href="javascript:void(0);" data-status="Confirm" onclick="changeStatus(this)">Confirm</a>
@@ -101,7 +112,7 @@
 									<div class="form-group">
 										<label><b>Room Number</b></label>
 										<select class="form-control" name="room_number" required>
-											<option value="" disabled selected>Select Room</option>
+											<option value="" disabled selected>Select</option>
 											<option value="307">307</option>
 											<option value="309">309</option>
 											<option value="310">310</option>

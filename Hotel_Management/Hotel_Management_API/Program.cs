@@ -1,4 +1,11 @@
+using Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<DatabaseContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelManagement"))
+);
 
 // Add services to the container.
 
