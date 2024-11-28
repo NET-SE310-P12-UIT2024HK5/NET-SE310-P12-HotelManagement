@@ -44,38 +44,38 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
-            // Phương thức lấy tất cả booking
-            [HttpGet]
-        public IActionResult Get()
-        {
-            try
-            {
-                // Lấy dữ liệu từ DbContext
-                var bookings = _context.Booking
-                    .Include(b => b.Customer)  // Bao gồm thông tin khách hàng
-                    .Include(b => b.Room)      // Bao gồm thông tin phòng
-                    .Select(b => new
-                    {
-                        b.BookingID,
-                        b.CustomerID,
-                        CustomerName = b.Customer.FullName,  // Lấy tên khách hàng từ Customer
-                        b.RoomID,
-                        RoomNumber = b.Room.RoomNumber,     // Lấy số phòng
-                        b.CheckInDate,
-                        b.CheckOutDate,
-                        b.Status
-                    })
-                    .ToList();
+		// Phương thức lấy tất cả booking
+		[HttpGet]
+		public IActionResult Get()
+		{
+			try
+			{
+				// Lấy dữ liệu từ DbContext
+				var bookings = _context.Booking
+					.Include(b => b.Customer)  // Bao gồm thông tin khách hàng
+					.Include(b => b.Room)      // Bao gồm thông tin phòng
+					.Select(b => new
+					{
+						b.BookingID,
+						b.CustomerID,
+						CustomerName = b.Customer.FullName,  // Lấy tên khách hàng từ Customer
+						b.RoomID,
+						RoomNumber = b.Room.RoomNumber,     // Lấy số phòng
+						b.CheckInDate,
+						b.CheckOutDate,
+						b.Status
+					})
+					.ToList();
 
-                // Trả về danh sách booking dưới dạng JSON
-                return Ok(bookings);
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi nếu có
-                return StatusCode(500, new { message = ex.Message });
-            }
-        }
+				// Trả về danh sách booking dưới dạng JSON
+				return Ok(bookings);
+			}
+			catch (Exception ex)
+			{
+				// Xử lý lỗi nếu có
+				return StatusCode(500, new { message = ex.Message });
+			}
+		}
 
-    }
+	}
 }
