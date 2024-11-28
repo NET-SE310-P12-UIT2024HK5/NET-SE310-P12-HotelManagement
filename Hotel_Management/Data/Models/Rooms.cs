@@ -1,7 +1,10 @@
-﻿namespace Data.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Data.Models
 {
     public class Rooms
     {
+        [Key]
         public required int RoomID { get; set; }
         public required string RoomNumber { get; set; }
         public required string RoomType { get; set; }
