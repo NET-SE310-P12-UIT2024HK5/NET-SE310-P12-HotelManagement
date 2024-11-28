@@ -113,15 +113,15 @@
                                 <h4 class="card-title"><b>Add New Booking</b></h4>
                             </div>
                             <div class="card-body">
-                                <form action="#" method="post">
+                                <form asp-action="CreateBooking" method="post">
                                     <div class="form-group">
                                         <label><b>Customer Name</b></label>
-                                        <input type="text" class="form-control" name="customer_name" required>
+                                        <input type="text" class="form-control" name="CustomerName" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label><b>Room Number</b></label>
-                                        <select class="form-control" name="room_number" required>
+                                        <select class="form-control" name="RoomNumber" required>
                                             <option value="" disabled selected>Select</option>
                                             @foreach (var room in ViewBag.Rooms)
                                             {

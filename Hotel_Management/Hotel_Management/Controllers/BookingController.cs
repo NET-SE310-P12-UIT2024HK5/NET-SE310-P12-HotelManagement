@@ -1,6 +1,7 @@
 ﻿using Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Hotel_Management.Controllers
 {
@@ -98,8 +99,64 @@ namespace Hotel_Management.Controllers
 			}
 		}
 
+        [HttpPost]
+        public async Task<IActionResult> CreateBooking(Booking booking)
+        {
+            // Kiểm tra booking có null không
+            if (booking == null)
+            {
+                _logger.LogError("Booking là null");
+                return View("Error");
+            }
 
-		public async Task<IActionResult> UpdateStatus(int bookingId, string status)
+            // Kiểm tra các trường bắt buộc
+            if (string.IsNullOrEmpty(booking.CustomerName) ||
+                booking.RoomID == 0 ||
+                booking.CheckInDate == default ||
+                booking.CheckOutDate == default)
+            {
+                _logger.LogError("Thiếu thông tin booking");
+                return View("Error");
+            }
+
+            try
+            {
+                // Đặt giá trị mặc định nếu status trống
+                booking.Status ??= "Pending";
+
+                // Gán CustomerID nếu chưa có
+                booking.CustomerID = 1;
+
+                var jsonContent = new StringContent(
+                    JsonConvert.SerializeObject(booking),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await _httpClient.PostAsync("https://localhost:7287/Booking", jsonContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("AdminBooking");
+                }
+
+                // Ghi log chi tiết lỗi
+                var errorContent = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Tạo booking thất bại. Trạng thái: {status}. Nội dung: {content}",
+                    response.StatusCode, errorContent);
+
+                return View("Error");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi không mong muốn khi tạo booking");
+                return View("Error");
+            }
+        }
+
+
+
+        public async Task<IActionResult> UpdateStatus(int bookingId, string status)
         {
             return Ok(status);
         }

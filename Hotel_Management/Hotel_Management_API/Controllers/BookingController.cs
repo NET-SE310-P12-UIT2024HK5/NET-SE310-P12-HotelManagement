@@ -77,5 +77,20 @@ namespace Hotel_Management_API.Controllers
 			}
 		}
 
-	}
+        [HttpPost]
+        public IActionResult CreateBooking([FromBody] Booking booking)
+        {
+            if (ModelState.IsValid)
+            {
+                // Thêm booking vào cơ sở dữ liệu
+                _context.Booking.Add(booking);
+                _context.SaveChanges();
+                return Ok(new { Message = "Booking created successfully." });
+            }
+
+            return BadRequest(new { Message = "Invalid booking data." });
+        }
+
+
+    }
 }
