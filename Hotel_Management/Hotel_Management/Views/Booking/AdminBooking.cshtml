@@ -123,9 +123,10 @@
                                         <label><b>Room Number</b></label>
                                         <select class="form-control" name="room_number" required>
                                             <option value="" disabled selected>Select</option>
-                                            <option value="307">307</option>
-                                            <option value="309">309</option>
-                                            <option value="310">310</option>
+                                            @foreach (var room in ViewBag.Rooms)
+                                            {
+                                                <option value="@room.RoomNumber">@room.RoomNumber</option>
+                                            }
                                         </select>
                                     </div>
 

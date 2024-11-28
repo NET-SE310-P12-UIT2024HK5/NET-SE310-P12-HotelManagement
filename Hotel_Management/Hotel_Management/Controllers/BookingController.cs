@@ -35,14 +35,24 @@ namespace Hotel_Management.Controllers
         public async Task<IActionResult> AdminBooking()
         {
             var bookings = await GetBookingsAsync();
-            if (bookings == null) return View("Error");
-            return View(bookings);
-        }
+			var rooms = await GetRoomsAsync();
+			if (bookings == null || rooms == null)
+			{
+				return View("Error");
+			}
+			ViewBag.Rooms = rooms; // Truyền danh sách phòng qua ViewBag
+			return View(bookings);
+		}
 
         public async Task<IActionResult> ReceptionBooking()
         {
             var bookings = await GetBookingsAsync();
-            if (bookings == null) return View("Error");
+            var rooms = await GetRoomsAsync();
+            if (bookings == null || rooms == null)
+            {
+                return View("Error");
+            }
+            ViewBag.Rooms = rooms; // Truyền danh sách phòng qua ViewBag
             return View(bookings);
         }
 
@@ -67,7 +77,29 @@ namespace Hotel_Management.Controllers
             }
         }
 
-        public async Task<IActionResult> UpdateStatus(int bookingId, string status)
+		public async Task<List<Rooms>> GetRoomsAsync()
+		{
+			try
+			{
+				var response = await _httpClient.GetAsync("https://localhost:7287/rooms");
+				if (!response.IsSuccessStatusCode)
+				{
+					_logger.LogError("Failed to retrieve room data.");
+					return new List<Rooms>();
+				}
+
+				var content = await response.Content.ReadAsStringAsync();
+				return JsonConvert.DeserializeObject<List<Rooms>>(content);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error while fetching room data.");
+				return new List<Rooms>();
+			}
+		}
+
+
+		public async Task<IActionResult> UpdateStatus(int bookingId, string status)
         {
             return Ok(status);
         }
