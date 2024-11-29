@@ -177,7 +177,7 @@ function confirmCustomerDelete(customerId) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
-                            text: xhr.responseJSON.message || 'An error occurred while deleting the customer.',
+                            text: 'An error occurred while deleting the customer.',
                             confirmButtonText: 'Close'
                         });
                     }
