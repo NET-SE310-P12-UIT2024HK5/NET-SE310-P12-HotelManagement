@@ -83,34 +83,27 @@ namespace Hotel_Management_API.Controllers
 		[HttpDelete("{id}")]
 		public IActionResult DeleteCustomer(int id)
 		{
-			try
+			// Kiểm tra xem Customer có tồn tại hay không
+			var customer = _context.Customer.Find(id);
+			if (customer == null)
 			{
-				// Tìm khách hàng theo ID
-				var customer = _context.Customer.Find(id);
-				if (customer == null)
-				{
-					// Trả về lỗi nếu không tìm thấy khách hàng
-					return NotFound(new { message = "Customer not found." });
-				}
+				return NotFound(new { message = "Customer not found." });
+			}
 
-				// Xóa khách hàng khỏi cơ sở dữ liệu
-				_context.Customer.Remove(customer);
-				_context.SaveChanges();
+			// Kiểm tra nếu CustomerID có tồn tại trong bảng Booking
+			bool isCustomerLinkedToBooking = _context.Booking.Any(b => b.CustomerID == id);
+			if (isCustomerLinkedToBooking)
+			{
+				return Conflict(new { message = "This customer is associated with existing bookings and cannot be deleted." });
+			}
 
-				// Trả về thông báo thành công
-				return Ok(new { message = "Customer deleted successfully." });
-			}
-			catch (DbUpdateException dbEx)
-			{
-				// Xử lý lỗi cơ sở dữ liệu
-				return StatusCode(500, new { message = "An error occurred while deleting the customer.", details = dbEx.Message });
-			}
-			catch (Exception ex)
-			{
-				// Xử lý lỗi chung
-				return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
-			}
+			// Nếu không liên kết, thực hiện xóa
+			_context.Customer.Remove(customer);
+			_context.SaveChanges();
+
+			return Ok(new { message = "Customer deleted successfully." });
 		}
+
 
 		[HttpPut("{id}")]
 		public IActionResult UpdateCustomer(int id, [FromBody] Customer updatedCustomer)
