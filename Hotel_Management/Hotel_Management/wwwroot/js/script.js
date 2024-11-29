@@ -120,15 +120,25 @@ $(document).ready(function () {
                 });
             },
             error: function (xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: xhr.responseJSON.message || 'An error occurred while updating the customer information.',
-                    confirmButtonText: 'Close'
-                });
+                if (xhr.status === 409) { // Trùng CCCD
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'A customer with this ID number already exists.',
+                        confirmButtonText: 'Close'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON.message || 'An error occurred while updating the customer information.',
+                        confirmButtonText: 'Close'
+                    });
+                }
             }
         });
     });
+
 });
 // Hàm xác nhận và xóa khách hàng
 function confirmCustomerDelete(customerId) {
