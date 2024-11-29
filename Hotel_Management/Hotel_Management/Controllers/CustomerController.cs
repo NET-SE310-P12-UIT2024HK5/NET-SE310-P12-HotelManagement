@@ -120,7 +120,34 @@ namespace Hotel_Management.Controllers
 			}
 		}
 
+		public async Task<IActionResult> UpdateCustomer(int id, [FromBody] Customer customer)
+		{
+			try
+			{
+				if (customer == null)
+				{
+					return BadRequest(new { message = "Invalid customer data." });
+				}
 
+				// Gửi yêu cầu cập nhật đến API
+				var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/Customer/{id}", customer);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return Ok(new { message = "Customer updated successfully." });
+				}
+				else
+				{
+					var errorResponse = await response.Content.ReadAsStringAsync();
+					return StatusCode((int)response.StatusCode, new { message = errorResponse });
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error while updating customer.");
+				return StatusCode(500, new { message = "An error occurred while updating the customer." });
+			}
+		}
 
 		public IActionResult Edit()
         {
