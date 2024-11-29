@@ -160,19 +160,27 @@ function confirmCustomerDelete(customerId) {
                     Swal.fire({
                         icon: 'success',
                         title: 'Deleted',
-                        text: 'The customer has been successfully deleted.',
+                        text: response.message,
                         confirmButtonText: 'OK'
                     }).then(() => {
                         location.reload(); // Làm mới trang
                     });
                 },
                 error: function (xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: xhr.responseJSON.message || 'An error occurred while deleting the customer.',
-                        confirmButtonText: 'Close'
-                    });
+                    if (xhr.status === 409) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'The customer cannot be deleted because the customer has already booked.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: xhr.responseJSON.message || 'An error occurred while deleting the customer.',
+                            confirmButtonText: 'Close'
+                        });
+                    }
                 }
             });
         }
