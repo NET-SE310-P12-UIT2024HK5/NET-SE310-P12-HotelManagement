@@ -124,6 +124,16 @@ namespace Hotel_Management_API.Controllers
 					return NotFound(new { message = "Customer not found." });
 				}
 
+				// Kiểm tra trùng CCCD với khách hàng khác
+				var duplicateCustomer = _context.Customer
+					.FirstOrDefault(c => c.CCCD == updatedCustomer.CCCD && c.CustomerID != id);
+
+				if (duplicateCustomer != null)
+				{
+					return Conflict(new { message = "A customer with this ID number already exists." });
+				}
+
+
 				// Cập nhật thông tin khách hàng
 				existingCustomer.FullName = updatedCustomer.FullName;
 				existingCustomer.PhoneNumber = updatedCustomer.PhoneNumber;
