@@ -1,15 +1,29 @@
-﻿/*================================= Hàm xử lí cho customer ======================================*/
-$(document).ready(function () {
+﻿$(document).ready(function () {
     // Hàm thêm khách hàng
     $('#addCustomerForm').on('submit', function (event) {
         event.preventDefault();
+
+        // Validate input trước khi gửi
+        const nationalId = $('input[name="national_id"]').val();
+
+        // Kiểm tra độ dài CCCD (ví dụ: 9 hoặc 12 chữ số)
+        if (!/^\d{12}$/.test(nationalId)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Invalid ID number. It must be 12 digits.'
+            });
+            return;
+        }
+
         // Thu thập dữ liệu từ form
         const customerData = {
             FullName: $('input[name="customer_name"]').val(),
             PhoneNumber: $('input[name="phone_number"]').val(),
             Email: $('input[name="email"]').val(),
-            CCCD: $('input[name="national_id"]').val()
+            CCCD: nationalId
         };
+
         // Gửi dữ liệu qua API
         $.ajax({
             url: '/Customer/CreateCustomer', // URL API
@@ -26,13 +40,42 @@ $(document).ready(function () {
                 });
             },
             error: function (xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: xhr.responseJSON?.message || 'An error occurred while adding the customer.'
-                });
+                // Xử lý các loại lỗi khác nhau
+                if (xhr.status === 409) {
+                    // Lỗi trùng CCCD
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'A customer with this ID number already exists.'
+                    });
+                } else {
+                    // Các lỗi khác
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the customer.'
+                    });
+                }
             }
         });
+    });
+
+    // Kiểm tra validate input CCCD khi nhập
+    $('input[name="national_id"]').on('input', function () {
+        const value = $(this).val();
+        const errorSpan = $('#national-id-error');
+
+        if (!/^\d+$/.test(value)) {
+            $(this).val(value.replace(/[^\d]/g, '')); // Chỉ cho phép số
+        }
+
+        if (value.length > 0 && !/^\d{9}(\d{3})?$/.test(value)) {
+            errorSpan.text('Invalid ID number. It must be 12 digits.');
+            $(this).addClass('is-invalid');
+        } else {
+            errorSpan.text('');
+            $(this).removeClass('is-invalid');
+        }
     });
 
     // Xử lý sự kiện khi nhấn nút Edit
@@ -68,8 +111,8 @@ $(document).ready(function () {
             success: function (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Thành công!',
-                    text: 'Cập nhật thông tin khách hàng thành công.',
+                    title: 'Success',
+                    text: 'Customer information updated successfully.',
                     confirmButtonText: 'OK'
                 }).then(() => {
                     location.reload(); // Làm mới trang
@@ -78,15 +121,14 @@ $(document).ready(function () {
             error: function (xhr) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi!',
-                    text: xhr.responseJSON.message || 'Có lỗi xảy ra khi cập nhật thông tin khách hàng.',
-                    confirmButtonText: 'Đóng'
+                    title: 'Error!',
+                    text: xhr.responseJSON.message || 'An error occurred while updating the customer information.',
+                    confirmButtonText: 'Close'
                 });
             }
         });
     });
 });
-
 // Hàm xác nhận và xóa khách hàng
 function confirmCustomerDelete(customerId) {
     Swal.fire({

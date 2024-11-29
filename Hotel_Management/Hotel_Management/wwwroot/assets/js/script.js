@@ -628,43 +628,6 @@ function confirmRoomDelete(roomId) {
 	})
 }
 
-function confirmCustomerDelete(customerId) {
-	Swal.fire({
-		title: 'Are you sure?',
-		text: "You won't be able to revert this!",
-		icon: 'warning',
-		showCancelButton: true,
-		confirmButtonText: 'Yes, delete it!',
-		cancelButtonText: 'No, cancel!',
-	}).then((result) => {
-		if (result.isConfirmed) {
-			// Gọi API xóa customer
-			$.ajax({
-				url: '/Customer/' + customerId,
-				type: 'DELETE',
-				success: function (response) {
-					// Xử lý thành công, xóa khách hàng trong bảng
-					Swal.fire(
-						'Deleted!',
-						'The customer has been deleted.',
-						'success'
-					).then(() => {
-						// Reload lại trang hoặc xóa dòng khách hàng khỏi bảng
-						location.reload();
-					});
-				},
-				error: function (xhr, status, error) {
-					Swal.fire(
-						'Error!',
-						'There was an issue deleting the customer.',
-						'error'
-					);
-				}
-			});
-		}
-	});
-}
-
 
 function deleteRoom(roomId) {
 	// Implement your delete logic here
