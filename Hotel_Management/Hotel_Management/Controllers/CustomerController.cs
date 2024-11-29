@@ -40,10 +40,15 @@ namespace Hotel_Management.Controllers
             }
             return View(customers);
         }
-        public IActionResult ReceptionCustomer()
+        public async Task<IActionResult> ReceptionCustomer()
         {
-            return View();
-        }
+			var customers = await GetCustomersAsync();
+			if (customers == null)
+			{
+				return View("Error");
+			}
+			return View(customers);
+		}
 
         public async Task<List<Customer>> GetCustomersAsync()
         {
