@@ -1,5 +1,6 @@
 ﻿using Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Hotel_Management.Controllers
 {
@@ -12,26 +13,6 @@ namespace Hotel_Management.Controllers
             _httpClient = httpClient;
             _logger = logger;
         }
-
-		public static class FakeDatabase
-		{
-			public static List<Customer> Customers { get; } = new List<Customer>
-			{
-				new Customer { CustomerID = 1, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
-				new Customer { CustomerID = 2, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
-				new Customer { CustomerID = 3, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
-				new Customer { CustomerID = 4, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
-				new Customer { CustomerID = 5, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
-				new Customer { CustomerID = 6, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
-				new Customer { CustomerID = 7, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
-				new Customer { CustomerID = 8, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
-				new Customer { CustomerID = 9, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
-				new Customer { CustomerID = 10, FullName = "Tô Vĩnh Tiến", PhoneNumber = "0123456789", CCCD = "123456789", Email = "john@example.com" },
-				new Customer { CustomerID = 11, FullName = "Trần Nhật Tân", PhoneNumber = "0987654321", CCCD = "987654321", Email = "jane@example.com" },
-				new Customer { CustomerID = 12, FullName = "Alice Brown", PhoneNumber = "0912345678", CCCD = "456123789", Email = "alice@example.com" },
-			};
-		}
-
 
 		public async Task<IActionResult> Index()
         {
@@ -50,18 +31,98 @@ namespace Hotel_Management.Controllers
             return View("Error"); // Nếu role không hợp lệ
         }
 
-        public IActionResult AdminCustomer()
+        public async Task<IActionResult> AdminCustomer()
         {
-            var customers = FakeDatabase.Customers.ToList(); // Directly use the list of Customer objects
+            var customers = await GetCustomersAsync();
+            if (customers == null)
+            {
+                return View("Error");
+            }
             return View(customers);
         }
         public IActionResult ReceptionCustomer()
         {
-			var customers = FakeDatabase.Customers.ToList(); // Directly use the list of Customer objects
-			return View(customers);
+            return View();
+        }
+
+        public async Task<List<Customer>> GetCustomersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7287/Customer");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error retrieving data from API.");
+                    return null;
+                }
+
+                var res = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<Customer>>(res);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while fetching data from API.");
+                return null;
+            }
+        }
+
+        
+        public async Task<IActionResult> CreateCustomer([FromBody] Customer customer)
+        {
+            try
+            {
+                if (customer == null)
+                {
+                    return BadRequest(new { message = "Invalid customer data." });
+                }
+
+                // Gửi yêu cầu đến API
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7287/Customer", customer);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Customer created successfully." });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { message = errorResponse });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while creating customer.");
+                return StatusCode(500, new { message = "An error occurred while creating the customer." });
+            }
+        }
+
+		public async Task<IActionResult> DeleteCustomer(int id)
+		{
+			try
+			{
+				// Gửi yêu cầu xóa tới API
+				var response = await _httpClient.DeleteAsync($"https://localhost:7287/Customer/{id}");
+
+				if (response.IsSuccessStatusCode)
+				{
+					return Ok(new { message = "Customer deleted successfully." });
+				}
+				else
+				{
+					var errorResponse = await response.Content.ReadAsStringAsync();
+					return StatusCode((int)response.StatusCode, new { message = errorResponse });
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error while deleting customer.");
+				return StatusCode(500, new { message = "An error occurred while deleting the customer." });
+			}
 		}
 
-        public IActionResult Edit()
+
+
+		public IActionResult Edit()
         {
             return View();
         }

@@ -42,5 +42,73 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, new { message = ex.Message });
             }
         }
-    }
+
+        [HttpPost]
+        public IActionResult CreateCustomer([FromBody] Customer customer)
+        {
+            try
+            {
+                if (customer == null)
+                {
+                    return BadRequest(new { message = "Customer data is required." });
+                }
+
+                // Kiểm tra các trường hợp hợp lệ (nếu cần)
+                if (string.IsNullOrEmpty(customer.FullName) || string.IsNullOrEmpty(customer.PhoneNumber))
+                {
+                    return BadRequest(new { message = "Full name and phone number are required." });
+                }
+
+                // Thêm khách hàng vào cơ sở dữ liệu
+                _context.Customer.Add(customer);
+                _context.SaveChanges();
+
+                return CreatedAtAction(nameof(Get), new { id = customer.CustomerID }, customer);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Xử lý lỗi cập nhật cơ sở dữ liệu
+                return StatusCode(500, new { message = "An error occurred while saving the customer.", details = dbEx.Message });
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi chung
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+		[HttpDelete("{id}")]
+		public IActionResult DeleteCustomer(int id)
+		{
+			try
+			{
+				// Tìm khách hàng theo ID
+				var customer = _context.Customer.Find(id);
+				if (customer == null)
+				{
+					// Trả về lỗi nếu không tìm thấy khách hàng
+					return NotFound(new { message = "Customer not found." });
+				}
+
+				// Xóa khách hàng khỏi cơ sở dữ liệu
+				_context.Customer.Remove(customer);
+				_context.SaveChanges();
+
+				// Trả về thông báo thành công
+				return Ok(new { message = "Customer deleted successfully." });
+			}
+			catch (DbUpdateException dbEx)
+			{
+				// Xử lý lỗi cơ sở dữ liệu
+				return StatusCode(500, new { message = "An error occurred while deleting the customer.", details = dbEx.Message });
+			}
+			catch (Exception ex)
+			{
+				// Xử lý lỗi chung
+				return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+			}
+		}
+
+
+	}
 }
