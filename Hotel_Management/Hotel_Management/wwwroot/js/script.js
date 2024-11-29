@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿/*================================= Hàm xử lí cho customer ===================================*/
+$(document).ready(function () {
     // Hàm thêm khách hàng
     $('#addCustomerForm').on('submit', function (event) {
         event.preventDefault();
