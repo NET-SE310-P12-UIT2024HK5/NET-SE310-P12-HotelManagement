@@ -109,6 +109,34 @@ namespace Hotel_Management_API.Controllers
 			}
 		}
 
+		[HttpPut("{id}")]
+		public IActionResult UpdateCustomer(int id, [FromBody] Customer updatedCustomer)
+		{
+			try
+			{
+				// Kiểm tra xem khách hàng có tồn tại không
+				var existingCustomer = _context.Customer.Find(id);
+				if (existingCustomer == null)
+				{
+					return NotFound(new { message = "Customer not found." });
+				}
+
+				// Cập nhật thông tin khách hàng
+				existingCustomer.FullName = updatedCustomer.FullName;
+				existingCustomer.PhoneNumber = updatedCustomer.PhoneNumber;
+				existingCustomer.Email = updatedCustomer.Email;
+				existingCustomer.CCCD = updatedCustomer.CCCD;
+
+				// Lưu các thay đổi
+				_context.SaveChanges();
+
+				return Ok(new { message = "Customer updated successfully.", customer = existingCustomer });
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, new { message = "An error occurred while updating the customer.", details = ex.Message });
+			}
+		}
 
 	}
 }
