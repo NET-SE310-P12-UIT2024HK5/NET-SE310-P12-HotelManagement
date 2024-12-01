@@ -8,7 +8,5 @@
 		public string CCCD { get; set; }
 		public string Email { get; set; }
 		public DateTime? DateOfBirth { get; set; }
-		// Quan hệ 1-N với Booking
-		/*public ICollection<Booking> Bookings { get; set; }*/
 	}
 }

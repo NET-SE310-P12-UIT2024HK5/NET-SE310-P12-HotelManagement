@@ -2,20 +2,16 @@
 {
     public class Booking
     {
-        public int BookingID { get; set; }
-        // Liên kết đến khách hàng
-        public int CustomerID { get; set; }
-        public required Customer Customer { get; set; }
+        public int BookingID { get; set; } // Khóa chính
+        public int CustomerID { get; set; } // Khách hàng đặt phòng
+        public int UserID { get; set; } // Nhân viên tiếp nhận đặt phòng
+        public int RoomID { get; set; } // Phòng được đặt
+        public DateTime CheckInDate { get; set; } // Ngày nhận phòng
+        public DateTime CheckOutDate { get; set; } // Ngày trả phòng
+        public string Status { get; set; } = "Pending"; // Trạng thái đặt phòng (mặc định là Pending)
 
-        // Liên kết đến phòng
-        public int RoomID { get; set; }
-        public required Rooms Room { get; set; }
-        public DateTime? CheckInDate { get; set; }
-        public DateTime? CheckOutDate { get; set; }
-        public required string Status { get; set; }
-		public required string CustomerName { get; set; } // Thêm trường này
-
-		public required string RoomNumber { get; set; } // Thêm trường này
-
+        // Navigation Properties
+        public virtual Customer Customer { get; set; } // Liên kết với Customer
+        public virtual Rooms Room { get; set; } // Liên kết với Room
     }
 }
