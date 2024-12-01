@@ -97,11 +97,15 @@ namespace Hotel_Management.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while creating customer.");
-                return StatusCode(500, new { message = "An error occurred while creating the customer." });
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError(ex.InnerException, "Inner exception while creating customer.");
+                }
+                return StatusCode(500, new { message = "An error occurred while creating the customer.", details = ex.InnerException?.Message });
             }
         }
 
-		public async Task<IActionResult> DeleteCustomer(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
 		{
 			try
 			{
