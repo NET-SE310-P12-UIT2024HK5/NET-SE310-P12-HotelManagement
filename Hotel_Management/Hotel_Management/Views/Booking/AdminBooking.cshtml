@@ -62,10 +62,10 @@
                                             {
                                                 <tr>
                                                     <td>@booking.BookingID</td>
-                                                    <td>@booking.CustomerName</td>
-                                                    <td>@booking.RoomNumber</td>
-                                                    <td>@booking.CheckInDate?.ToString("dd/MM/yyyy")</td>
-                                                    <td>@booking.CheckOutDate?.ToString("dd/MM/yyyy")</td>
+                                                    <td>@booking.Customer.FullName</td>
+                                                    <td>@booking.Room.RoomNumber</td>
+                                                    <td>@booking.CheckInDate.ToString("yyyy-MM-dd")</td>
+                                                    <td>@booking.CheckOutDate.ToString("yyyy-MM-dd")</td>
                                                     @* <td>@booking.Status</td> *@
                                                     <td>
                                                         <div class="dropdown">
@@ -105,45 +105,43 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Add Booking Form Column - 40% -->
+                    @* Add booking *@
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-header">
                                 <h4 class="card-title"><b>Add New Booking</b></h4>
                             </div>
                             <div class="card-body">
-                                <form asp-action="CreateBooking" method="post">
+                                <form id="addBookingForm" method="post">
                                     <div class="form-group">
-                                        <label><b>Customer Name</b></label>
-                                        <input type="text" class="form-control" name="CustomerName" required>
+                                        <label><b>Customer</b></label>
+                                        <select class="form-control" name="CustomerID" required>
+                                            <option value="" disabled selected>Select Customer</option>
+                                            
+                                        </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label><b>Room Number</b></label>
-                                        <select class="form-control" name="RoomNumber" required>
-                                            <option value="" disabled selected>Select</option>
-                                            @foreach (var room in ViewBag.Rooms)
-                                            {
-                                                <option value="@room.RoomNumber">@room.RoomNumber</option>
-                                            }
+                                        <label><b>Room</b></label>
+                                        <select class="form-control" name="RoomID" required>
+                                            <option value="" disabled selected>Select Room</option>
+                                            
                                         </select>
                                     </div>
 
                                     <div class="form-group">
                                         <label><b>Check In Date</b></label>
-                                        <input type="date" class="form-control" name="check_in" required>
+                                        <input type="date" class="form-control" name="CheckInDate" required>
                                     </div>
 
                                     <div class="form-group">
                                         <label><b>Check Out Date</b></label>
-                                        <input type="date" class="form-control" name="check_out" required>
+                                        <input type="date" class="form-control" name="CheckOutDate" required>
                                     </div>
-
 
                                     <div class="form-group">
                                         <label><b>Status</b></label>
-                                        <select class="form-control" name="status" required>
+                                        <select class="form-control" name="Status" required>
                                             <option value="confirmed">Confirmed</option>
                                             <option value="pending" selected>Pending</option>
                                             <option value="cancelled">Cancelled</option>
@@ -159,6 +157,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div id="editBookingModal" class="modal fade" role="dialog">
@@ -215,29 +214,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Status</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-                                                    </div>
-                                                    <select class="form-control" id="sel2" name="sellist1" required>
-                                                        <option value="pending" selected>Pending</option>
-                                                        <option value="confirmed">Confirmed</option>
-                                                        <option value="cancelled">Cancelled</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="text-right">
-                                        <button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
-                                            <i class="fas fa-save"></i> Save
-                                        </button>
-                                        <button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </button>
+                                    <div class="form-group text-right">
+                                        <button type="button" class="btn btn-primary" id="editBookingButton">Update Booking</button>
                                     </div>
                                 </form>
                             </div>
@@ -246,26 +225,9 @@
                 </div>
             </div>
 
-            <!-- Delete Modal -->
-            <div id="delete_asset" class="modal fade delete-modal" role="dialog">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-body text-center">
-                            <img src="assets/img/sent.png" alt="" width="50" height="46">
-                            <h3 class="delete_class">Are you sure want to delete this Booking?</h3>
-                            <div class="m-t-20">
-                                <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
-        <!-- End Content -->
-    </div>
 
-    <!-- Scripts -->
+    </div>
     <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="~/assets/js/jquery-3.5.1.min.js"></script>
     <script src="~/assets/plugins/datatables/datatables.min.js"></script>
@@ -276,7 +238,11 @@
     <script src="~/assets/plugins/morris/morris.min.js"></script>
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
+    <script src="~/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+
+
 </body>
 
 </html>

@@ -44,52 +44,27 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
-		// Phương thức lấy tất cả booking
-		[HttpGet]
-		public IActionResult Get()
-		{
-			try
-			{
-				// Lấy dữ liệu từ DbContext
-				var bookings = _context.Booking
-					.Include(b => b.Customer)  // Bao gồm thông tin khách hàng
-					.Include(b => b.Room)      // Bao gồm thông tin phòng
-					.Select(b => new
-					{
-						b.BookingID,
-						b.CustomerID,
-						CustomerName = b.Customer.FullName,  // Lấy tên khách hàng từ Customer
-						b.RoomID,
-						RoomNumber = b.Room.RoomNumber,     // Lấy số phòng
-						b.CheckInDate,
-						b.CheckOutDate,
-						b.Status
-					})
-					.ToList();
-
-				// Trả về danh sách booking dưới dạng JSON
-				return Ok(bookings);
-			}
-			catch (Exception ex)
-			{
-				// Xử lý lỗi nếu có
-				return StatusCode(500, new { message = ex.Message });
-			}
-		}
-
-        [HttpPost]
-        public IActionResult CreateBooking([FromBody] Booking booking)
+        // Phương thức lấy tất cả booking
+        // Phương thức lấy danh sách booking
+        [HttpGet]
+        public async Task<IActionResult> GetBookings()
         {
-            if (ModelState.IsValid)
+            try
             {
-                // Thêm booking vào cơ sở dữ liệu
-                _context.Booking.Add(booking);
-                _context.SaveChanges();
-                return Ok(new { Message = "Booking created successfully." });
+                var bookings = await _context.Booking
+                                              .Include(b => b.Customer)  // Bao gồm thông tin khách hàng
+                                              .Include(b => b.Room)      // Bao gồm thông tin phòng
+                                              .ToListAsync();
+                return Ok(bookings);
             }
-
-            return BadRequest(new { Message = "Invalid booking data." });
+            catch (Exception ex)
+            {
+                _logger.LogError($"Lỗi khi lấy danh sách booking: {ex.Message}");
+                return StatusCode(500, "Internal server error");
+            }
         }
+
+
 
 
     }
