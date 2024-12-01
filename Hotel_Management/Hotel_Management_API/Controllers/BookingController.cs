@@ -163,5 +163,22 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBooking(int id)
+        {
+            // Kiểm tra xem Customer có tồn tại hay không
+            var booking = _context.Booking.Find(id);
+            if (booking == null)
+            {
+                return NotFound(new { message = "Booking not found." });
+            }
+
+            // Nếu không liên kết, thực hiện xóa
+            _context.Booking.Remove(booking);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Booking deleted successfully." });
+        }
+
     }
 }
