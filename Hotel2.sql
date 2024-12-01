@@ -1,5 +1,4 @@
-﻿
-
+﻿Create database HotelManagement
 -- B?ng Roles
 CREATE TABLE Roles (
     RoleID INT PRIMARY KEY IDENTITY(1,1),
