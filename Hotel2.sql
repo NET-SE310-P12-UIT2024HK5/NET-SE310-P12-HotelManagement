@@ -26,7 +26,7 @@ CREATE TABLE Users (
 -- B?ng Customer
 CREATE TABLE Customer (
     CustomerID INT PRIMARY KEY IDENTITY(1,1),
-    CustomerName NVARCHAR(100) NOT NULL,
+    FullName NVARCHAR(100) NOT NULL,
     PhoneNumber NVARCHAR(20) CHECK (PhoneNumber LIKE '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]%' OR PhoneNumber LIKE '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
     CCCD NVARCHAR(50),
     Email NVARCHAR(100),
