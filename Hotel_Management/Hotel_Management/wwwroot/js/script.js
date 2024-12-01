@@ -186,3 +186,80 @@ function confirmCustomerDelete(customerId) {
         }
     });
 }
+
+/*================================= Hàm xử lí cho Booking ===================================*/
+// Hàm thêm booking
+$('#addBookingForm').on('submit', function (event) {
+    event.preventDefault();
+
+    // Kiểm tra nếu các trường quan trọng chưa được điền
+    if (!$('select[name="CustomerID"]').val()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Customer field is required!'
+        });
+        return;
+    }
+
+    if (!$('select[name="RoomID"]').val()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Room field is required!'
+        });
+        return;
+    }
+
+    if (!$('input[name="CheckInDate"]').val()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Check In Date is required!'
+        });
+        return;
+    }
+
+    if (!$('input[name="CheckOutDate"]').val()) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Check Out Date is required!'
+        });
+        return;
+    }
+
+    // Thu thập dữ liệu và gửi qua API nếu mọi thứ hợp lệ
+    const bookingData = {
+        CustomerID: $('select[name="CustomerID"]').val(),
+        RoomID: $('select[name="RoomID"]').val(),
+        CheckInDate: $('input[name="CheckInDate"]').val(),
+        CheckOutDate: $('input[name="CheckOutDate"]').val(),
+        Status: $('select[name="Status"]').val()
+    };
+
+    // Gửi dữ liệu qua API
+    $.ajax({
+        url: '/Booking/CreateBooking',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(bookingData),
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Booking added successfully!'
+            }).then(() => {
+                location.reload(); // Làm mới trang
+            });
+        },
+        error: function (xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: xhr.responseJSON?.message || 'An error occurred while adding the booking.'
+            });
+        }
+    });
+});
+

@@ -61,10 +61,10 @@
 											{
 												<tr>
 													<td class="text-center">@booking.BookingID</td>
-													<td class="text-center">@booking.CustomerName</td>
-													<td class="text-center">@booking.RoomNumber</td>
-													<td class="text-center">@booking.CheckInDate?.ToString("dd/MM/yyyy")</td>
-													<td class="text-center">@booking.CheckOutDate?.ToString("dd/MM/yyyy")</td>
+													<td class="text-center">@booking.Customer.FullName</td>
+													<td class="text-center">@booking.Room.RoomNumber</td>
+													<td class="text-center">@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+													<td class="text-center">@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
 													@* <td>@booking.Status</td> *@
 													<td>
 														<div class="dropdown">
