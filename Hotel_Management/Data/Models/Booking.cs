@@ -10,8 +10,8 @@
         public DateTime CheckOutDate { get; set; } // Ngày trả phòng
         public string Status { get; set; } = "Pending"; // Trạng thái đặt phòng (mặc định là Pending)
 
-        // Navigation Properties
-        public virtual Customer Customer { get; set; } // Liên kết với Customer
-        public virtual Rooms Room { get; set; } // Liên kết với Room
+        // Navigation properties không required
+        public virtual Customer? Customer { get; set; }
+        public virtual Rooms? Room { get; set; }
     }
 }

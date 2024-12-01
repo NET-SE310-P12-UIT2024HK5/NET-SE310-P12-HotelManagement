@@ -64,8 +64,8 @@
                                                     <td>@booking.BookingID</td>
                                                     <td>@booking.Customer.FullName</td>
                                                     <td>@booking.Room.RoomNumber</td>
-                                                    <td>@booking.CheckInDate.ToString("yyyy-MM-dd")</td>
-                                                    <td>@booking.CheckOutDate.ToString("yyyy-MM-dd")</td>
+                                                    <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
                                                     @* <td>@booking.Status</td> *@
                                                     <td>
                                                         <div class="dropdown">
@@ -117,7 +117,10 @@
                                         <label><b>Customer</b></label>
                                         <select class="form-control" name="CustomerID" required>
                                             <option value="" disabled selected>Select Customer</option>
-                                            
+                                            @foreach (var customer in ViewBag.Customers)
+                                            {
+                                                <option value="@customer.CustomerID">@customer.FullName</option>
+                                            }
                                         </select>
                                     </div>
 
@@ -125,7 +128,10 @@
                                         <label><b>Room</b></label>
                                         <select class="form-control" name="RoomID" required>
                                             <option value="" disabled selected>Select Room</option>
-                                            
+                                            @foreach (var room in ViewBag.Rooms)
+                                            {
+                                                <option value="@room.RoomID">@room.RoomNumber</option>
+                                            }
                                         </select>
                                     </div>
 
