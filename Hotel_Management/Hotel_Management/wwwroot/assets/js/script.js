@@ -618,7 +618,8 @@ function confirmRoomDelete(roomId) {
 		showCancelButton: true,
 		confirmButtonColor: '#2563EB',
 		cancelButtonColor: '#d33',
-		confirmButtonText: 'Yes, delete it!'
+		confirmButtonText: 'Yes, delete it!',
+		cancelButtonText: 'No, cancel!',
 	}).then((result) => {
 		if (result.isConfirmed) {
 			// Call your delete function here
@@ -626,6 +627,7 @@ function confirmRoomDelete(roomId) {
 		}
 	})
 }
+
 
 function deleteRoom(roomId) {
 	// Implement your delete logic here

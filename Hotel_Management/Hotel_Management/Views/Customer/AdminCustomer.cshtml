@@ -51,20 +51,22 @@
 											</tr>
 										</thead>
 										<tbody>
-											@foreach (var customer in Model)
+											@foreach (var customer in Model.Select((value,index) => new {value, index}))
 											{
 												<tr>
-													<td class="text-center">@(customer.CustomerID.ToString())</td>
-													<td class="text-center">@customer.FullName</td>
-													<td class="text-center">@customer.PhoneNumber</td>
-													<td class="text-center">@customer.Email</td>
-													<td class="text-center">@customer.CCCD</td>
+													<td class="text-center">@(@customer.index + 1)</td>
+													<td class="text-center">@customer.value.FullName</td>
+													<td class="text-center">@customer.value.PhoneNumber</td>
+													<td class="text-center">@customer.value.Email</td>
+													<td class="text-center">@customer.value.CCCD</td>
 													<td class="text-right">
 														<div class="dropdown dropdown-action">
 															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
 															<div class="dropdown-menu dropdown-menu-right">
 																<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editCustomerModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-																<a class="dropdown-item" href="#" onclick="confirmRoomDelete(1)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+																<a class="dropdown-item" href="javascript:void(0);" onclick="confirmCustomerDelete(@customer.value.CustomerID)" data-id="@customer.value.CustomerID">
+																	<i class="fas fa-trash-alt m-r-5"></i> Delete
+																</a>
 															</div>
 														</div>
 													</td>
@@ -84,7 +86,7 @@
 								<h4 class="card-title"><b>Add New Customer</b></h4>
 							</div>
 							<div class="card-body">
-								<form action="#" method="post">
+								<form id="addCustomerForm" action="#" method="post">
 									<div class="form-group">
 										<label><b>Customer Name</b></label>
 										<input type="text" class="form-control" name="customer_name" required>
@@ -121,7 +123,7 @@
 					<div class="modal-dialog modal-dialog-centered">
 						<div class="modal-content">
 							<div class="modal-header">
-								<h4 class="modal-title">Edit Customer</h4>
+								<h4 class="modal-title">Edit customer information</h4>
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 							<div class="modal-body">
@@ -129,35 +131,35 @@
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Customer ID/#</label>
+												<label>Mã khách hàng</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
 													</div>
-													<input class="form-control" type="text" value="1" readonly required>
+													<input name="customer_id" class="form-control" type="text" readonly required>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>National ID</label>
+												<label>CCCD/CMND</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-id-card"></i></span>
 													</div>
-													<input class="form-control no-spinner" type="number" placeholder="Enter National ID" required>
+													<input name="national_id" class="form-control no-spinner" type="text" placeholder="Nhập CCCD" required>
 												</div>
 											</div>
 										</div>
-										
+
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Customer Name</label>
+												<label>Tên khách hàng</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-user"></i></span>
 													</div>
-													<input class="form-control no-spinner" type="text" placeholder="Enter Customer Name" required>
+													<input name="customer_name" class="form-control no-spinner" type="text" placeholder="Nhập tên khách hàng" required>
 												</div>
 											</div>
 										</div>
@@ -168,29 +170,28 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fa fa-envelope"></i></span>
 													</div>
-													<input class="form-control no-spinner" type="text" placeholder="Enter Your Email" required>
+													<input name="email" class="form-control no-spinner" type="text" placeholder="Nhập email" required>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Phone Number</label>
+												<label>Số điện thoại</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fa fa-mobile"></i></span>
 													</div>
-													<input class="form-control no-spinner" type="number" placeholder="Enter Phone Number" required>
+													<input name="phone_number" class="form-control no-spinner" type="text" placeholder="Nhập số điện thoại" required>
 												</div>
 											</div>
 										</div>
-										
 									</div>
 									<div class="text-right">
-										<button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
-											<i class="fas fa-save"></i> Save
+										<button type="submit" class="btn btn-primary btn-success">
+											<i class="fas fa-save"></i> Lưu
 										</button>
 										<button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
-											<i class="fas fa-times"></i> Cancel
+											<i class="fas fa-times"></i> Hủy
 										</button>
 									</div>
 								</form>
@@ -215,7 +216,10 @@
 	<script src="~/assets/plugins/morris/morris.min.js"></script>
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
+	<script src="~/js/script.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+
 </body>
 
 

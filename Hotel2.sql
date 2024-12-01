@@ -52,7 +52,6 @@ CREATE TABLE Booking (
     RoomID INT,
     CheckInDate DATE,
     CheckOutDate DATE,
-    TotalPrice DECIMAL(10, 2),
     Status NVARCHAR(50) DEFAULT 'Pending',
     FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID),
