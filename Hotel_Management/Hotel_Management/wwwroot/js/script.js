@@ -70,7 +70,7 @@ $(document).ready(function () {
             $(this).val(value.replace(/[^\d]/g, '')); // Chỉ cho phép số
         }
 
-        if (value.length > 0 && !/^\d{9}(\d{3})?$/.test(value)) {
+        if (value.length > 0 && !/^\d{12}$/.test(value)) {
             errorSpan.text('Invalid ID number. It must be 12 digits.');
             $(this).addClass('is-invalid');
         } else {
@@ -256,4 +256,108 @@ $('#addBookingForm').on('submit', function (event) {
         }
     });
 });
+
+// Thêm vào phần Booking trong file script.js
+function confirmBookingDelete(bookingId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this booking? This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteBooking(bookingId);
+        }
+    });
+}
+
+function deleteBooking(bookingId) {
+    const row = $(`tr[data-booking-id="${bookingId}"]`);
+    row.addClass('deleting');
+
+    $.ajax({
+        url: '/Booking/DeleteBooking/' + bookingId,
+        type: 'DELETE',
+        beforeSend: function () {
+            row.find('.dropdown-action').addClass('disabled');
+        },
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Deleted!',
+                text: 'Booking has been deleted successfully.',
+                showConfirmButton: true,  // Hiển thị nút OK
+                confirmButtonText: 'OK',  // Text cho nút OK
+                timer: null  // Bỏ timer để alert không tự đóng
+            }).then((result) => {
+                if (result.isConfirmed) {  // Khi người dùng click OK
+                    location.reload();  // Load lại danh sách booking
+                }
+            });
+        },
+        error: function (xhr) {
+            row.removeClass('deleting');
+            row.find('.dropdown-action').removeClass('disabled');
+
+            let errorMessage = 'An error occurred while deleting the booking.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: errorMessage,
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+function loadBookings() {
+    $.ajax({
+        url: '/Booking/GetBookings', // Đảm bảo API này trả về danh sách booking
+        type: 'GET',
+        success: function (data) {
+            const tbody = $('.datatable tbody');
+            tbody.empty();
+            data.forEach(booking => {
+                tbody.append(`
+                    <tr data-booking-id="${booking.BookingID}">
+                        <td>${booking.BookingID}</td>
+                        <td>${booking.Customer.FullName}</td>
+                        <td>${booking.Room.RoomNumber}</td>
+                        <td>${new Date(booking.CheckInDate).toLocaleDateString()}</td>
+                        <td>${new Date(booking.CheckOutDate).toLocaleDateString()}</td>
+                        <td>${booking.Status}</td>
+                        <td class="text-right">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ellipse_color"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="javascript:void(0);" onclick="confirmBookingDelete(${booking.BookingID})">
+                                        <i class="fas fa-trash-alt m-r-5"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        },
+        error: function (xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'An error occurred while loading bookings.',
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
 

@@ -58,28 +58,28 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach (var booking in Model)
+                                            @foreach (var booking in Model.Select((value, index) => new { value, index }))
                                             {
                                                 <tr>
-                                                    <td>@booking.BookingID</td>
-                                                    <td>@booking.Customer.FullName</td>
-                                                    <td>@booking.Room.RoomNumber</td>
-                                                    <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@(@booking.index + 1)</td>
+                                                    <td>@booking.value.Customer.FullName</td>
+                                                    <td>@booking.value.Room.RoomNumber</td>
+                                                    <td>@booking.value.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                                    <td>@booking.value.CheckOutDate.ToString("dd/MM/yyyy")</td>
                                                     @* <td>@booking.Status</td> *@
                                                     <td>
                                                         <div class="dropdown">
                                                             <a href="#" class="btn btn-sm
                                                                 @(
-                                                                    booking.Status == "Pending" ? "bg-warning-light" :
-                                                                    booking.Status == "Confirm" ? "bg-success-light" :
-                                                                    booking.Status == "Cancelled" ? "bg-danger-light" :
+                                                                    booking.value.Status == "Pending" ? "bg-warning-light" :
+                                                                    booking.value.Status == "Confirm" ? "bg-success-light" :
+                                                                    booking.value.Status == "Cancelled" ? "bg-danger-light" :
                                                                     "bg-secondary-light"
                                                                 )
                                                                 mr-2 dropdown-toggle"
                                                                data-toggle="dropdown"
                                                                aria-expanded="false">
-                                                                @booking.Status
+                                                                @booking.value.Status
                                                             </a>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
@@ -93,7 +93,7 @@
                                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
                                                             <div class="dropdown-menu dropdown-menu-right">
                                                                 <a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editBookingModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-                                                                <a class="dropdown-item" href="#" onclick="confirmRoomDelete(1)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+                                                                <a class="dropdown-item" href="javascript:void(0);" onclick="confirmBookingDelete(@booking.value.BookingID)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
                                                             </div>
                                                         </div>
                                                     </td>

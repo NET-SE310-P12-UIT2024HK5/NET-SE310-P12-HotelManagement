@@ -158,5 +158,29 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        // Xoá booking
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"https://localhost:7287/Booking/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Booking deleted successfully." });
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, errorContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting booking: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deleting the booking." });
+            }
+        }
+
     }
 }
