@@ -140,7 +140,17 @@ $(document).ready(function () {
     });
 
 });
+// Thêm vào file script.js
+$(document).ready(function () {
+    $('#customerSearch').on('keyup', function () {
+        var value = $(this).val().toLowerCase();
+        $('.datatable tbody tr').filter(function () {
+            $(this).toggle($(this).children('td').eq(1).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
 // Hàm xác nhận và xóa khách hàng
+
 function confirmCustomerDelete(customerId) {
     Swal.fire({
         title: 'Are you sure?',
@@ -274,6 +284,112 @@ function confirmBookingDelete(bookingId) {
         }
     });
 }
+
+$(document).ready(function () {
+    // Validate dates when they change
+    $('#checkInDate, #checkOutDate').on('change', function () {
+        validateDates();
+    });
+
+    function validateDates() {
+        const checkInDate = new Date($('#checkInDate').val());
+        const checkOutDate = new Date($('#checkOutDate').val());
+
+        // Reset validation state
+        $('#checkInDate, #checkOutDate').removeClass('is-invalid');
+
+        if (checkInDate && checkOutDate) {
+            if (checkInDate > checkOutDate) {
+                $('#checkOutDate').addClass('is-invalid');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Dates',
+                    text: 'Check-out date must be after check-in date'
+                });
+                return false;
+            }
+
+            // Check if check-in date is in the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (checkInDate <= today) {
+                $('#checkInDate').addClass('is-invalid');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Date',
+                    text: 'Check-in date cannot be in the past'
+                });
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Modify your existing form submission
+    $('#addBookingForm').on('submit', function (event) {
+        event.preventDefault();
+
+        if (!validateDates()) {
+            return;
+        }
+
+        const bookingData = {
+            customerID: parseInt($('select[name="CustomerID"]').val()),
+            roomID: parseInt($('select[name="RoomID"]').val()),
+            checkInDate: $('#checkInDate').val(),
+            checkOutDate: $('#checkOutDate').val(),
+            status: "Pending"
+        };
+
+        // Validate required fields
+        if (!bookingData.customerID || !bookingData.roomID) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Missing Data',
+                text: 'Please select both customer and room'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/Booking/CreateBooking',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(bookingData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Booking added successfully!'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                let errorMessage = 'An error occurred while adding the booking.';
+
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.message;
+
+                    // If there's a booking conflict, show detailed information
+                    if (xhr.responseJSON.conflictBooking) {
+                        const conflictBooking = xhr.responseJSON.conflictBooking;
+                        const checkIn = new Date(conflictBooking.checkIn).toLocaleDateString();
+                        const checkOut = new Date(conflictBooking.checkOut).toLocaleDateString();
+                        errorMessage += `\nExisting booking: ${checkIn} to ${checkOut}`;
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage
+                });
+            }
+        });
+    });
+});
 
 function deleteBooking(bookingId) {
     const row = $(`tr[data-booking-id="${bookingId}"]`);
