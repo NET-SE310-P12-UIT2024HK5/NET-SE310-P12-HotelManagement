@@ -105,16 +105,35 @@ namespace Hotel_Management_API.Controllers
                     return BadRequest(new { message = "Booking data is required." });
                 }
 
-                // Validate dates
-                if (bookingDTO.CheckInDate >= bookingDTO.CheckOutDate)
+                // Kiểm tra ngày check-in và check-out
+                if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
                 {
-                    return BadRequest(new { message = "Check-out date must be after check-in date." });
+                    return BadRequest(new { message = "Check-in date must be before check-out date." });
                 }
 
-                // Validate IDs
-                if (bookingDTO.CustomerID <= 0 || bookingDTO.RoomID <= 0)
+                // Kiểm tra ngày check-in không được là ngày trong quá khứ
+                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
                 {
-                    return BadRequest(new { message = "Invalid Customer ID or Room ID." });
+                    return BadRequest(new { message = "Check-in date cannot be in the past." });
+                }
+
+                // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
+                var existingBooking = await _context.Booking
+                    .Where(b => b.RoomID == bookingDTO.RoomID)
+                    .Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
+                    .FirstOrDefaultAsync();
+
+                if (existingBooking != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "This room is already booked for the selected dates.",
+                        conflictBooking = new
+                        {
+                            checkIn = existingBooking.CheckInDate,
+                            checkOut = existingBooking.CheckOutDate
+                        }
+                    });
                 }
 
                 // Tạo booking mới
@@ -128,28 +147,16 @@ namespace Hotel_Management_API.Controllers
                     UserID = 1  // Set this to appropriate value
                 };
 
-                try
-                {
-                    _context.Booking.Add(booking);
-                    await _context.SaveChangesAsync();
+                _context.Booking.Add(booking);
+                await _context.SaveChangesAsync();
 
-                    // Load related data after successful save
-                    var createdBooking = await _context.Booking
-                        .Include(b => b.Customer)
-                        .Include(b => b.Room)
-                        .FirstOrDefaultAsync(b => b.BookingID == booking.BookingID);
+                // Load related data
+                var createdBooking = await _context.Booking
+                    .Include(b => b.Customer)
+                    .Include(b => b.Room)
+                    .FirstOrDefaultAsync(b => b.BookingID == booking.BookingID);
 
-                    return Ok(new { message = "Booking created successfully", data = createdBooking });
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    _logger.LogError(dbEx, "Database error while creating booking");
-                    return StatusCode(500, new
-                    {
-                        message = "Database error occurred",
-                        details = dbEx.InnerException?.Message
-                    });
-                }
+                return Ok(new { message = "Booking created successfully", data = createdBooking });
             }
             catch (Exception ex)
             {
@@ -157,8 +164,7 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, new
                 {
                     message = "An error occurred while creating the booking.",
-                    details = ex.Message,
-                    stackTrace = ex.StackTrace // Chỉ dùng trong development
+                    details = ex.Message
                 });
             }
         }
