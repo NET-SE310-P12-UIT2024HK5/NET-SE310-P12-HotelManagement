@@ -64,8 +64,5 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
-
-
-
     }
 }
