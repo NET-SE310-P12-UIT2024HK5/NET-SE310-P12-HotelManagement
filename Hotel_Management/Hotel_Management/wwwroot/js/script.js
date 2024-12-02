@@ -198,74 +198,6 @@ function confirmCustomerDelete(customerId) {
 }
 
 /*================================= Hàm xử lí cho Booking ===================================*/
-/*$('#addBookingForm').on('submit', function (event) {
-    event.preventDefault();
-
-    const checkInDate = $('input[name="CheckInDate"]').val();
-    const checkOutDate = $('input[name="CheckOutDate"]').val();
-
-    // Basic validation
-    if (!checkInDate || !checkOutDate) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Missing Dates',
-            text: 'Please select both check-in and check-out dates'
-        });
-        return;
-    }
-
-    const bookingData = {
-        customerID: parseInt($('select[name="CustomerID"]').val()),
-        roomID: parseInt($('select[name="RoomID"]').val()),
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate,
-        status: "Pending"
-    };
-
-    // Validate required fields
-    if (!bookingData.customerID || !bookingData.roomID) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Missing Data',
-            text: 'Please select both customer and room'
-        });
-        return;
-    }
-
-    console.log('Sending booking data:', bookingData); // Debug log
-
-    $.ajax({
-        url: '/Booking/CreateBooking',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(bookingData),
-        success: function (response) {
-            console.log('Success response:', response); // Debug log
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: 'Booking added successfully!'
-            }).then(() => {
-                location.reload();
-            });
-        },
-        error: function (xhr, status, error) {
-            console.error('Error response:', xhr.responseJSON); // Debug log
-            let errorMessage = 'An error occurred while adding the booking.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-                errorMessage = xhr.responseJSON.message;
-                if (xhr.responseJSON.details) {
-                    errorMessage += '\n' + xhr.responseJSON.details;
-                }
-            }
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: errorMessage
-            });
-        }
-    });
-});*/
 
 // Thêm vào phần Booking trong file script.js
 function confirmBookingDelete(bookingId) {
@@ -384,7 +316,7 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: errorMessage
+                    text: "Room is booked"
                 });
             }
         });
