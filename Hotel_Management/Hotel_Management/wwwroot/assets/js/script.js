@@ -290,23 +290,23 @@
     $(document).ready(function () {
         $('.datatable').DataTable();
 	});
-	function changeRoomStatus(element) {
-		var newStatus = element.getAttribute('data-status');
-		var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
-		dropdownToggle.textContent = newStatus;
+	//function changeRoomStatus(element) {
+	//	var newStatus = element.getAttribute('data-status');
+	//	var dropdownToggle = element.closest('.dropdown').querySelector('.dropdown-toggle');
+	//	dropdownToggle.textContent = newStatus;
 
-		// Update the button class based on the new status
-		dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
-		if (newStatus === 'Available') {
-			dropdownToggle.classList.add('bg-success-light');
-		} else if (newStatus === 'Occupied') {
-			dropdownToggle.classList.add('bg-danger-light');
-		} else if (newStatus === 'Under Maintainance/Cleaning') {
-			dropdownToggle.classList.add('bg-warning-light');
-		}
+	//	// Update the button class based on the new status
+	//	dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
+	//	if (newStatus === 'Available') {
+	//		dropdownToggle.classList.add('bg-success-light');
+	//	} else if (newStatus === 'Occupied') {
+	//		dropdownToggle.classList.add('bg-danger-light');
+	//	} else if (newStatus === 'Under Maintainance/Cleaning') {
+	//		dropdownToggle.classList.add('bg-warning-light');
+	//	}
 
-		// Add your AJAX call here to update the status in the backend if needed
-	}
+	//	// Add your AJAX call here to update the status in the backend if needed
+	//}
 
 	// Ensure the function is globally accessible
 	window.changeRoomStatus = changeRoomStatus;
@@ -320,11 +320,11 @@ function changeStatus(element) {
 
 	// Update the button class based on the new status
 	dropdownToggle.classList.remove('bg-success-light', 'bg-danger-light', 'bg-warning-light');
-	if (newStatus === 'Paid' || newStatus === 'Confirm') {
+	if (newStatus === 'Paid' || newStatus === 'Confirm' || newStatus === "Available") {
 		dropdownToggle.classList.add('bg-success-light');
 	} else if (newStatus === 'Pending') {
 		dropdownToggle.classList.add('bg-warning-light');
-	} else if (newStatus === 'Cancelled') {
+	} else if (newStatus === 'Cancelled' || newStatus === "Occupied") {
 		dropdownToggle.classList.add('bg-danger-light');
 	}
 	// Add your AJAX call here to update the status in the backend if needed
@@ -668,4 +668,34 @@ function confirmSaveRoom(event, formId) {
 	} else {
 		form.reportValidity();
 	}
+}
+
+function changeRoomStatus(element) {
+	var status = $(element).data('status');
+	var roomId = $(element).closest('tr').find('td:first').text();
+
+	// Make an AJAX call to update the room status
+	$.ajax({
+		url: '/api/Rooms/ChangeStatus', // Update with your actual endpoint
+		type: 'POST',
+		contentType: 'application/json',
+		data: JSON.stringify({
+			roomId: parseInt(roomId),
+			status: status
+		}),
+		success: function (response) {
+			if (response.success) {
+				// Update the status button text and class
+				var button = $(element).closest('.dropdown').find('.dropdown-toggle');
+				button.text(status);
+				button.removeClass('bg-success-light bg-danger-light bg-secondary-light');
+				button.addClass(status === 'Available' ? 'bg-success-light' : 'bg-danger-light');
+			} else {
+				alert('Failed to update status: ' + response.message);
+			}
+		},
+		error: function (xhr, status, error) {
+			alert('Error updating status: ' + xhr.responseText);
+		}
+	});
 }

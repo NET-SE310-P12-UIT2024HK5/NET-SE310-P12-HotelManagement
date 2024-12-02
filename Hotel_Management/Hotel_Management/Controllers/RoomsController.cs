@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Hotel_Management.Controllers
 {
@@ -30,13 +32,43 @@ namespace Hotel_Management.Controllers
             return View("Error"); // Nếu role không hợp lệ
         }
 
-        public IActionResult AdminRooms()
+        public async Task<IActionResult> AdminRooms()
         {
-            return View(); // Trả về danh sách sản phẩm cho Admin
+            var rooms = await GetRoomsAsync();
+            if (rooms == null)
+            {
+                return View("Error");
+            }
+            return View(rooms);
         }
-        public IActionResult ReceptionRooms()
+        public async Task<IActionResult> ReceptionRooms()
         {
-            return View(); // Trả về danh sách sản phẩm cho Admin
+            var rooms = await GetRoomsAsync();
+            if (rooms == null)
+            {
+                return View("Error");
+            }
+            return View(rooms);
+        }
+
+        public async Task<List<Rooms>?> GetRoomsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7287/Rooms");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error retrieving data from API.");
+                    return null;
+                }
+                var rooms = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<Rooms>>(rooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving data from API.");
+                return null;
+            }
         }
     }
 }

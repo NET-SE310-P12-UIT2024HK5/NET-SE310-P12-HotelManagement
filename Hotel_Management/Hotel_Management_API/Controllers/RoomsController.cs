@@ -67,6 +67,6 @@ namespace Hotel_Management_API.Controllers
 				// Xử lý lỗi nếu có
 				return StatusCode(500, new { message = ex.Message });
 			}
-		}
-	}
+		}        
+    }    
 }
