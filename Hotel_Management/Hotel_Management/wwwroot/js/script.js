@@ -198,7 +198,7 @@ function confirmCustomerDelete(customerId) {
 }
 
 /*================================= Hàm xử lí cho Booking ===================================*/
-$('#addBookingForm').on('submit', function (event) {
+/*$('#addBookingForm').on('submit', function (event) {
     event.preventDefault();
 
     const checkInDate = $('input[name="CheckInDate"]').val();
@@ -265,7 +265,7 @@ $('#addBookingForm').on('submit', function (event) {
             });
         }
     });
-});
+});*/
 
 // Thêm vào phần Booking trong file script.js
 function confirmBookingDelete(bookingId) {
