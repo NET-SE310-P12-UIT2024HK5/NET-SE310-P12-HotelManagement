@@ -67,6 +67,68 @@ namespace Hotel_Management_API.Controllers
 				// Xử lý lỗi nếu có
 				return StatusCode(500, new { message = ex.Message });
 			}
-		}        
-    }    
+		}
+
+        [HttpPost]
+        public IActionResult CreateRoom([FromBody] Rooms room)
+        {
+            try
+            {
+                if (room == null)
+                {
+                    return BadRequest(new { message = "Room data is required." });
+                }
+
+                // Check for duplicate RoomNumber
+                var existingRoom = _context.Rooms.FirstOrDefault(r => r.RoomNumber == room.RoomNumber);
+                if (existingRoom != null)
+                {
+                    return Conflict(new { message = "A room with this number already exists." });
+                }
+
+                // Additional validations
+                if (string.IsNullOrEmpty(room.RoomNumber) || string.IsNullOrEmpty(room.RoomType))
+                {
+                    return BadRequest(new { message = "Room number and room type are required." });
+                }
+
+                // Add room to the database
+                _context.Rooms.Add(room);
+                _context.SaveChanges();
+                return CreatedAtAction(nameof(Get), new { id = room.RoomID }, room);
+            }
+            catch (DbUpdateException dbEx)
+            {
+                return StatusCode(500, new { message = "An error occurred while saving the room.", details = dbEx.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteRoom(int id)
+        {
+            // Check if the Room exists
+            var room = _context.Rooms.Find(id);
+            if (room == null)
+            {
+                return NotFound(new { message = "Room not found." });
+            }
+
+            // Check if the RoomID exists in the Booking table
+            bool isRoomLinkedToBooking = _context.Booking.Any(b => b.RoomID == id);
+            if (isRoomLinkedToBooking)
+            {
+                return Conflict(new { message = "This room is associated with existing bookings and cannot be deleted." });
+            }
+
+            // If not linked, proceed to delete
+            _context.Rooms.Remove(room);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Room deleted successfully." });
+        }
+    }
 }

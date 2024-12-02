@@ -79,6 +79,7 @@ namespace Hotel_Management_API.Controllers
 				return StatusCode(500, new { message = "An unexpected error occurred.", details = ex.Message });
 			}
 		}
+
 		[HttpDelete("{id}")]
 		public IActionResult DeleteCustomer(int id)
 		{
@@ -102,7 +103,6 @@ namespace Hotel_Management_API.Controllers
 
 			return Ok(new { message = "Customer deleted successfully." });
 		}
-
 
 		[HttpPut("{id}")]
 		public IActionResult UpdateCustomer(int id, [FromBody] Customer updatedCustomer)

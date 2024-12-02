@@ -37,20 +37,22 @@ s
 									<table class="datatable table table-stripped table-hover table-center mb-0">
 										<thead>
 											<tr>
-												<th style="width: 12.5%; text-align: center;">Room ID/#.</th>
-												<th style="width: 25%; text-align: center;">Room Type</th>
-												<th style="width: 25%; text-align: center;">Unit Price</th>
-												<th style="width: 25%; text-align: center;">Status</th>
-												<th style="width: 12.5%; text-align: center;">Actions</th>
+												<th style="width: 10%; text-align: center;">Room ID</th>
+                                                <th style="width: 20%; text-align: center;">Room Number</th>
+												<th style="width: 20%; text-align: center;">Room Type</th>
+												<th style="width: 20%; text-align: center;">Price</th>
+												<th style="width: 20%; text-align: center;">Status</th>
+												<th style="width: 10%; text-align: center;">Actions</th>
 											</tr>
 										</thead>
 										<tbody>
 											@foreach (var room in Model.Select((value, index) => new { value, index }))
 											{
 												<tr>
-													<td style="text-align: center">@(@room.index + 1)</td>
+													<td style="text-align: center">@(@room.value.RoomID)</td>
 													<td style="text-align: center">@room.value.RoomNumber</td>
 													<td style="text-align: center">@room.value.RoomType</td>
+                                                    <td style="text-align: center">@room.value.Price</td>
 													<td style="text-align: center">
 														<div class="dropdown">
 															<a href="#" class="btn btn-sm
@@ -93,14 +95,14 @@ s
 								<h4 class="card-title"><b>Add Room</b></h4>
 							</div>
 							<div class="card-body">
-								<form id="addRoomForm" action="#" method="post">
+								<form id="addRoomForm" action="#" method="post">									
 									<div class="form-group">
-										<label><b>Room ID/#.</b></label>
+										<label><b>Room Number</b></label>
 										<div class="input-group">
 											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+												<span class="input-group-text"><i class="fas fa-door-open"></i></span>
 											</div>
-											<input class="form-control" type="text" value="1" readonly required>
+											<input class="form-control" type="text" name="RoomNumber" placeholder="Enter Room Number" required>
 										</div>
 									</div>
 									<div class="form-group">
@@ -124,7 +126,7 @@ s
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 											</div>
-											<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
+											<input class="form-control no-spinner" type="number" name="Price" inputmode="numeric" placeholder="Enter Hourly Rate" required>
 											<div class="input-group-append">
 												<span class="input-group-text">VND</span>
 											</div>
@@ -140,12 +142,15 @@ s
 												<option value="" disabled selected>Select</option>
 												<option value="Available">Available</option>
 												<option value="Occupied">Occupied</option>
-												<option value="Under Maintenance">Under Maintenance/Cleaning</option>
 											</select>
 										</div>
 									</div>
+									<div class="form-group">
+										<label><b>Description</b></label>
+										<textarea class="form-control" name="Description" placeholder="Enter Description"></textarea>
+									</div>
 									<div class="container text-right">
-										<button type="button" class="btn btn-primary" onclick="confirmSaveRoom(event, 'addRoomForm')">
+										<button type="submit" class="btn btn-primary">
 											<i class="fas fa-plus"></i> Add Room
 										</button>
 									</div>
@@ -166,12 +171,12 @@ s
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room ID/#</label>
+												<label>Room Number</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+														<span class="input-group-text"><i class="fas fa-door-open"></i></span>
 													</div>
-													<input class="form-control" type="text" value="1" readonly required>
+													<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Room Number" required>
 												</div>
 											</div>
 										</div>
@@ -194,10 +199,10 @@ s
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Unit Price</label>
+												<label>Hourly Rate</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+														<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 													</div>
 													<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
 													<div class="input-group-append">
@@ -217,12 +222,17 @@ s
 														<option value="" disabled selected>Select</option>
 														<option>Available</option>
 														<option>Occupied</option>
-														<option>Under Maintenance/Cleaning</option>
 													</select>
 												</div>
 											</div>
 										</div>
-									</div>
+                                        <div class="col-md-12">
+											<div class="form-group">
+												<label><b>Description</b></label>
+												<textarea class="form-control" name="Description" placeholder="Enter Description"></textarea>
+											</div>
+										</div>
+                                    </div>
 									<div class="text-right">
 										<button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
 											<i class="fas fa-save"></i> Save
@@ -248,6 +258,7 @@ s
 	<script src="~/assets/plugins/morris/morris.min.js"></script>
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
+	<script src="~/js/script.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>

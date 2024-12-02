@@ -70,5 +70,63 @@ namespace Hotel_Management.Controllers
                 return null;
             }
         }
+
+        public async Task<IActionResult> CreateRoom([FromBody] Rooms room)
+        {
+            try
+            {
+                if (room == null)
+                {
+                    return BadRequest(new { message = "Invalid room data." });
+                }
+
+                // Send request to API
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7287/Rooms", room);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Room created successfully." });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { message = errorResponse });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while creating room.");
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError(ex.InnerException, "Inner exception while creating room.");
+                }
+                return StatusCode(500, new { message = "An error occurred while creating the room.", details = ex.InnerException?.Message });
+            }
+        }
+
+        public async Task<IActionResult> DeleteRoom(int id)
+        {
+            try
+            {
+                // Send delete request to API
+                var response = await _httpClient.DeleteAsync($"https://localhost:7287/Rooms/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Room deleted successfully." });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { message = errorResponse });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while deleting room.");
+                return StatusCode(500, new { message = "An error occurred while deleting the room." });
+            }
+        }
+
     }
 }
