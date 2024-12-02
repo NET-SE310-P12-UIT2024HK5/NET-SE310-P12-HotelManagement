@@ -183,6 +183,46 @@ namespace Hotel_Management.Controllers
         }
 
         //Update Booking
+        [HttpPost]
+        public async Task<IActionResult> UpdateBooking([FromBody] Booking updatedBooking)
+        {
+            try
+            {
+                if (updatedBooking == null)
+                {
+                    return BadRequest(new { message = "Invalid booking data." });
+                }
+
+                // Debug: In ra thông tin booking nhận được
+                _logger.LogInformation($"Received booking update: {JsonConvert.SerializeObject(updatedBooking)}");
+
+                // Gửi yêu cầu PUT đến API backend
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/Booking/{updatedBooking.BookingID}", updatedBooking);
+
+                // Debug: In ra response từ API
+                var responseContent = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation($"API Response: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Booking updated successfully.", data = responseContent });
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, new { message = responseContent });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while updating booking");
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while updating the booking.",
+                    details = ex.Message
+                });
+            }
+        }
+
 
     }
 }

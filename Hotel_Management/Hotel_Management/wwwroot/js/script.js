@@ -199,24 +199,6 @@ function confirmCustomerDelete(customerId) {
 
 /*================================= Hàm xử lí cho Booking ===================================*/
 
-// Thêm vào phần Booking trong file script.js
-function confirmBookingDelete(bookingId) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'You want to delete this booking? This action cannot be undone!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            deleteBooking(bookingId);
-        }
-    });
-}
-
 // Add booking
 $(document).ready(function () {
     // Validate dates when they change
@@ -324,6 +306,8 @@ $(document).ready(function () {
     });
 });
 
+//Delete Booking
+
 function deleteBooking(bookingId) {
     const row = $(`tr[data-booking-id="${bookingId}"]`);
     row.addClass('deleting');
@@ -363,6 +347,23 @@ function deleteBooking(bookingId) {
                 text: errorMessage,
                 confirmButtonText: 'OK'
             });
+        }
+    });
+}
+
+function confirmBookingDelete(bookingId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this booking? This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteBooking(bookingId);
         }
     });
 }
@@ -409,4 +410,6 @@ function loadBookings() {
         }
     });
 }
+
+
 

@@ -193,7 +193,7 @@
                                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                             </div>
                             <div class="modal-body">
-                                <form id="editRoomForm">
+                                <form id="editBookingForm">
                                     <div class="row formtype">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -202,8 +202,30 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
                                                     </div>
-                                                    <input class="form-control" type="text" value="1" readonly required>
+                                                    <input name="BookingID" class="form-control" type="text" required>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Customer</label>
+                                                <select name="CustomerID" class="form-control" required>
+                                                    @foreach (var customer in ViewBag.Customers)
+                                                    {
+                                                        <option value="@customer.CustomerID">@customer.FullName</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Room</label>
+                                                <select name="RoomID" class="form-control" required>
+                                                    @foreach (var room in ViewBag.Rooms)
+                                                    {
+                                                        <option value="@room.RoomID">@room.RoomNumber</option>
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -213,18 +235,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                                     </div>
-                                                    <input class="form-control" type="date">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Customer Name</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                                    </div>
-                                                    <input class="form-control no-spinner" type="text" placeholder="Enter Customer Name" required>
+                                                    <input name="CheckInDate" class="form-control" type="date" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -235,8 +246,18 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                                     </div>
-                                                    <input class="form-control" type="date">
+                                                    <input name="CheckOutDate" class="form-control" type="date" required>
                                                 </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <select name="Status" class="form-control" required>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Confirm">Confirm</option>
+                                                    <option value="Cancelled">Cancelled</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
@@ -265,6 +286,77 @@
     <script src="~/assets/js/script.js"></script>
     <script src="~/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+    <script>
+        // Biến toàn cục để lưu danh sách bookings
+        let bookings = @Html.Raw(Json.Serialize(Model));
+
+        // Hàm format ngày để hiển thị trong input date
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Sự kiện khi nhấn nút Edit trong dropdown
+        $(document).on('click', '.edit-room', function () {
+            // Lấy BookingID thực tế từ dòng hiện tại
+            const bookingIndex = $(this).closest('tr').find('td:first-child').text() - 1;
+            const booking = bookings[bookingIndex];
+
+            if (booking) {
+                // Điền thông tin vào modal
+                $('#editBookingModal input[name="BookingID"]').val(booking.bookingID);
+                $('#editBookingModal select[name="CustomerID"]').val(booking.customerID);
+                $('#editBookingModal select[name="RoomID"]').val(booking.roomID);
+                $('#editBookingModal input[name="CheckInDate"]').val(formatDate(new Date(booking.checkInDate)));
+                $('#editBookingModal input[name="CheckOutDate"]').val(formatDate(new Date(booking.checkOutDate)));
+                $('#editBookingModal select[name="Status"]').val(booking.status.toLowerCase());
+            }
+        });
+
+        // Xử lý sự kiện update booking
+        $('#editBookingButton').on('click', function () {
+            const bookingData = {
+                BookingID: parseInt($('#editBookingModal input[name="BookingID"]').val()),
+                CustomerID: parseInt($('#editBookingModal select[name="CustomerID"]').val()),
+                RoomID: parseInt($('#editBookingModal select[name="RoomID"]').val()),
+                CheckInDate: $('#editBookingModal input[name="CheckInDate"]').val(),
+                CheckOutDate: $('#editBookingModal input[name="CheckOutDate"]').val(),
+                Status: $('#editBookingModal select[name="Status"]').val()
+            };
+
+            console.log('Booking Data to Update:', bookingData);
+
+            // Gọi API update
+            $.ajax({
+                url: '/Booking/UpdateBooking',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(bookingData),
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Booking Updated',
+                        text: response.message || 'Booking updated successfully'
+                    }).then(() => {
+                        location.reload(); // Tải lại trang sau khi cập nhật
+                    });
+                },
+                error: function (xhr) {
+                    console.error('Update Error:', xhr);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Update Failed',
+                        text: xhr.responseJSON ?
+                            (xhr.responseJSON.message || 'An error occurred') :
+                            'An error occurred while updating the booking'
+                    });
+                }
+            });
+        });
+    </script>
 
 </body>
 
