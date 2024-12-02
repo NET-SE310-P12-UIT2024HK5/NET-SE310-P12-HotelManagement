@@ -217,6 +217,7 @@ function confirmBookingDelete(bookingId) {
     });
 }
 
+// Add booking
 $(document).ready(function () {
     // Validate dates when they change
     $('#checkInDate, #checkOutDate').on('change', function () {
@@ -316,7 +317,7 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: "Room is booked"
+                    text: "Room is booked! Please choose another option"
                 });
             }
         });

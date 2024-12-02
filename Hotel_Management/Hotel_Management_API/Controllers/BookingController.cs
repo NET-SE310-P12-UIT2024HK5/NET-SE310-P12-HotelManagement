@@ -186,5 +186,83 @@ namespace Hotel_Management_API.Controllers
             return Ok(new { message = "Booking deleted successfully." });
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingDTO bookingDTO)
+        {
+            try
+            {
+                if (bookingDTO == null)
+                {
+                    return BadRequest(new { message = "Booking data is required." });
+                }
+
+                // Tìm booking cần chỉnh sửa
+                var existingBooking = await _context.Booking.FindAsync(id);
+
+                if (existingBooking == null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                // Kiểm tra ngày check-in và check-out
+                if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
+                {
+                    return BadRequest(new { message = "Check-in date must be before check-out date." });
+                }
+
+                // Kiểm tra xem ngày check-in không được là ngày trong quá khứ
+                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
+                {
+                    return BadRequest(new { message = "Check-in date cannot be in the past." });
+                }
+
+                // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
+                var conflictBooking = await _context.Booking
+                    .Where(b => b.RoomID == bookingDTO.RoomID && b.BookingID != id) // Exclude the current booking
+                    .Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
+                    .FirstOrDefaultAsync();
+
+                if (conflictBooking != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "This room is already booked for the selected dates.",
+                        conflictBooking = new
+                        {
+                            checkIn = conflictBooking.CheckInDate,
+                            checkOut = conflictBooking.CheckOutDate
+                        }
+                    });
+                }
+
+                // Cập nhật thông tin booking
+                existingBooking.CustomerID = bookingDTO.CustomerID;
+                existingBooking.RoomID = bookingDTO.RoomID;
+                existingBooking.CheckInDate = bookingDTO.CheckInDate;
+                existingBooking.CheckOutDate = bookingDTO.CheckOutDate;
+                existingBooking.Status = bookingDTO.Status;
+
+                _context.Booking.Update(existingBooking);
+                await _context.SaveChangesAsync();
+
+                // Load dữ liệu liên kết
+                var updatedBooking = await _context.Booking
+                    .Include(b => b.Customer)
+                    .Include(b => b.Room)
+                    .FirstOrDefaultAsync(b => b.BookingID == id);
+
+                return Ok(new { message = "Booking updated successfully", data = updatedBooking });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in UpdateBooking");
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while updating the booking.",
+                    details = ex.Message
+                });
+            }
+        }
+
     }
 }
