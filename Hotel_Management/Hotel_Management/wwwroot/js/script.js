@@ -199,8 +199,12 @@ function confirmCustomerDelete(customerId) {
 
 /*================================= Hàm xử lí cho Booking ===================================*/
 
+
 // Add booking
 $(document).ready(function () {
+
+
+
     // Validate dates when they change
     $('#checkInDate, #checkOutDate').on('change', function () {
         validateDates();
@@ -300,6 +304,73 @@ $(document).ready(function () {
                     icon: 'error',
                     title: 'Error',
                     text: "Room is booked! Please choose another option"
+                });
+            }
+        });
+    });
+
+
+    // Hàm format ngày để hiển thị trong input date
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // Sự kiện khi nhấn nút Edit trong dropdown
+    $(document).on('click', '.edit-room', function () {
+        // Lấy BookingID thực tế từ dòng hiện tại
+        const bookingIndex = $(this).closest('tr').find('td:first-child').text() - 1;
+        const booking = bookings[bookingIndex];
+
+        if (booking) {
+            // Điền thông tin vào modal
+            $('#editBookingModal input[name="BookingID"]').val(booking.bookingID);
+            $('#editBookingModal select[name="CustomerID"]').val(booking.customerID);
+            $('#editBookingModal select[name="RoomID"]').val(booking.roomID);
+            $('#editBookingModal input[name="CheckInDate"]').val(formatDate(new Date(booking.checkInDate)));
+            $('#editBookingModal input[name="CheckOutDate"]').val(formatDate(new Date(booking.checkOutDate)));
+            $('#editBookingModal select[name="Status"]').val(booking.status.toLowerCase());
+        }
+    });
+
+    // Xử lý sự kiện update booking
+    $('#editBookingButton').on('click', function () {
+        const bookingData = {
+            BookingID: parseInt($('#editBookingModal input[name="BookingID"]').val()),
+            CustomerID: parseInt($('#editBookingModal select[name="CustomerID"]').val()),
+            RoomID: parseInt($('#editBookingModal select[name="RoomID"]').val()),
+            CheckInDate: $('#editBookingModal input[name="CheckInDate"]').val(),
+            CheckOutDate: $('#editBookingModal input[name="CheckOutDate"]').val(),
+            Status: $('#editBookingModal select[name="Status"]').val()
+        };
+
+        console.log('Booking Data to Update:', bookingData);
+
+        // Gọi API update
+        $.ajax({
+            url: '/Booking/UpdateBooking',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(bookingData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Booking Updated',
+                    text: response.message || 'Booking updated successfully'
+                }).then(() => {
+                    location.reload(); // Tải lại trang sau khi cập nhật
+                });
+            },
+            error: function (xhr) {
+                console.error('Update Error:', xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: xhr.responseJSON ?
+                        (xhr.responseJSON.message || 'An error occurred') :
+                        'An error occurred while updating the booking'
                 });
             }
         });
