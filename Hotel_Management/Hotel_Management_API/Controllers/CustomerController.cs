@@ -31,8 +31,7 @@ namespace Hotel_Management_API.Controllers
                         u.FullName,
                         u.PhoneNumber,
                         u.Email,
-                        u.CCCD,
-                        u.DateOfBirth
+                        u.CCCD
                     });
                 return Ok(customers);
             }

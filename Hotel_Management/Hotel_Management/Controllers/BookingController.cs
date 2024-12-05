@@ -36,6 +36,12 @@ namespace Hotel_Management.Controllers
 		public async Task<IActionResult> AdminBooking()
 		{
             var bookings = await GetBookingsAsync();
+
+            var customers = await GetCustomersAsync();
+            var rooms = await GetRoomsAsync();
+            ViewBag.Customers = customers;
+            ViewBag.Rooms = rooms;
+
             return View(bookings); // Truyền danh sách booking vào view
         }
 
@@ -74,6 +80,148 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        private async Task<List<Customer>> GetCustomersAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7287/Booking/customers");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Lỗi khi gọi API: {response.StatusCode}");
+                    return new List<Customer>();
+                }
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var customers = JsonConvert.DeserializeObject<List<Customer>>(jsonString);
+
+                return customers;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Lỗi khi lấy danh sách Customer: {ex.Message}");
+                return new List<Customer>();
+            }
+        }
+
+        private async Task<List<Rooms>> GetRoomsAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7287/Booking/rooms");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Lỗi khi gọi API: {response.StatusCode}");
+                    return new List<Rooms>();
+                }
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var rooms = JsonConvert.DeserializeObject<List<Rooms>>(jsonString);
+
+                return rooms;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Lỗi khi lấy danh sách Room: {ex.Message}");
+                return new List<Rooms>();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBooking([FromBody] Booking booking)
+        {
+            try
+            {
+                if (booking == null)
+                {
+                    return BadRequest(new { message = "Invalid booking data." });
+                }
+
+                // Gửi yêu cầu đến API
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7287/Booking", booking);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Booking created successfully." });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { message = errorResponse });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while creating booking");
+                return StatusCode(500, new { message = "An error occurred while creating the booking.", details = ex.Message });
+            }
+        }
+
+        // Xoá booking
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"https://localhost:7287/Booking/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Booking deleted successfully." });
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, errorContent);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting booking: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deleting the booking." });
+            }
+        }
+
+        //Update Booking
+        [HttpPost]
+        public async Task<IActionResult> UpdateBooking([FromBody] Booking updatedBooking)
+        {
+            try
+            {
+                if (updatedBooking == null)
+                {
+                    return BadRequest(new { message = "Invalid booking data." });
+                }
+
+                // Debug: In ra thông tin booking nhận được
+                _logger.LogInformation($"Received booking update: {JsonConvert.SerializeObject(updatedBooking)}");
+
+                // Gửi yêu cầu PUT đến API backend
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/Booking/{updatedBooking.BookingID}", updatedBooking);
+
+                // Debug: In ra response từ API
+                var responseContent = await response.Content.ReadAsStringAsync();
+                _logger.LogInformation($"API Response: {responseContent}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Booking updated successfully.", data = responseContent });
+                }
+                else
+                {
+                    return StatusCode((int)response.StatusCode, new { message = responseContent });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while updating booking");
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while updating the booking.",
+                    details = ex.Message
+                });
+            }
+        }
 
 
     }

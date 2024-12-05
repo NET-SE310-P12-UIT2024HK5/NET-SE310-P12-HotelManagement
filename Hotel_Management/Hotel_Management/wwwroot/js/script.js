@@ -70,7 +70,7 @@ $(document).ready(function () {
             $(this).val(value.replace(/[^\d]/g, '')); // Chỉ cho phép số
         }
 
-        if (value.length > 0 && !/^\d{9}(\d{3})?$/.test(value)) {
+        if (value.length > 0 && !/^\d{12}$/.test(value)) {
             errorSpan.text('Invalid ID number. It must be 12 digits.');
             $(this).addClass('is-invalid');
         } else {
@@ -140,7 +140,17 @@ $(document).ready(function () {
     });
 
 });
+// Thêm vào file script.js
+$(document).ready(function () {
+    $('#customerSearch').on('keyup', function () {
+        var value = $(this).val().toLowerCase();
+        $('.datatable tbody tr').filter(function () {
+            $(this).toggle($(this).children('td').eq(1).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});
 // Hàm xác nhận và xóa khách hàng
+
 function confirmCustomerDelete(customerId) {
     Swal.fire({
         title: 'Are you sure?',
@@ -188,78 +198,289 @@ function confirmCustomerDelete(customerId) {
 }
 
 /*================================= Hàm xử lí cho Booking ===================================*/
-// Hàm thêm booking
-$('#addBookingForm').on('submit', function (event) {
-    event.preventDefault();
 
-    // Kiểm tra nếu các trường quan trọng chưa được điền
-    if (!$('select[name="CustomerID"]').val()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Customer field is required!'
-        });
-        return;
+
+// Add booking
+$(document).ready(function () {
+
+
+
+    // Validate dates when they change
+    $('#checkInDate, #checkOutDate').on('change', function () {
+        validateDates();
+    });
+
+    function validateDates() {
+        const checkInDate = new Date($('#checkInDate').val());
+        const checkOutDate = new Date($('#checkOutDate').val());
+
+        // Reset validation state
+        $('#checkInDate, #checkOutDate').removeClass('is-invalid');
+
+        if (checkInDate && checkOutDate) {
+            if (checkInDate > checkOutDate) {
+                $('#checkOutDate').addClass('is-invalid');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Dates',
+                    text: 'Check-out date must be after check-in date'
+                });
+                return false;
+            }
+
+            // Check if check-in date is in the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (checkInDate <= today) {
+                $('#checkInDate').addClass('is-invalid');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid Date',
+                    text: 'Check-in date cannot be in the past'
+                });
+                return false;
+            }
+        }
+        return true;
     }
 
-    if (!$('select[name="RoomID"]').val()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Room field is required!'
+    // Modify your existing form submission
+    $('#addBookingForm').on('submit', function (event) {
+        event.preventDefault();
+
+        if (!validateDates()) {
+            return;
+        }
+
+        const bookingData = {
+            customerID: parseInt($('select[name="CustomerID"]').val()),
+            roomID: parseInt($('select[name="RoomID"]').val()),
+            checkInDate: $('#checkInDate').val(),
+            checkOutDate: $('#checkOutDate').val(),
+            status: "Pending"
+        };
+
+        // Validate required fields
+        if (!bookingData.customerID || !bookingData.roomID) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Missing Data',
+                text: 'Please select both customer and room'
+            });
+            return;
+        }
+
+        $.ajax({
+            url: '/Booking/CreateBooking',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(bookingData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Booking added successfully!'
+                }).then(() => {
+                    location.reload();
+                });
+            },
+            error: function (xhr) {
+                let errorMessage = 'An error occurred while adding the booking.';
+
+                if (xhr.responseJSON) {
+                    errorMessage = xhr.responseJSON.message;
+
+                    // If there's a booking conflict, show detailed information
+                    if (xhr.responseJSON.conflictBooking) {
+                        const conflictBooking = xhr.responseJSON.conflictBooking;
+                        const checkIn = new Date(conflictBooking.checkIn).toLocaleDateString();
+                        const checkOut = new Date(conflictBooking.checkOut).toLocaleDateString();
+                        errorMessage += `\nExisting booking: ${checkIn} to ${checkOut}`;
+                    }
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: "Room is booked! Please choose another option"
+                });
+            }
         });
-        return;
+    });
+
+
+    // Hàm format ngày để hiển thị trong input date
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
     }
 
-    if (!$('input[name="CheckInDate"]').val()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Check In Date is required!'
+    // Sự kiện khi nhấn nút Edit trong dropdown
+    $(document).on('click', '.edit-room', function () {
+        // Lấy BookingID thực tế từ dòng hiện tại
+        const bookingIndex = $(this).closest('tr').find('td:first-child').text() - 1;
+        const booking = bookings[bookingIndex];
+
+        if (booking) {
+            // Điền thông tin vào modal
+            $('#editBookingModal input[name="BookingID"]').val(booking.bookingID);
+            $('#editBookingModal select[name="CustomerID"]').val(booking.customerID);
+            $('#editBookingModal select[name="RoomID"]').val(booking.roomID);
+            $('#editBookingModal input[name="CheckInDate"]').val(formatDate(new Date(booking.checkInDate)));
+            $('#editBookingModal input[name="CheckOutDate"]').val(formatDate(new Date(booking.checkOutDate)));
+            $('#editBookingModal select[name="Status"]').val(booking.status.toLowerCase());
+        }
+    });
+
+    // Xử lý sự kiện update booking
+    $('#editBookingButton').on('click', function () {
+        const bookingData = {
+            BookingID: parseInt($('#editBookingModal input[name="BookingID"]').val()),
+            CustomerID: parseInt($('#editBookingModal select[name="CustomerID"]').val()),
+            RoomID: parseInt($('#editBookingModal select[name="RoomID"]').val()),
+            CheckInDate: $('#editBookingModal input[name="CheckInDate"]').val(),
+            CheckOutDate: $('#editBookingModal input[name="CheckOutDate"]').val(),
+            Status: $('#editBookingModal select[name="Status"]').val()
+        };
+
+        console.log('Booking Data to Update:', bookingData);
+
+        // Gọi API update
+        $.ajax({
+            url: '/Booking/UpdateBooking',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(bookingData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Booking Updated',
+                    text: response.message || 'Booking updated successfully'
+                }).then(() => {
+                    location.reload(); // Tải lại trang sau khi cập nhật
+                });
+            },
+            error: function (xhr) {
+                console.error('Update Error:', xhr);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Update Failed',
+                    text: xhr.responseJSON ?
+                        (xhr.responseJSON.message || 'An error occurred') :
+                        'An error occurred while updating the booking'
+                });
+            }
         });
-        return;
-    }
+    });
+});
 
-    if (!$('input[name="CheckOutDate"]').val()) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Check Out Date is required!'
-        });
-        return;
-    }
+//Delete Booking
 
-    // Thu thập dữ liệu và gửi qua API nếu mọi thứ hợp lệ
-    const bookingData = {
-        CustomerID: $('select[name="CustomerID"]').val(),
-        RoomID: $('select[name="RoomID"]').val(),
-        CheckInDate: $('input[name="CheckInDate"]').val(),
-        CheckOutDate: $('input[name="CheckOutDate"]').val(),
-        Status: $('select[name="Status"]').val()
-    };
+function deleteBooking(bookingId) {
+    const row = $(`tr[data-booking-id="${bookingId}"]`);
+    row.addClass('deleting');
 
-    // Gửi dữ liệu qua API
     $.ajax({
-        url: '/Booking/CreateBooking',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(bookingData),
+        url: '/Booking/DeleteBooking/' + bookingId,
+        type: 'DELETE',
+        beforeSend: function () {
+            row.find('.dropdown-action').addClass('disabled');
+        },
         success: function (response) {
             Swal.fire({
                 icon: 'success',
-                title: 'Success',
-                text: 'Booking added successfully!'
-            }).then(() => {
-                location.reload(); // Làm mới trang
+                title: 'Deleted!',
+                text: 'Booking has been deleted successfully.',
+                showConfirmButton: true,  // Hiển thị nút OK
+                confirmButtonText: 'OK',  // Text cho nút OK
+                timer: null  // Bỏ timer để alert không tự đóng
+            }).then((result) => {
+                if (result.isConfirmed) {  // Khi người dùng click OK
+                    location.reload();  // Load lại danh sách booking
+                }
+            });
+        },
+        error: function (xhr) {
+            row.removeClass('deleting');
+            row.find('.dropdown-action').removeClass('disabled');
+
+            let errorMessage = 'An error occurred while deleting the booking.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: errorMessage,
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+}
+
+function confirmBookingDelete(bookingId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You want to delete this booking? This action cannot be undone!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            deleteBooking(bookingId);
+        }
+    });
+}
+
+function loadBookings() {
+    $.ajax({
+        url: '/Booking/GetBookings', // Đảm bảo API này trả về danh sách booking
+        type: 'GET',
+        success: function (data) {
+            const tbody = $('.datatable tbody');
+            tbody.empty();
+            data.forEach(booking => {
+                tbody.append(`
+                    <tr data-booking-id="${booking.BookingID}">
+                        <td>${booking.BookingID}</td>
+                        <td>${booking.Customer.FullName}</td>
+                        <td>${booking.Room.RoomNumber}</td>
+                        <td>${new Date(booking.CheckInDate).toLocaleDateString()}</td>
+                        <td>${new Date(booking.CheckOutDate).toLocaleDateString()}</td>
+                        <td>${booking.Status}</td>
+                        <td class="text-right">
+                            <div class="dropdown dropdown-action">
+                                <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v ellipse_color"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a class="dropdown-item" href="javascript:void(0);" onclick="confirmBookingDelete(${booking.BookingID})">
+                                        <i class="fas fa-trash-alt m-r-5"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `);
             });
         },
         error: function (xhr) {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: xhr.responseJSON?.message || 'An error occurred while adding the booking.'
+                title: 'Error!',
+                text: 'An error occurred while loading bookings.',
+                confirmButtonText: 'OK'
             });
         }
     });
-});
+}
+
+
 

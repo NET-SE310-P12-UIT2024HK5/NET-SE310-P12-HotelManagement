@@ -43,9 +43,8 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, $"Lỗi kết nối cơ sở dữ liệu: {ex.Message}");
             }
         }
-
-        // Phương thức lấy tất cả booking
         // Phương thức lấy danh sách booking
+
         [HttpGet]
         public async Task<IActionResult> GetBookings()
         {
@@ -64,8 +63,206 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
+        // Lấy danh sách Customer
+        [HttpGet("customers")]
+        public async Task<IActionResult> GetCustomers()
+        {
+            try
+            {
+                var customers = await _context.Customer.ToListAsync();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy danh sách Customer");
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
 
+        // Lấy danh sách Room
+        [HttpGet("rooms")]
+        public async Task<IActionResult> GetRooms()
+        {
+            try
+            {
+                var rooms = await _context.Rooms.ToListAsync();
+                return Ok(rooms);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy danh sách Room");
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDTO)
+        {
+            try
+            {
+                if (bookingDTO == null)
+                {
+                    return BadRequest(new { message = "Booking data is required." });
+                }
+
+                // Kiểm tra ngày check-in và check-out
+                if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
+                {
+                    return BadRequest(new { message = "Check-in date must be before check-out date." });
+                }
+
+                // Kiểm tra ngày check-in không được là ngày trong quá khứ
+                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
+                {
+                    return BadRequest(new { message = "Check-in date cannot be in the past." });
+                }
+
+                // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
+                var existingBooking = await _context.Booking
+                    .Where(b => b.RoomID == bookingDTO.RoomID)
+                    .Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
+                    .FirstOrDefaultAsync();
+
+                if (existingBooking != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "This room is already booked for the selected dates.",
+                        conflictBooking = new
+                        {
+                            checkIn = existingBooking.CheckInDate,
+                            checkOut = existingBooking.CheckOutDate
+                        }
+                    });
+                }
+
+                // Tạo booking mới
+                var booking = new Booking
+                {
+                    CustomerID = bookingDTO.CustomerID,
+                    RoomID = bookingDTO.RoomID,
+                    CheckInDate = bookingDTO.CheckInDate,
+                    CheckOutDate = bookingDTO.CheckOutDate,
+                    Status = "Pending",
+                    UserID = 1  // Set this to appropriate value
+                };
+
+                _context.Booking.Add(booking);
+                await _context.SaveChangesAsync();
+
+                // Load related data
+                var createdBooking = await _context.Booking
+                    .Include(b => b.Customer)
+                    .Include(b => b.Room)
+                    .FirstOrDefaultAsync(b => b.BookingID == booking.BookingID);
+
+                return Ok(new { message = "Booking created successfully", data = createdBooking });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in CreateBooking");
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while creating the booking.",
+                    details = ex.Message
+                });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBooking(int id)
+        {
+            // Kiểm tra xem Customer có tồn tại hay không
+            var booking = _context.Booking.Find(id);
+            if (booking == null)
+            {
+                return NotFound(new { message = "Booking not found." });
+            }
+
+            // Nếu không liên kết, thực hiện xóa
+            _context.Booking.Remove(booking);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Booking deleted successfully." });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingDTO bookingDTO)
+        {
+            try
+            {
+                if (bookingDTO == null)
+                {
+                    return BadRequest(new { message = "Booking data is required." });
+                }
+
+                // Tìm booking cần chỉnh sửa
+                var existingBooking = await _context.Booking.FindAsync(id);
+
+                if (existingBooking == null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                // Kiểm tra ngày check-in và check-out
+                if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
+                {
+                    return BadRequest(new { message = "Check-in date must be before check-out date." });
+                }
+
+                // Kiểm tra xem ngày check-in không được là ngày trong quá khứ
+                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
+                {
+                    return BadRequest(new { message = "Check-in date cannot be in the past." });
+                }
+
+                // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
+                var conflictBooking = await _context.Booking
+                    .Where(b => b.RoomID == bookingDTO.RoomID && b.BookingID != id) // Exclude the current booking
+                    .Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
+                    .FirstOrDefaultAsync();
+
+                if (conflictBooking != null)
+                {
+                    return BadRequest(new
+                    {
+                        message = "This room is already booked for the selected dates.",
+                        conflictBooking = new
+                        {
+                            checkIn = conflictBooking.CheckInDate,
+                            checkOut = conflictBooking.CheckOutDate
+                        }
+                    });
+                }
+
+                // Cập nhật thông tin booking
+                existingBooking.CustomerID = bookingDTO.CustomerID;
+                existingBooking.RoomID = bookingDTO.RoomID;
+                existingBooking.CheckInDate = bookingDTO.CheckInDate;
+                existingBooking.CheckOutDate = bookingDTO.CheckOutDate;
+                existingBooking.Status = bookingDTO.Status;
+
+                _context.Booking.Update(existingBooking);
+                await _context.SaveChangesAsync();
+
+                // Load dữ liệu liên kết
+                var updatedBooking = await _context.Booking
+                    .Include(b => b.Customer)
+                    .Include(b => b.Room)
+                    .FirstOrDefaultAsync(b => b.BookingID == id);
+
+                return Ok(new { message = "Booking updated successfully", data = updatedBooking });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in UpdateBooking");
+                return StatusCode(500, new
+                {
+                    message = "An error occurred while updating the booking.",
+                    details = ex.Message
+                });
+            }
+        }
 
     }
 }

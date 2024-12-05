@@ -7,6 +7,5 @@
 		public string PhoneNumber { get; set; }
 		public string CCCD { get; set; }
 		public string Email { get; set; }
-		public DateTime? DateOfBirth { get; set; }
 	}
 }

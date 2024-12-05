@@ -20,8 +20,22 @@ namespace Data
         // Cấu hình thêm các quy tắc (nếu cần)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Cấu hình cho các bảng, ví dụ: tên bảng, khoá chính, khoá ngoại, v.v.
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.HasKey(e => e.BookingID);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany()
+                    .HasForeignKey(d => d.CustomerID)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(d => d.Room)
+                    .WithMany()
+                    .HasForeignKey(d => d.RoomID)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }
