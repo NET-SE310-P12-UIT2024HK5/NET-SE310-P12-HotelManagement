@@ -198,13 +198,8 @@ function confirmCustomerDelete(customerId) {
 }
 
 /*================================= Hàm xử lí cho Booking ===================================*/
-
-
 // Add booking
 $(document).ready(function () {
-
-
-
     // Validate dates when they change
     $('#checkInDate, #checkOutDate').on('change', function () {
         validateDates();
@@ -481,6 +476,118 @@ function loadBookings() {
         }
     });
 }
+/*================================= Hàm xử lí cho room ===================================*/
+$(document).ready(function () {   
+    $('#addRoomForm').on('submit', function (event) {
+        event.preventDefault();
 
+        // Validate input before sending
+        const roomID = 0;
+        const roomNumber = $('input[name="RoomNumber"]').val();
+        const roomType = $('select[name="room_type"]').val();
+        const price = $('input[name="Price"]').val();
+        const status = $('select[name="status"]').val();
+        const description = $('textarea[name="Description"]').val();
 
+        // Check if required fields are filled
+        if (!roomNumber || !roomType || !price) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Room number, room type, and price are required.'
+            });
+            return;
+        }
 
+        // Collect data from form
+        const roomData = {
+            RoomID: 0,
+            RoomNumber: roomNumber,
+            RoomType: roomType,
+            Price: parseInt(price),
+            Status: status,
+            Description: description
+        };
+
+        // Send data via API
+        $.ajax({
+            url: '/Rooms/CreateRoom', // API URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(roomData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Room added successfully!'
+                }).then(() => {
+                    location.reload(); // Reload the page
+                });
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate room number error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'A room with this number already exists.'
+                    });
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the room.'
+                    });
+                }
+            }
+        });
+    });   
+});
+
+function confirmRoomDelete(roomId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to undo this action!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Rooms/DeleteRoom/' + roomId,
+                type: 'DELETE',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload the page
+                    });
+                },
+                error: function (xhr) {
+                    if (xhr.status === 409) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'The room cannot be deleted because it is associated with existing bookings.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while deleting the room.',
+                            confirmButtonText: 'Close'
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
