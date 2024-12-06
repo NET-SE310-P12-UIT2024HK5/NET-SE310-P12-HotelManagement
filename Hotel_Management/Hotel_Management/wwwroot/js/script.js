@@ -271,12 +271,15 @@ $(document).ready(function () {
             return;
         }
 
+        console.log('Booking Data:', bookingData); // Log the booking data
+
         $.ajax({
             url: '/Booking/CreateBooking',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(bookingData),
             success: function (response) {
+                console.log('Success Response:', response); // Log the success response
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
@@ -286,6 +289,7 @@ $(document).ready(function () {
                 });
             },
             error: function (xhr) {
+                console.error('Error Response:', xhr); // Log the error response
                 let errorMessage = 'An error occurred while adding the booking.';
 
                 if (xhr.responseJSON) {
@@ -303,11 +307,12 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: "Room is booked! Please choose another option"
+                    text: errorMessage
                 });
             }
         });
     });
+
 
 
     // Hàm format ngày để hiển thị trong input date
@@ -481,6 +486,177 @@ function loadBookings() {
         }
     });
 }
+/*================================= Hàm xử lí cho room ===================================*/
+$(document).ready(function () {
+    $('#editRoomInformationForm').on('submit', function (e) {
+        e.preventDefault();
 
+        var roomId = $('#editRoomModal input[name="room_id"]').val();
+        var roomData = {
+            RoomID: parseInt(roomId),
+            RoomNumber: $('#editRoomModal input[name="room_number"]').val(),
+            RoomType: $('#editRoomModal select[name="room_type"]').val(),
+            Price: parseInt($('#editRoomModal input[name="price"]').val()),
+            Status: $('#editRoomModal select[name="status"]').val(),
+            Description: $('#editRoomModal textarea[name="description"]').val()
+        };
+
+        $.ajax({
+            url: '/Rooms/UpdateRoom/' + roomId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(roomData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Room information updated successfully.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload(); // Reload the page
+                });
+            },
+            error: function (xhr) {
+                if (xhr.status === 409) { // Duplicate room number
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'A room with this number already exists.',
+                        confirmButtonText: 'Close'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON.message || 'An error occurred while updating the room information.',
+                        confirmButtonText: 'Close'
+                    });
+                }
+            }
+        });
+    });
+
+    $('#addRoomForm').on('submit', function (event) {
+        event.preventDefault();
+
+        // Validate input before sending
+        const roomID = 0;
+        const roomNumber = $('input[name="RoomNumber"]').val();
+        const roomType = $('select[name="room_type"]').val();
+        const price = $('input[name="Price"]').val();
+        const status = $('select[name="status"]').val();
+        const description = $('textarea[name="Description"]').val();
+
+        // Check if required fields are filled
+        if (!roomNumber || !roomType || !price) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Room number, room type, and price are required.'
+            });
+            return;
+        }
+
+        // Collect data from form
+        const roomData = {
+            RoomID: 0,
+            RoomNumber: roomNumber,
+            RoomType: roomType,
+            Price: parseInt(price),
+            Status: status,
+            Description: description
+        };
+
+        // Send data via API
+        $.ajax({
+            url: '/Rooms/CreateRoom', // API URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(roomData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Room added successfully!'
+                }).then(() => {
+                    location.reload(); // Reload the page
+                });
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate room number error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'A room with this number already exists.'
+                    });
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the room.'
+                    });
+                }
+            }
+        });
+    });
+});
+
+function confirmRoomDelete(roomId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to undo this action!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Rooms/DeleteRoom/' + roomId,
+                type: 'DELETE',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload the page
+                    });
+                },
+                error: function (xhr) {
+                    if (xhr.status === 409) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'The room cannot be deleted because it is associated with existing bookings.'
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'An error occurred while deleting the room.',
+                            confirmButtonText: 'Close'
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+function populateEditRoomModal(roomId, roomNumber, roomType, price, status, description) {
+    $('#editRoomModal input[name="room_id"]').val(roomId);
+    $('#editRoomModal input[name="room_number"]').val(roomNumber);
+    $('#editRoomModal select[name="room_type"]').val(roomType);
+    $('#editRoomModal input[name="price"]').val(price);
+    $('#editRoomModal select[name="status"]').val(status);
+    $('#editRoomModal textarea[name="description"]').val(description);
+}
 
 

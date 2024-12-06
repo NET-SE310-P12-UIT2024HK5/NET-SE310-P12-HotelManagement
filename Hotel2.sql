@@ -132,10 +132,10 @@ INSERT INTO FoodAndBeverageServices (ItemName, ItemPrice, Category, Description,
 ('Club Sandwich', 70000, 'Food', 'Classic sandwich with chicken and vegetables.', 1);
 
 -- Insert sample data into BookingFoodServices table
-INSERT INTO BookingFoodServices (BookingID, ServiceID, Quantity, TotalPrice, OrderTime) VALUES
-(1, 1, 2, 100000, GETDATE()),
-(1, 3, 1, 70000, GETDATE()),
-(2, 2, 3, 120000, GETDATE());
+-- INSERT INTO BookingFoodServices (BookingID, ServiceID, Quantity, TotalPrice, OrderTime) VALUES
+-- (1, 1, 2, 100000, GETDATE()),
+-- (1, 3, 1, 70000, GETDATE()),
+-- (2, 2, 3, 120000, GETDATE());
 
 -- Insert sample data into Invoice table
 INSERT INTO Invoice (TotalAmount, PaymentStatus, PaymentDate) VALUES
