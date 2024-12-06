@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model List<Data.Models.Rooms>
+s
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -35,86 +37,58 @@
 									<table class="datatable table table-stripped table-hover table-center mb-0">
 										<thead>
 											<tr>
-												<th style="width: 12.5%; text-align: center;">Room ID/#.</th>
-												<th style="width: 25%; text-align: center;">Room Type</th>
-												<th style="width: 25%; text-align: center;">Unit Price</th>
-												<th style="width: 25%; text-align: center;">Status</th>
-												<th style="width: 12.5%; text-align: center;">Actions</th>
+												<th style="width: 10%; text-align: center;">Room ID</th>
+                                                <th style="width: 20%; text-align: center;">Room Number</th>
+												<th style="width: 20%; text-align: center;">Room Type</th>
+												<th style="width: 20%; text-align: center;">Price</th>
+												<th style="width: 20%; text-align: center;">Status</th>
+												<th style="width: 10%; text-align: center;">Actions</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td style="text-align: center;">1</td>
-												<td style="text-align: center;">Single</td>
-												<td style="text-align: center;">250,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Available</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
+											@foreach (var room in Model.Select((value, index) => new { value, index }))
+											{
+												<tr>
+													<td style="text-align: center">@(@room.value.RoomID)</td>
+													<td style="text-align: center">@room.value.RoomNumber</td>
+													<td style="text-align: center">@room.value.RoomType</td>
+                                                    <td style="text-align: center">@room.value.Price</td>
+													<td style="text-align: center">
+														<div class="dropdown">
+															<a href="#" class="btn btn-sm
+                                                                @(
+                                                                    room.value.Status == "Available" ? "bg-success-light" :
+                                                                    room.value.Status == "Occupied" ? "bg-danger-light" :
+                                                                    "bg-secondary-light"
+                                                                )
+                                                                mr-2 dropdown-toggle"
+															   data-toggle="dropdown"
+															   aria-expanded="false">
+																@room.value.Status
+															</a>
+															<div class="dropdown-menu">
+																<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeStatus(this)">Available</a>
+																<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeStatus(this)">Occupied</a>
+															</div>
 														</div>
-													</div>
-												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(1)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
+													</td>
+													<td class="text-right">
+														<div class="dropdown dropdown-action">
+															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+																<i class="fas fa-ellipsis-v ellipse_color"></i>
+															</a>
+															<div class="dropdown-menu dropdown-menu-right">
+																<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal" onclick="populateEditRoomModal(@room.value.RoomID, '@room.value.RoomNumber', '@room.value.RoomType', @room.value.Price, '@room.value.Status', '@room.value.Description')">
+																	<i class="fas fa-pencil-alt m-r-5"></i> Edit
+																</a>
+																<a class="dropdown-item" href="javascript:void(0);" onclick="confirmRoomDelete(@room.value.RoomID)">
+																	<i class="fas fa-trash-alt m-r-5"></i> Delete
+																</a>
+															</div>
 														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align: center;">2</td>
-												<td style="text-align: center;">Double</td>
-												<td style="text-align: center;">500,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-danger-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Occupied</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-														</div>
-													</div>
-												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(2)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align: center;">3</td>
-												<td style="text-align: center;">King/Queen</td>
-												<td style="text-align: center;">750,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Under Maintainance/Cleaning</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-														</div>
-													</div>
-												</td>
-												<td class="text-right">
-													<div class="dropdown dropdown-action">
-														<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editRoomModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
-															<a class="dropdown-item" href="#" onclick="confirmRoomDelete(3)"><i class="fas fa-trash-alt m-r-5"></i> Delete</a>
-														</div>
-													</div>
-												</td>
-											</tr>
+													</td>
+												</tr>
+											}
 										</tbody>
 									</table>
 								</div>
@@ -127,14 +101,14 @@
 								<h4 class="card-title"><b>Add Room</b></h4>
 							</div>
 							<div class="card-body">
-								<form id="addRoomForm" action="#" method="post">
+								<form id="addRoomForm" action="#" method="post">									
 									<div class="form-group">
-										<label><b>Room ID/#.</b></label>
+										<label><b>Room Number</b></label>
 										<div class="input-group">
 											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+												<span class="input-group-text"><i class="fas fa-door-open"></i></span>
 											</div>
-											<input class="form-control" type="text" value="1" readonly required>
+											<input class="form-control" type="text" name="RoomNumber" placeholder="Enter Room Number" required>
 										</div>
 									</div>
 									<div class="form-group">
@@ -158,7 +132,7 @@
 											<div class="input-group-prepend">
 												<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 											</div>
-											<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
+											<input class="form-control no-spinner" type="number" name="Price" inputmode="numeric" placeholder="Enter Hourly Rate" required>
 											<div class="input-group-append">
 												<span class="input-group-text">VND</span>
 											</div>
@@ -174,12 +148,15 @@
 												<option value="" disabled selected>Select</option>
 												<option value="Available">Available</option>
 												<option value="Occupied">Occupied</option>
-												<option value="Under Maintenance">Under Maintenance/Cleaning</option>
 											</select>
 										</div>
 									</div>
+									<div class="form-group">
+										<label><b>Description</b></label>
+										<textarea class="form-control" name="Description" placeholder="Enter Description"></textarea>
+									</div>
 									<div class="container text-right">
-										<button type="button" class="btn btn-primary" onclick="confirmSaveRoom(event, 'addRoomForm')">
+										<button type="submit" class="btn btn-primary">
 											<i class="fas fa-plus"></i> Add Room
 										</button>
 									</div>
@@ -196,16 +173,17 @@
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
 							<div class="modal-body">
-								<form id="editRoomForm">
+								<form id="editRoomInformationForm">
+									<input type="hidden" name="room_id">
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room ID/#</label>
+												<label>Room Number</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+														<span class="input-group-text"><i class="fas fa-door-open"></i></span>
 													</div>
-													<input class="form-control" type="text" value="1" readonly required>
+													<input class="form-control" type="text" name="room_number" placeholder="Enter Room Number" required>
 												</div>
 											</div>
 										</div>
@@ -216,24 +194,24 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-bed"></i></span>
 													</div>
-													<select class="form-control" id="sel1" name="sellist1" required>
+													<select class="form-control" name="room_type" required>
 														<option value="" disabled selected>Select</option>
-														<option>Single</option>
-														<option>Double</option>
-														<option>King/Queen</option>
-														<option>Suite</option>
+														<option value="Single">Single</option>
+														<option value="Double">Double</option>
+														<option value="King/Queen">King/Queen</option>
+														<option value="Suite">Suite</option>
 													</select>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Unit Price</label>
+												<label>Hourly Rate</label>
 												<div class="input-group">
 													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+														<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
 													</div>
-													<input class="form-control no-spinner" type="number" inputmode="numeric" placeholder="Enter Hourly Rate" required>
+													<input class="form-control no-spinner" type="number" name="price" inputmode="numeric" placeholder="Enter Hourly Rate" required>
 													<div class="input-group-append">
 														<span class="input-group-text">VND</span>
 													</div>
@@ -247,18 +225,23 @@
 													<div class="input-group-prepend">
 														<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
 													</div>
-													<select class="form-control" id="sel2" name="sellist1" required>
+													<select class="form-control" name="status" required>
 														<option value="" disabled selected>Select</option>
-														<option>Available</option>
-														<option>Occupied</option>
-														<option>Under Maintenance/Cleaning</option>
+														<option value="Available">Available</option>
+														<option value="Occupied">Occupied</option>
 													</select>
 												</div>
 											</div>
 										</div>
+										<div class="col-md-12">
+											<div class="form-group">
+												<label><b>Description</b></label>
+												<textarea class="form-control" name="description" placeholder="Enter Description"></textarea>
+											</div>
+										</div>
 									</div>
 									<div class="text-right">
-										<button type="submit" class="btn btn-primary btn-success" onclick="confirmSaveRoom(event, 'editRoomForm')">
+										<button type="submit" class="btn btn-primary btn-success">
 											<i class="fas fa-save"></i> Save
 										</button>
 										<button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
@@ -282,6 +265,7 @@
 	<script src="~/assets/plugins/morris/morris.min.js"></script>
 	<script src="~/assets/js/chart.morris.js"></script>
 	<script src="~/assets/js/script.js"></script>
+	<script src="~/js/script.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>
