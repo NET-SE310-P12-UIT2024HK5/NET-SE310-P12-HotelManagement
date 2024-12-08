@@ -140,7 +140,7 @@ $(document).ready(function () {
     });
 
 });
-// Thêm vào file script.js
+// Customer search by name
 $(document).ready(function () {
     $('#customerSearch').on('keyup', function () {
         var value = $(this).val().toLowerCase();
@@ -202,9 +202,6 @@ function confirmCustomerDelete(customerId) {
 
 // Add booking
 $(document).ready(function () {
-
-
-
     // Validate dates when they change
     $('#checkInDate, #checkOutDate').on('change', function () {
         validateDates();
@@ -383,7 +380,6 @@ $(document).ready(function () {
 });
 
 //Delete Booking
-
 function deleteBooking(bookingId) {
     const row = $(`tr[data-booking-id="${bookingId}"]`);
     row.addClass('deleting');
@@ -540,8 +536,6 @@ $(document).ready(function () {
         });
     });
 
-
-
     $('#addRoomForm').on('submit', function (event) {
         event.preventDefault();
 
@@ -606,6 +600,15 @@ $(document).ready(function () {
                     });
                 }
             }
+        });
+    });    
+});
+
+$(document).ready(function () {
+    $('#roomSearch').on('keyup', function () {
+        var value = $(this).val().toLowerCase();
+        $('.datatable tbody tr').filter(function () {
+            $(this).toggle($(this).children('td').eq(1).text().toLowerCase().indexOf(value) > -1)
         });
     });
 });
