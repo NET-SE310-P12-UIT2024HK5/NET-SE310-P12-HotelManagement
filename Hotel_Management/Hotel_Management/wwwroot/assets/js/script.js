@@ -487,27 +487,32 @@ function submitOrder() {
 
 document.addEventListener('DOMContentLoaded', function () {
 	var today = new Date().toISOString().split('T')[0];
-	document.getElementById('fromDate').value = today;
-	document.getElementById('toDate').value = today;	
+
+	var checkInDate = document.getElementById('checkInDate');
+	if (checkInDate) {
+		checkInDate.value = today;
+	}
+
+	var checkOutDate = document.getElementById('checkOutDate');
+	if (checkOutDate) {
+		checkOutDate.value = today;
+	}
+
+	var fromDate = document.getElementById('fromDate');
+	if (fromDate) {
+		fromDate.value = today;
+	}
+
+	var toDate = document.getElementById('toDate');
+	if (toDate) {
+		toDate.value = today;
+	}
+
+	var invoicePaymentDate = document.getElementById('InvoicePaymentDate');
+	if (invoicePaymentDate) {
+		invoicePaymentDate.value = today;
+	}
 });
-
-document.addEventListener('DOMContentLoaded', function () {
-	var today = new Date().toISOString().split('T')[0];
-	document.getElementById('invoiceDate').value = today;
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-	// Lấy ô input
-	var checkInInput = document.querySelector('input[name="check_in"]');
-	var checkOutInput = document.querySelector('input[name="check_out"]');
-	// Lấy ngày hiện tại
-	var today = new Date().toISOString().split('T')[0];
-	// Gán giá trị mặc định cho ô input
-	checkInInput.value = today;
-	checkOutInput.value = today;
-});
-
-
 
 function confirmInvoiceDelete(invoiceId) {
 	Swal.fire({
@@ -669,3 +674,47 @@ function confirmSaveRoom(event, formId) {
 		form.reportValidity();
 	}
 }
+
+function formatCurrency(input) {
+	// Remove non-numeric characters
+	let value = input.value.replace(/\D/g, '');
+
+	// Format the value with thousand separators (comma)
+	value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+	// Set the formatted value back to the input
+	input.value = value;
+
+	// Determine the hidden input field based on the input name
+	let hiddenInputName;
+	if (input.name === 'PriceFormatted' || input.name === 'PriceFormattedEdit') {
+		hiddenInputName = input.name === 'PriceFormatted' ? 'Price' : 'PriceEdit';
+	} else if (input.name === 'TotalAmountFormatted' || input.name === 'total_amount_formatted') {
+		hiddenInputName = input.name === 'TotalAmountFormatted' ? 'TotalAmount' : 'total_amount';
+	}
+	document.querySelector(`input[name="${hiddenInputName}"]`).value = value.replace(/,/g, '');
+}
+
+document.getElementById('addRoomForm').addEventListener('submit', function (event) {
+	// Ensure the hidden input has the correct numeric value before submitting
+	const formattedInput = document.querySelector('input[name="PriceFormatted"]');
+	document.querySelector('input[name="Price"]').value = formattedInput.value.replace(/\D/g, '');
+});
+
+document.getElementById('editRoomInformationForm').addEventListener('submit', function (event) {
+	// Ensure the hidden input has the correct numeric value before submitting
+	const formattedInput = document.querySelector('input[name="PriceFormattedEdit"]');
+	document.querySelector('input[name="PriceEdit"]').value = formattedInput.value.replace(/\D/g, '');
+});
+
+document.getElementById('addInvoiceForm').addEventListener('submit', function (event) {
+	// Ensure the hidden input has the correct numeric value before submitting
+	const formattedInput = document.querySelector('input[name="TotalAmountFormatted"]');
+	document.querySelector('input[name="TotalAmount"]').value = formattedInput.value.replace(/\D/g, '');
+});
+
+document.getElementById('editInvoiceForm').addEventListener('submit', function (event) {
+	// Ensure the hidden input has the correct numeric value before submitting
+	const formattedInput = document.querySelector('input[name="total_amount_formatted"]');
+	document.querySelector('input[name="total_amount"]').value = formattedInput.value.replace(/\D/g, '');
+});

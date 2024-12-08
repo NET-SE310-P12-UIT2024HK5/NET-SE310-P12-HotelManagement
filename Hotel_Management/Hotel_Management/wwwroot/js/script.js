@@ -672,29 +672,119 @@ function populateEditRoomModal(roomId, roomNumber, roomType, price, status, desc
     $('#editRoomModal input[name="PriceEdit"]').val(price);
 }
 
-function formatCurrency(input) {
-    // Remove non-numeric characters
-    let value = input.value.replace(/\D/g, '');
+/*================================= Hàm xử lí cho invoice ===================================*/
+$(document).ready(function () {
+    $('#addInvoiceForm').on('submit', function (event) {
+        event.preventDefault();
 
-    // Format the value with thousand separators (comma)
-    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        // Validate input before sending
+        const invoiceID = 0;
+        const bookingID = $('select[name="BookingID"]').val();
+        const paymentDate = $('input[name="PaymentDate"]').val();
+        const totalAmount = $('input[name="TotalAmount"]').val();
+        const paymentStatus = $('select[name="PaymentStatus"]').val();
 
-    // Set the formatted value back to the input
-    input.value = value;
+        // Check if required fields are filled
+        if (!bookingID || !paymentDate || !totalAmount || !paymentStatus) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Booking ID, payment date, total amount, and payment status are required.'
+            });
+            return;
+        }
 
-    // Determine the hidden input field based on the input name
-    const hiddenInputName = input.name === 'PriceFormatted' ? 'Price' : 'PriceEdit';
-    document.querySelector(`input[name="${hiddenInputName}"]`).value = value.replace(/,/g, '');
+        // Collect data from form
+        const invoiceData = {
+            InvoiceID: 0,
+            BookingID: bookingID,
+            PaymentDate: paymentDate,
+            TotalAmount: parseInt(totalAmount),
+            PaymentStatus: paymentStatus
+        };
+
+        // Send data via API
+        $.ajax({
+            url: '/Invoice/CreateInvoice', // API URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(invoiceData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Invoice added successfully!'
+                }).then(() => {
+                    location.reload(); // Reload the page
+                });
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate invoice error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An invoice with this ID already exists.'
+                    });
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the invoice.'
+                    });
+                }
+            }
+        });
+    });
+
+
+});
+
+function populateEditInvoiceModal(invoiceId, bookingId, totalAmount, paymentStatus, paymentDate) {
+    $('#editInvoiceModal input[name="invoice_id"]').val(invoiceId);
+    $('#editInvoiceModal input[name="booking_id"]').val(bookingId);
+    $('#editInvoiceModal input[name="total_amount_formatted"]').val(totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+    $('#editInvoiceModal input[name="total_amount"]').val(totalAmount);
+    $('#editInvoiceModal select[name="payment_status"]').val(paymentStatus);
+    $('#editInvoiceModal input[name="payment_date"]').val(paymentDate);
 }
 
-document.getElementById('addRoomForm').addEventListener('submit', function (event) {
-    // Ensure the hidden input has the correct numeric value before submitting
-    const formattedInput = document.querySelector('input[name="PriceFormatted"]');
-    document.querySelector('input[name="Price"]').value = formattedInput.value.replace(/\D/g, '');
-});
-
-document.getElementById('editRoomInformationForm').addEventListener('submit', function (event) {
-    // Ensure the hidden input has the correct numeric value before submitting
-    const formattedInput = document.querySelector('input[name="PriceFormattedEdit"]');
-    document.querySelector('input[name="PriceEdit"]').value = formattedInput.value.replace(/\D/g, '');
-});
+function confirmInvoiceDelete(invoiceId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to undo this action!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Invoices/DeleteInvoice/' + invoiceId,
+                type: 'DELETE',
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload the page
+                    });
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while deleting the invoice.',
+                        confirmButtonText: 'Close'
+                    });
+                }
+            });
+        }
+    });
+}
