@@ -491,12 +491,16 @@ $(document).ready(function () {
     $('#editRoomInformationForm').on('submit', function (e) {
         e.preventDefault();
 
+        // Ensure the hidden input has the correct numeric value before submitting
+        const formattedInput = document.querySelector('input[name="PriceFormattedEdit"]');
+        document.querySelector('input[name="PriceEdit"]').value = formattedInput.value.replace(/\D/g, '');
+
         var roomId = $('#editRoomModal input[name="room_id"]').val();
         var roomData = {
             RoomID: parseInt(roomId),
             RoomNumber: $('#editRoomModal input[name="room_number"]').val(),
             RoomType: $('#editRoomModal select[name="room_type"]').val(),
-            Price: parseInt($('#editRoomModal input[name="price"]').val()),
+            Price: parseInt($('#editRoomModal input[name="PriceEdit"]').val()),
             Status: $('#editRoomModal select[name="status"]').val(),
             Description: $('#editRoomModal textarea[name="description"]').val()
         };
@@ -535,6 +539,8 @@ $(document).ready(function () {
             }
         });
     });
+
+
 
     $('#addRoomForm').on('submit', function (event) {
         event.preventDefault();
@@ -654,9 +660,38 @@ function populateEditRoomModal(roomId, roomNumber, roomType, price, status, desc
     $('#editRoomModal input[name="room_id"]').val(roomId);
     $('#editRoomModal input[name="room_number"]').val(roomNumber);
     $('#editRoomModal select[name="room_type"]').val(roomType);
-    $('#editRoomModal input[name="price"]').val(price);
     $('#editRoomModal select[name="status"]').val(status);
     $('#editRoomModal textarea[name="description"]').val(description);
+
+    // Format the price with thousand separators
+    const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    $('#editRoomModal input[name="PriceFormattedEdit"]').val(formattedPrice);
+    $('#editRoomModal input[name="PriceEdit"]').val(price);
 }
 
+function formatCurrency(input) {
+    // Remove non-numeric characters
+    let value = input.value.replace(/\D/g, '');
 
+    // Format the value with thousand separators (comma)
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Set the formatted value back to the input
+    input.value = value;
+
+    // Determine the hidden input field based on the input name
+    const hiddenInputName = input.name === 'PriceFormatted' ? 'Price' : 'PriceEdit';
+    document.querySelector(`input[name="${hiddenInputName}"]`).value = value.replace(/,/g, '');
+}
+
+document.getElementById('addRoomForm').addEventListener('submit', function (event) {
+    // Ensure the hidden input has the correct numeric value before submitting
+    const formattedInput = document.querySelector('input[name="PriceFormatted"]');
+    document.querySelector('input[name="Price"]').value = formattedInput.value.replace(/\D/g, '');
+});
+
+document.getElementById('editRoomInformationForm').addEventListener('submit', function (event) {
+    // Ensure the hidden input has the correct numeric value before submitting
+    const formattedInput = document.querySelector('input[name="PriceFormattedEdit"]');
+    document.querySelector('input[name="PriceEdit"]').value = formattedInput.value.replace(/\D/g, '');
+});
