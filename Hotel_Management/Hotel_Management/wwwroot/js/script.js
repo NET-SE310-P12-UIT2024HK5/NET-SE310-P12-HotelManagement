@@ -543,7 +543,7 @@ $(document).ready(function () {
         const roomID = 0;
         const roomNumber = $('input[name="RoomNumber"]').val();
         const roomType = $('select[name="room_type"]').val();
-        const price = $('input[name="Price"]').val();
+        const price = $('input[name="HourlyRate"]').val();
         const status = $('select[name="status"]').val();
         const description = $('textarea[name="Description"]').val();
 
@@ -663,92 +663,124 @@ function populateEditRoomModal(roomId, roomNumber, roomType, price, status, desc
     $('#editRoomModal input[name="room_id"]').val(roomId);
     $('#editRoomModal input[name="room_number"]').val(roomNumber);
     $('#editRoomModal select[name="room_type"]').val(roomType);
+    $('#editRoomModal input[name="HourlyRateEdit"]').val(price);
     $('#editRoomModal select[name="status"]').val(status);
     $('#editRoomModal textarea[name="description"]').val(description);
-
-    // Format the price with thousand separators
-    const formattedPrice = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    $('#editRoomModal input[name="PriceFormattedEdit"]').val(formattedPrice);
-    $('#editRoomModal input[name="PriceEdit"]').val(price);
 }
 
 /*================================= Hàm xử lí cho invoice ===================================*/
 $(document).ready(function () {
-    $('#addInvoiceForm').on('submit', function (event) {
-        event.preventDefault();
+    $(document).ready(function () {
+        $('#BookingID, #Quantity').on('change', function () {
+            calculateTotalAmount();
+        });
 
-        // Validate input before sending
-        const invoiceID = 0;
-        const bookingID = $('select[name="BookingID"]').val();
-        const paymentDate = $('input[name="PaymentDate"]').val();
-        const totalAmount = $('input[name="TotalAmount"]').val();
-        const paymentStatus = $('select[name="PaymentStatus"]').val();
+        function calculateTotalAmount() {
+            const bookingID = $('#BookingID').val();
+            const quantity = $('#Quantity').val();
 
-        // Check if required fields are filled
-        if (!bookingID || !paymentDate || !totalAmount || !paymentStatus) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Booking ID, payment date, total amount, and payment status are required.'
-            });
-            return;
-        }
+            if (!bookingID || !quantity) {
+                $('#TotalAmount').val('');
+                return;
+            }
 
-        // Collect data from form
-        const invoiceData = {
-            InvoiceID: 0,
-            BookingID: bookingID,
-            PaymentDate: paymentDate,
-            TotalAmount: parseInt(totalAmount),
-            PaymentStatus: paymentStatus
-        };
-
-        // Send data via API
-        $.ajax({
-            url: '/Invoice/CreateInvoice', // API URL
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(invoiceData),
-            success: function (response) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Invoice added successfully!'
-                }).then(() => {
-                    location.reload(); // Reload the page
-                });
-            },
-            error: function (xhr) {
-                // Handle different types of errors
-                if (xhr.status === 409) {
-                    // Duplicate invoice error
+            // Fetch the hourly price based on the booking ID
+            $.ajax({
+                url: `/Rooms/GetHourlyPrice/${bookingID}`,
+                type: 'GET',
+                success: function (response) {
+                    const hourlyPrice = response.hourlyPrice;
+                    const totalAmount = hourlyPrice * quantity;
+                    $('#TotalAmount').val(totalAmount);
+                },
+                error: function (xhr) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'An invoice with this ID already exists.'
-                    });
-                } else {
-                    // Other errors
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: xhr.responseJSON?.message || 'An error occurred while adding the invoice.'
+                        text: 'An error occurred while fetching the hourly price.'
                     });
                 }
+            });
+        }
+
+        $('#addInvoiceForm').on('submit', function (event) {
+            event.preventDefault();
+
+            // Validate input before sending
+            const bookingID = $('select[name="BookingID"]').val();
+            const paymentDate = $('input[name="PaymentDate"]').val();
+            const totalAmount = $('input[name="TotalAmount"]').val();
+            const paymentStatus = $('select[name="PaymentStatus"]').val();
+
+            // Check if required fields are filled
+            if (!bookingID || !paymentDate || !totalAmount || !paymentStatus) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Booking ID, payment date, total amount, and payment status are required.'
+                });
+                return;
             }
+
+            // Collect data from form
+            const invoiceData = {
+                InvoiceID: 0,
+                BookingID: bookingID,
+                PaymentDate: paymentDate,
+                TotalAmount: parseInt(totalAmount),
+                PaymentStatus: paymentStatus
+            };
+
+            // Send data via API
+            $.ajax({
+                url: '/Invoice/CreateInvoice', // API URL
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(invoiceData),
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Invoice added successfully!'
+                    }).then(() => {
+                        location.reload(); // Reload the page
+                    });
+                },
+                error: function (xhr) {
+                    // Handle different types of errors
+                    if (xhr.status === 409) {
+                        // Duplicate invoice error
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An invoice with this ID already exists.'
+                        });
+                    } else {
+                        // Other errors
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: xhr.responseJSON?.message || 'An error occurred while adding the invoice.'
+                        });
+                    }
+                }
+            });
+
+            return false;
         });
     });
-
-
 });
 
 function populateEditInvoiceModal(invoiceId, bookingId, totalAmount, paymentStatus, paymentDate) {
+    // Set the values in the edit modal
     $('#editInvoiceModal input[name="invoice_id"]').val(invoiceId);
-    $('#editInvoiceModal input[name="booking_id"]').val(bookingId);
-    $('#editInvoiceModal input[name="total_amount_formatted"]').val(totalAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+    $('#editInvoiceModal select[name="booking_id"]').val(bookingId);
     $('#editInvoiceModal input[name="total_amount"]').val(totalAmount);
     $('#editInvoiceModal select[name="payment_status"]').val(paymentStatus);
-    $('#editInvoiceModal input[name="payment_date"]').val(paymentDate);
+    $('#editInvoiceModal input[name="payment_date"]').val(new Date(paymentDate).toISOString().split('T')[0]);
+
+    // Show the modal
+    $('#editInvoiceModal').modal('show');
 }
 
 function confirmInvoiceDelete(invoiceId) {
@@ -764,7 +796,7 @@ function confirmInvoiceDelete(invoiceId) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Invoices/DeleteInvoice/' + invoiceId,
+                url: '/Invoice/DeleteInvoice/' + invoiceId,
                 type: 'DELETE',
                 success: function (response) {
                     Swal.fire({
@@ -788,3 +820,4 @@ function confirmInvoiceDelete(invoiceId) {
         }
     });
 }
+

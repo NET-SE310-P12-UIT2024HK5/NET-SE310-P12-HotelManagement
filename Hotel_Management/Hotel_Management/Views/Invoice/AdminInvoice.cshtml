@@ -148,7 +148,7 @@
                                     <div class="form-group">
                                         <label><b>Booking ID</b></label>
                                         <div class="input-group">
-                                            <select class="form-control" name="BookingID" required>
+                                            <select class="form-control" name="BookingID" id="BookingID" required>
                                                 <option value="" disabled selected>Select Booking ID</option>
                                                 @foreach (var booking in ViewBag.Bookings)
                                                 {
@@ -164,11 +164,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <label><b>Quantity</b></label>
+                                        <div class="input-group">
+                                            <input class="form-control no-spinner" type="number" id="Quantity" name="Quantity" inputmode="numeric" placeholder="Enter Quantity" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
                                         <label><b>Total Amount</b></label>
                                         <div class="input-group">
-                                            <input class="form-control no-spinner" type="text" name="TotalAmountFormatted" inputmode="numeric" placeholder="Enter Total Amount" required oninput="formatCurrency(this)">
+                                            <input class="form-control no-spinner" type="number" id="TotalAmount" name="TotalAmount" inputmode="numeric" placeholder="Enter Total Amount" readonly required>
                                         </div>
-                                        <input type="hidden" name="TotalAmount" />
                                     </div>
                                     <div class="form-group">
                                         <label><b>Status</b></label>
@@ -185,6 +190,7 @@
                                         </button>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -199,10 +205,10 @@
                             <div class="modal-body">
                                 <form id="editInvoiceForm">
                                     <input type="hidden" name="invoice_id">
-                                    <div class="row formtype">
+                                    <div class="row formtype">                                        
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Invoice ID</label>
+                                                <label>Booking ID</label>
                                                 <div class="input-group">
                                                     @* <div class="input-group-prepend"> *@
                                                     @*     <span class="input-group-text"><i class="fas fa-id-badge"></i></span> *@
@@ -219,12 +225,12 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Booking ID</label>
+                                                <label>Payment Date</label>
                                                 <div class="input-group">
                                                     @* <div class="input-group-prepend"> *@
-                                                    @*     <span class="input-group-text"><i class="fas fa-id-badge"></i></span> *@
+                                                    @*     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span> *@
                                                     @* </div> *@
-                                                    <input class="form-control no-spinner" type="number" name="booking_id" placeholder="Enter Booking ID" required>
+                                                    <input type="date" class="form-control" name="payment_date" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -235,7 +241,7 @@
                                                     @* <div class="input-group-prepend"> *@
                                                     @*     <span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span> *@
                                                     @* </div> *@
-                                                    <input class="form-control no-spinner" type="text" name="total_amount_formatted" inputmode="numeric" placeholder="Enter Total Amount" required oninput="formatCurrency(this)">
+                                                    <input class="form-control no-spinner" type="number" name="total_amount" inputmode="numeric" placeholder="Enter Total Amount" required>
                                                     @* <div class="input-group-append"> *@
                                                     @*     <span class="input-group-text">VND</span> *@
                                                     @* </div> *@
@@ -256,18 +262,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Payment Date</label>
-                                                <div class="input-group">
-                                                    @* <div class="input-group-prepend"> *@
-                                                    @*     <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span> *@
-                                                    @* </div> *@
-                                                    <input type="date" class="form-control" name="payment_date" required>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </div>                                       
                                     </div>
                                     <div class="text-right">
                                         <button type="submit" class="btn btn-primary btn-success">
@@ -294,6 +289,7 @@
     <script src="~/assets/plugins/morris/morris.min.js"></script>
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
+    <script src="~/js/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </body>
 </html>

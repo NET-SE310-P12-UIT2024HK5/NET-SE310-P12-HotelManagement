@@ -155,12 +155,11 @@
 											@* <div class="input-group-prepend"> *@
 											@* 	<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span> *@
 											@* </div> *@
-											<input class="form-control no-spinner" type="text" name="PriceFormatted" inputmode="numeric" placeholder="Enter Hourly Rate" required oninput="formatCurrency(this)">
+											<input class="form-control no-spinner" name="HourlyRate" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
 											@* <div class="input-group-append">
 												<span class="input-group-text">VND</span>
 											</div> *@
-										</div>
-										<input type="hidden" name="Price" />
+										</div>										
 									</div>
 
 									<div class="form-group">
@@ -236,12 +235,11 @@
 													@* <div class="input-group-prepend"> *@
 													@* 	<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span> *@
 													@* </div> *@
-													<input class="form-control no-spinner" type="text" name="PriceFormattedEdit" inputmode="numeric" placeholder="Enter Hourly Rate" required oninput="formatCurrency(this)">
+													<input class="form-control no-spinner" name="HourlyRateEdit" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
 													@* <div class="input-group-append"> *@
 													@* 	<span class="input-group-text">VND</span> *@
 													@* </div> *@
 												</div>
-												<input type="hidden" name="PriceEdit" />
 											</div>
 										</div>
 										<div class="col-md-6">

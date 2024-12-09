@@ -95,6 +95,29 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
+        [HttpGet("GetHourlyPrice/{bookingID}")]
+        public IActionResult GetHourlyPrice(int bookingID)
+        {
+            try
+            {
+                // Find the booking and include the room details
+                var booking = _context.Booking.Include(b => b.Room).FirstOrDefault(b => b.BookingID == bookingID);
+                if (booking == null)
+                {
+                    return NotFound(new { message = "Booking not found." });
+                }
+
+                // Get the hourly price from the room
+                var hourlyPrice = booking.Room.Price;
+                return Ok(new { hourlyPrice });
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors that occur
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDTO)
         {
