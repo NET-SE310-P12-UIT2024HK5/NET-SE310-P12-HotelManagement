@@ -54,6 +54,7 @@ namespace Hotel_Management_API.Controllers
                     {
                         i.InvoiceID,
                         i.BookingID,
+                        i.Duration,
                         i.TotalAmount,
                         i.PaymentStatus,
                         i.PaymentDate
@@ -65,6 +66,22 @@ namespace Hotel_Management_API.Controllers
                 // Xử lý lỗi nếu có
                 return StatusCode(500, new { message = ex.Message });
             }
+        }
+
+        [HttpGet("getroomprice/{bookingId}")]
+        public ActionResult<int> GetRoomPrice(int bookingId)
+        {
+            var roomPrice = (from booking in _context.Booking
+                             join room in _context.Rooms on booking.RoomID equals room.RoomID
+                             where booking.BookingID == bookingId
+                             select room.Price).FirstOrDefault();
+
+            if (roomPrice == default)
+            {
+                return NotFound();
+            }
+
+            return Ok(roomPrice);
         }
 
         [HttpPost]
@@ -81,6 +98,12 @@ namespace Hotel_Management_API.Controllers
                 if (invoice.BookingID <= 0 || invoice.TotalAmount <= 0)
                 {
                     return BadRequest(new { message = "Booking ID and total amount are required." });
+                }
+
+                var existingInvoice = _context.Invoice.FirstOrDefault(i => i.BookingID == invoice.BookingID);
+                if (existingInvoice != null)
+                {
+                    return Conflict(new { message = "An invoice with this booking ID already exists." });
                 }
 
                 // Add invoice to the database
@@ -129,6 +152,7 @@ namespace Hotel_Management_API.Controllers
 
                 // Update invoice information
                 existingInvoice.BookingID = updatedInvoice.BookingID;
+                existingInvoice.Duration = updatedInvoice.Duration;
                 existingInvoice.TotalAmount = updatedInvoice.TotalAmount;
                 existingInvoice.PaymentStatus = updatedInvoice.PaymentStatus;
                 existingInvoice.PaymentDate = updatedInvoice.PaymentDate;

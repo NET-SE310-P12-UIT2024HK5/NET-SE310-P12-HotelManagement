@@ -95,6 +95,27 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        public async Task<int> GetRoomPrice(int bookingId)
+        {
+            try
+            {
+                _logger.LogInformation("Received Booking ID: {BookingID}", bookingId);
+                var response = await _httpClient.GetAsync($"https://localhost:7287/Invoice/getroomprice/{bookingId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error retrieving room price from API. Status Code: {StatusCode}, Reason: {ReasonPhrase}", response.StatusCode, response.ReasonPhrase);
+                    return 0;
+                }
+                var roomPrice = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<int>(roomPrice);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving room price from API.");
+                return 0;
+            }
+        }
+
         public async Task<IActionResult> CreateInvoice([FromBody] Invoice invoice)
         {
             try

@@ -52,55 +52,38 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <table class="datatable table table-stripped table table-hover table-center mb-0 text-center">
-                                        <colgroup>
-                                            <col style="width: 5%;">
-                                            <col style="width: 30%;">
-                                            <col style="width: 20%;">
-                                            <col style="width: 20%;">
-                                        </colgroup>
+                                    <table class="datatable table table-stripped table table-hover table-center mb-0 text-center">                                       
                                         <thead>
-                                            <tr>
-                                                <th>Booking ID</th>
-                                                <th>Customer</th>
-                                                <th>Room Number</th>
-                                                <th>Check In</th>
-                                                <th>Check Out</th>
-                                                <th>Status</th>
-                                                <th class="text-right">Actions</th>
+                                            <tr>                                                
+                                                <th style="width: 5%; text-align: center;">No.</th>
+                                                <th style="width: 17%; text-align: center;">Customer Name</th>
+                                                <th style="width: 14%; text-align: center;">Room Number</th>
+                                                <th style="width: 17%; text-align: center;">Check In Date</th>
+                                                <th style="width: 17%; text-align: center;">Check Out Date</th>
+                                                <th style="width: 17%; text-align: center;">Status</th>
+                                                <th style="width: 13%; text-align: center;">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @foreach (var booking in Model.Select((value, index) => new { value, index }))
                                             {
                                                 <tr>
-                                                    <td>@(@booking.index + 1)</td>
-                                                    <td>@booking.value.Customer.FullName</td>
-                                                    <td>@booking.value.Room.RoomNumber</td>
-                                                    <td>@booking.value.CheckInDate.ToString("dd/MM/yyyy")</td>
-                                                    <td>@booking.value.CheckOutDate.ToString("dd/MM/yyyy")</td>
-                                                    @* <td>@booking.Status</td> *@
-                                                    <td>
-                                                        <div class="dropdown">
-                                                            <a href="#" class="btn btn-sm
-                                                                @(
-                                                                    booking.value.Status == "Pending" ? "bg-warning-light" :
-                                                                    booking.value.Status == "Confirm" ? "bg-success-light" :
-                                                                    booking.value.Status == "Cancelled" ? "bg-danger-light" :
-                                                                    "bg-secondary-light"
-                                                                )
-                                                                mr-2 dropdown-toggle"
-                                                               data-toggle="dropdown"
-                                                               aria-expanded="false">
-                                                                @booking.value.Status
-                                                            </a>
-                                                            <div class="dropdown-menu">
-                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Pending" onclick="changeStatus(this)">Pending</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Confirm" onclick="changeStatus(this)">Confirm</a>
-                                                                <a class="dropdown-item" href="javascript:void(0);" data-status="Cancelled" onclick="changeStatus(this)">Cancelled</a>
-                                                            </div>
-                                                        </div>
-
+                                                    <td style="text-align: center">@(@booking.index + 1)</td>
+                                                    <td style="text-align: center">@booking.value.Customer.FullName</td>
+                                                    <td style="text-align: center">@booking.value.Room.RoomNumber</td>
+                                                    <td style="text-align: center">@booking.value.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                                    <td style="text-align: center">@booking.value.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                                    <td style="text-align: center">
+                                                        <span class="badge
+                                                            @(
+                                                                booking.value.Status == "Pending" ? "bg-warning-light" :
+                                                                booking.value.Status == "Confirm" ? "bg-success-light" :
+                                                                booking.value.Status == "Cancelled" ? "bg-danger-light" :
+                                                                "bg-secondary-light"
+                                                            )">
+                                                            @booking.value.Status
+                                                        </span>
+                                                    </td>
                                                     <td class="text-right">
                                                         <div class="dropdown dropdown-action">
                                                             <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
@@ -127,7 +110,7 @@
                             <div class="card-body">
                                 <form id="addBookingForm" method="post">
                                     <div class="form-group">
-                                        <label><b>Customer</b></label>
+                                        <label><b>Customer Name</b></label>
                                         <select class="form-control" name="CustomerID" required>
                                             <option value="" disabled selected>Select Customer</option>
                                             @foreach (var customer in ViewBag.Customers)
@@ -138,7 +121,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label><b>Room</b></label>
+                                        <label><b>Room Number</b></label>
                                         <select class="form-control" name="RoomID" required>
                                             <option value="" disabled selected>Select Room</option>
                                             @foreach (var room in ViewBag.Rooms)
@@ -172,7 +155,6 @@
                                             <option value="cancelled">Cancelled</option>
                                         </select>
                                     </div>
-
                                     <div class="container text-right">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-plus mr-2"></i>Add Booking
@@ -182,7 +164,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 <div id="editBookingModal" class="modal fade" role="dialog">
@@ -195,9 +176,9 @@
                             <div class="modal-body">
                                 <form id="editBookingForm">
                                     <div class="row formtype">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6" style="display: none;">
                                             <div class="form-group">
-                                                <label>Booking ID/#</label>
+                                                <label><b>Booking ID</b></label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
@@ -208,7 +189,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Customer</label>
+                                                <label><b>Customer Name</b></label>
                                                 <select name="CustomerID" class="form-control" required>
                                                     @foreach (var customer in ViewBag.Customers)
                                                     {
@@ -219,7 +200,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Room</label>
+                                                <label><b>Room Number</b></label>
                                                 <select name="RoomID" class="form-control" required>
                                                     @foreach (var room in ViewBag.Rooms)
                                                     {
@@ -230,7 +211,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Check In Date</label>
+                                                <label><b>Check In Date</b></label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
@@ -241,7 +222,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Check Out Date</label>
+                                                <label><b>Check Out Date</b></label>
                                                 <div class="input-group">
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
@@ -252,7 +233,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Status</label>
+                                                <label><b>Status</b></label>
                                                 <select name="Status" class="form-control" required>
                                                     <option value="Pending">Pending</option>
                                                     <option value="Confirm">Confirm</option>
@@ -262,7 +243,12 @@
                                         </div>
                                     </div>
                                     <div class="form-group text-right">
-                                        <button type="button" class="btn btn-primary" id="editBookingButton">Update Booking</button>
+                                        <button type="button" class="btn btn-primary btn-success" id="editBookingButton">
+                                            <i class="fas fa-save"></i> Save
+                                        </button>
+                                        <button type="button" class="btn btn-primary btn-danger" data-dismiss="modal">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
                                     </div>
                                 </form>
                             </div>

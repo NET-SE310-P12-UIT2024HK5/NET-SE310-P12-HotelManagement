@@ -486,17 +486,13 @@ function loadBookings() {
 $(document).ready(function () {
     $('#editRoomInformationForm').on('submit', function (e) {
         e.preventDefault();
-
-        // Ensure the hidden input has the correct numeric value before submitting
-        const formattedInput = document.querySelector('input[name="PriceFormattedEdit"]');
-        document.querySelector('input[name="PriceEdit"]').value = formattedInput.value.replace(/\D/g, '');
-
+       
         var roomId = $('#editRoomModal input[name="room_id"]').val();
         var roomData = {
             RoomID: parseInt(roomId),
             RoomNumber: $('#editRoomModal input[name="room_number"]').val(),
             RoomType: $('#editRoomModal select[name="room_type"]').val(),
-            Price: parseInt($('#editRoomModal input[name="PriceEdit"]').val()),
+            Price: parseInt($('#editRoomModal input[name="HourlyRateEdit"]').val()),
             Status: $('#editRoomModal select[name="status"]').val(),
             Description: $('#editRoomModal textarea[name="description"]').val()
         };
@@ -670,111 +666,184 @@ function populateEditRoomModal(roomId, roomNumber, roomType, price, status, desc
 
 /*================================= Hàm xử lí cho invoice ===================================*/
 $(document).ready(function () {
-    $(document).ready(function () {
-        $('#BookingID, #Quantity').on('change', function () {
-            calculateTotalAmount();
-        });
+    $('#addInvoiceForm').on('submit', function (event) {
+        event.preventDefault();
 
-        function calculateTotalAmount() {
-            const bookingID = $('#BookingID').val();
-            const quantity = $('#Quantity').val();
+        // Validate input before sending
+        const bookingID = $('select[name="BookingID"]').val();
+        const duration = $('input[name="Duration"]').val();
+        const paymentDate = $('input[name="PaymentDate"]').val();
+        const totalAmount = $('input[name="TotalAmount"]').val();
+        const paymentStatus = $('select[name="PaymentStatus"]').val();
 
-            if (!bookingID || !quantity) {
-                $('#TotalAmount').val('');
-                return;
-            }
+        // Check if required fields are filled
+        if (!bookingID || !paymentDate || !duration || !totalAmount || !paymentStatus) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Booking ID, payment date, duration,total amount, and payment status are required.'
+            });
+            return;
+        }
 
-            // Fetch the hourly price based on the booking ID
-            $.ajax({
-                url: `/Rooms/GetHourlyPrice/${bookingID}`,
-                type: 'GET',
-                success: function (response) {
-                    const hourlyPrice = response.hourlyPrice;
-                    const totalAmount = hourlyPrice * quantity;
-                    $('#TotalAmount').val(totalAmount);
-                },
-                error: function (xhr) {
+        // Collect data from form
+        const invoiceData = {
+            InvoiceID: 0,
+            BookingID: bookingID,
+            Duration: parseInt(duration),
+            PaymentDate: paymentDate,
+            TotalAmount: parseInt(totalAmount),
+            PaymentStatus: paymentStatus
+        };
+
+        // Send data via API
+        $.ajax({
+            url: '/Invoice/CreateInvoice', // API URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(invoiceData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Invoice added successfully!'
+                }).then(() => {
+                    location.reload(); // Reload the page
+                });
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate invoice error
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'An error occurred while fetching the hourly price.'
+                        text: 'An invoice with this ID already exists.'
+                    });
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the invoice.'
                     });
                 }
+            }
+        });
+        return false;
+    });
+
+    $('#editInvoiceForm').on('submit', function (event) {
+        event.preventDefault();
+
+        // Validate input before sending
+        const invoiceID = $('input[name="invoice_id"]').val();
+        const bookingID = $('select[name="booking_id"]').val();
+        const duration = $('input[name="Duration"]').val();
+        const paymentDate = $('input[name="payment_date"]').val();
+        const totalAmount = $('input[name="total_amount"]').val();
+        const paymentStatus = $('select[name="payment_status"]').val();
+
+        // Check if required fields are filled
+        if (!invoiceID || !bookingID || !paymentDate || !duration || !totalAmount || !paymentStatus) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Invoice ID, booking ID, payment date, duration, total amount, and payment status are required.'
             });
+            return;
         }
 
-        $('#addInvoiceForm').on('submit', function (event) {
-            event.preventDefault();
+        // Collect data from form
+        const invoiceData = {
+            InvoiceID: parseInt(invoiceID),
+            BookingID: parseInt(bookingID),
+            Duration: parseInt(duration),
+            PaymentDate: paymentDate,
+            TotalAmount: parseInt(totalAmount),
+            PaymentStatus: paymentStatus
+        };
 
-            // Validate input before sending
-            const bookingID = $('select[name="BookingID"]').val();
-            const paymentDate = $('input[name="PaymentDate"]').val();
-            const totalAmount = $('input[name="TotalAmount"]').val();
-            const paymentStatus = $('select[name="PaymentStatus"]').val();
-
-            // Check if required fields are filled
-            if (!bookingID || !paymentDate || !totalAmount || !paymentStatus) {
+        // Send data via API
+        $.ajax({
+            url: `/Invoice/UpdateInvoice/${invoiceID}`, // API URL
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(invoiceData),
+            success: function (response) {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Booking ID, payment date, total amount, and payment status are required.'
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Invoice updated successfully!'
+                }).then(() => {
+                    location.reload(); // Reload the page
                 });
-                return;
-            }
-
-            // Collect data from form
-            const invoiceData = {
-                InvoiceID: 0,
-                BookingID: bookingID,
-                PaymentDate: paymentDate,
-                TotalAmount: parseInt(totalAmount),
-                PaymentStatus: paymentStatus
-            };
-
-            // Send data via API
-            $.ajax({
-                url: '/Invoice/CreateInvoice', // API URL
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(invoiceData),
-                success: function (response) {
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate invoice error
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Invoice added successfully!'
-                    }).then(() => {
-                        location.reload(); // Reload the page
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An invoice with this ID already exists.'
                     });
-                },
-                error: function (xhr) {
-                    // Handle different types of errors
-                    if (xhr.status === 409) {
-                        // Duplicate invoice error
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'An invoice with this ID already exists.'
-                        });
-                    } else {
-                        // Other errors
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: xhr.responseJSON?.message || 'An error occurred while adding the invoice.'
-                        });
-                    }
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while updating the invoice.'
+                    });
                 }
-            });
-
-            return false;
+            }
         });
+        return false;
     });
 });
 
-function populateEditInvoiceModal(invoiceId, bookingId, totalAmount, paymentStatus, paymentDate) {
+$(document).ready(function () {
+    $('#BookingID').on('change', function () {
+        const bookingId = $(this).val();
+        if (bookingId) {
+            console.log(`Received Booking ID: ${bookingId}`);
+            $.ajax({
+                url: `https://localhost:7287/Invoice/getroomprice/${bookingId}`,
+                type: 'GET',
+                success: function (roomPrice) {
+                    console.log(`Room Price: ${roomPrice}`);
+                    $('#HourlyRate').val(roomPrice);
+                },
+                error: function (xhr, status, error) {
+                    console.error(`Error retrieving room price from API. Status Code: ${xhr.status}, Reason: ${xhr.statusText}`);
+                }
+            });
+        }
+    });
+});
+
+$(document).ready(function () {
+    function calculateTotalAmount() {
+        const hourlyRate = parseInt($('#HourlyRate').val());
+        const duration = parseInt($('#Duration').val());
+        if (!isNaN(hourlyRate) && !isNaN(duration)) {
+            const totalAmount = hourlyRate * duration;
+            $('#TotalAmount').val(totalAmount);
+        }
+    }
+
+    $('#HourlyRate, #Duration').on('input', function () {
+        calculateTotalAmount();
+    });
+});
+
+
+
+function populateEditInvoiceModal(invoiceId, bookingId, duration, totalAmount, paymentStatus, paymentDate) {
     // Set the values in the edit modal
     $('#editInvoiceModal input[name="invoice_id"]').val(invoiceId);
     $('#editInvoiceModal select[name="booking_id"]').val(bookingId);
+    $('#editInvoiceModal input[name="Duration"]').val(duration);
     $('#editInvoiceModal input[name="total_amount"]').val(totalAmount);
     $('#editInvoiceModal select[name="payment_status"]').val(paymentStatus);
     $('#editInvoiceModal input[name="payment_date"]').val(new Date(paymentDate).toISOString().split('T')[0]);
@@ -821,3 +890,53 @@ function confirmInvoiceDelete(invoiceId) {
     });
 }
 
+$(document).ready(function () {
+    // Function to filter the datatable
+    function filterTable() {
+        const bookingId = $('input[type="number"]').val();
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Date Range',
+                text: 'The "To" date cannot be earlier than the "From" date.'
+            });
+            return;
+        }
+
+        $('.datatable tbody tr').each(function () {
+            const row = $(this);
+            const rowBookingId = row.find('td:nth-child(2)').text().trim();
+            const rowPaymentDate = row.find('td:nth-child(3)').text().trim();
+
+            let showRow = true;
+
+            if (bookingId && parseInt(rowBookingId) !== parseInt(bookingId)) {
+                showRow = false;
+            }
+
+            if (fromDate && toDate) {
+                const paymentDate = new Date(rowPaymentDate.split('/').reverse().join('-'));
+                const from = new Date(fromDate);
+                const to = new Date(toDate);
+
+                if (paymentDate < from || paymentDate > to) {
+                    showRow = false;
+                }
+            }
+
+            if (showRow) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    }
+
+    // Event listeners for the input fields
+    $('input[type="number"], #fromDate, #toDate').on('input change', function () {
+        filterTable();
+    });
+});

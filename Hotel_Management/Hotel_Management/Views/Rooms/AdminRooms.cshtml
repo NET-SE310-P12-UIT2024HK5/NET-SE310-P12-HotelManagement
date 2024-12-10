@@ -66,25 +66,6 @@
 													<td style="text-align: center">@room.value.RoomNumber</td>
 													<td style="text-align: center">@room.value.RoomType</td>
 													<td style="text-align: center">@String.Format("{0:N0}", room.value.Price)</td>
-													@* <td style="text-align: center"> *@
-													@* 	<div class="dropdown"> *@
-													@* 		<a href="#" class="btn btn-sm *@
-             @*                                                    @( *@
-             @*                                                        room.value.Status == "Available" ? "bg-success-light" : *@
-             @*                                                        room.value.Status == "Occupied" ? "bg-danger-light" : *@
-             @*                                                        "bg-secondary-light" *@
-             @*                                                    ) *@
-             @*                                                    mr-2 dropdown-toggle" *@
-													@* 		   data-toggle="dropdown" *@
-													@* 		   aria-expanded="false"> *@
-													@* 			@room.value.Status *@
-													@* 		</a> *@
-													@* 		<div class="dropdown-menu"> *@
-													@* 			<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeStatus(this)">Available</a> *@
-													@* 			<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeStatus(this)">Occupied</a> *@
-													@* 		</div> *@
-													@* 	</div> *@
-													@* </td> *@
 													<td style="text-align: center">
 														<span class="badge
 															@(
@@ -128,18 +109,12 @@
 									<div class="form-group">
 										<label><b>Room Number</b></label>
 										<div class="input-group">
-											@* <div class="input-group-prepend"> *@
-											@* 	<span class="input-group-text"><i class="fas fa-door-open"></i></span> *@
-											@* </div> *@
 											<input class="form-control" type="text" name="RoomNumber" placeholder="Enter Room Number" required>
 										</div>
 									</div>
 									<div class="form-group">
 										<label><b>Room Type</b></label>
 										<div class="input-group">
-											@* <div class="input-group-prepend"> *@
-											@* 	<span class="input-group-text"><i class="fas fa-bed"></i></span> *@
-											@* </div> *@
 											<select class="form-control" name="room_type" required>
 												<option value="" disabled selected>Select</option>
 												<option value="Single">Single</option>
@@ -152,22 +127,13 @@
 									<div class="form-group">
 										<label><b>Hourly Rate</b></label>
 										<div class="input-group">
-											@* <div class="input-group-prepend"> *@
-											@* 	<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span> *@
-											@* </div> *@
 											<input class="form-control no-spinner" name="HourlyRate" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
-											@* <div class="input-group-append">
-												<span class="input-group-text">VND</span>
-											</div> *@
 										</div>										
 									</div>
 
 									<div class="form-group">
 										<label><b>Status</b></label>
 										<div class="input-group">
-											@* <div class="input-group-prepend"> *@
-											@* 	<span class="input-group-text"><i class="fas fa-info-circle"></i></span> *@
-											@* </div> *@
 											<select class="form-control" name="status" required>
 												<option value="" disabled selected>Select</option>
 												<option value="Available">Available</option>
@@ -202,22 +168,16 @@
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room Number</label>
+												<label><b>Room Number</b></label>
 												<div class="input-group">
-													@* <div class="input-group-prepend"> *@
-													@* 	<span class="input-group-text"><i class="fas fa-door-open"></i></span> *@
-													@* </div> *@
 													<input class="form-control" type="text" name="room_number" placeholder="Enter Room Number" required>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room Type</label>
+												<label><b>Room Type</b></label>
 												<div class="input-group">
-													@* <div class="input-group-prepend"> *@
-													@* 	<span class="input-group-text"><i class="fas fa-bed"></i></span> *@
-													@* </div> *@
 													<select class="form-control" name="room_type" required>
 														<option value="" disabled selected>Select</option>
 														<option value="Single">Single</option>
@@ -230,25 +190,16 @@
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Hourly Rate</label>
+												<label><b>Hourly Rate</b></label>
 												<div class="input-group">
-													@* <div class="input-group-prepend"> *@
-													@* 	<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span> *@
-													@* </div> *@
 													<input class="form-control no-spinner" name="HourlyRateEdit" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
-													@* <div class="input-group-append"> *@
-													@* 	<span class="input-group-text">VND</span> *@
-													@* </div> *@
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Status</label>
+												<label><b>Status</b></label>
 												<div class="input-group">
-													@* <div class="input-group-prepend"> *@
-													@* 	<span class="input-group-text"><i class="fas fa-info-circle"></i></span> *@
-													@* </div> *@
 													<select class="form-control" name="status" required>
 														<option value="" disabled selected>Select</option>
 														<option value="Available">Available</option>

@@ -25,7 +25,6 @@
 					<div class="row align-items-center">
 						<div class="col">
 							<h3 class="page-title mt-5">Rooms</h3>
-							@* <a href="/Rooms/Create" class="btn btn-primary float-right viewbutton ">Add Room</a> *@
 						</div>
 					</div>
 				</div>
@@ -61,29 +60,9 @@
 											{
 												<tr>
 													<td style="text-align: center">@(@room.index + 1)</td>
-													@* <td style="text-align: center">@(@room.value.RoomID)</td> *@
 													<td style="text-align: center">@room.value.RoomNumber</td>
 													<td style="text-align: center">@room.value.RoomType</td>
 													<td style="text-align: center">@String.Format("{0:N0}", room.value.Price)</td>
-													@* <td style="text-align: center"> *@
-													@* 	<div class="dropdown"> *@
-													@* 		<a href="#" class="btn btn-sm *@
-													@*                                                    @( *@
-													@*                                                        room.value.Status == "Available" ? "bg-success-light" : *@
-													@*                                                        room.value.Status == "Occupied" ? "bg-danger-light" : *@
-													@*                                                        "bg-secondary-light" *@
-													@*                                                    ) *@
-													@*                                                    mr-2 dropdown-toggle" *@
-													@* 		   data-toggle="dropdown" *@
-													@* 		   aria-expanded="false"> *@
-													@* 			@room.value.Status *@
-													@* 		</a> *@
-													@* 		<div class="dropdown-menu"> *@
-													@* 			<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeStatus(this)">Available</a> *@
-													@* 			<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeStatus(this)">Occupied</a> *@
-													@* 		</div> *@
-													@* 	</div> *@
-													@* </td> *@
 													<td style="text-align: center">
 														<span class="badge
 															@(

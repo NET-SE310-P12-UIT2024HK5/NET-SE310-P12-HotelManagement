@@ -80,7 +80,8 @@ CREATE TABLE BookingFoodServices (
 -- Invoice Table
 CREATE TABLE Invoice (
     InvoiceID INT PRIMARY KEY IDENTITY(1,1),
-    BookingID INT NOT NULL,  -- Foreign key reference to Booking table
+    BookingID INT NOT NULL,
+	Duration INT NOT NULL,
     TotalAmount INT NOT NULL,
     PaymentStatus NVARCHAR(50) DEFAULT 'Pending',
     PaymentDate DATE NOT NULL,
@@ -132,7 +133,7 @@ INSERT INTO FoodAndBeverageServices (ItemName, ItemPrice, Category, Description,
 -- (2, 2, 3, 120000, GETDATE());
 
 -- Insert sample data into Invoice table
-INSERT INTO Invoice (BookingID, TotalAmount, PaymentStatus, PaymentDate)
+INSERT INTO Invoice (BookingID, Duration, TotalAmount, PaymentStatus, PaymentDate)
 VALUES 
-(1, 500, 'Paid', '2024-06-01'),
-(2, 700, 'Pending', '2024-06-03');
+(1, 1, 500000, 'Paid', '2024-06-01'),
+(2, 2 ,700000, 'Pending', '2024-06-03');
