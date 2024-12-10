@@ -9,6 +9,7 @@ namespace Data
         public DbSet<Booking> Booking { get; set; }
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Rooms> Rooms { get; set; }
+        public DbSet<Invoice> Invoice { get; set; }
         public DbSet<FoodAndBeverageServices> FoodAndBeverageServices { get; set; }
         // Bạn có thể khai báo thêm DbSet cho các bảng khác nếu cần
 

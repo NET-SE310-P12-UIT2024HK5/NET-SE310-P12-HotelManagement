@@ -1,6 +1,5 @@
 ﻿namespace Hotel_Management.Middleware
-{
-    public class RoleMiddleWare
+{    public class RoleMiddleWare
     {
         private readonly RequestDelegate _next;
 
@@ -19,7 +18,6 @@
 	        {
 		        { "Role", context.Items["Role"] }
 	        };
-
 			await _next(context);
         }
     }

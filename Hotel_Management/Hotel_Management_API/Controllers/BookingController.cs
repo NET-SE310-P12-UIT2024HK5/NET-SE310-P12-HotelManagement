@@ -93,7 +93,7 @@ namespace Hotel_Management_API.Controllers
                 _logger.LogError(ex, "Lỗi khi lấy danh sách Room");
                 return StatusCode(500, $"Lỗi: {ex.Message}");
             }
-        }
+        }        
 
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDTO)

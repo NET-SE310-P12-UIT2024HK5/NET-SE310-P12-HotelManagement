@@ -1,5 +1,5 @@
 ﻿@model List<Data.Models.Rooms>
-s
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,16 +28,28 @@ s
 							<h3 class="page-title mt-5">Rooms</h3>
 						</div>
 					</div>
-				</div>
+				</div>				
 				<div class="row">
 					<div class="col-sm-8">
 						<div class="card card-table">
 							<div class="card-body booking_card">
 								<div class="table-responsive">
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+														<i class="fas fa-search"></i>
+													</span>
+												</div>
+												<input type="text" id="roomSearch" class="form-control" placeholder="Search by room number...">
+											</div>
+										</div>
+									</div>									
 									<table class="datatable table table-stripped table-hover table-center mb-0">
 										<thead>
 											<tr>
-												<th style="width: 10%; text-align: center;">Room ID</th>
+												<th style="width: 10%; text-align: center;">No.</th>
                                                 <th style="width: 20%; text-align: center;">Room Number</th>
 												<th style="width: 20%; text-align: center;">Room Type</th>
 												<th style="width: 20%; text-align: center;">Price</th>
@@ -49,28 +61,20 @@ s
 											@foreach (var room in Model.Select((value, index) => new { value, index }))
 											{
 												<tr>
-													<td style="text-align: center">@(@room.value.RoomID)</td>
+                                                    <td style="text-align: center">@(@room.index + 1)</td>
+													@* <td style="text-align: center">@(@room.value.RoomID)</td> *@
 													<td style="text-align: center">@room.value.RoomNumber</td>
 													<td style="text-align: center">@room.value.RoomType</td>
-                                                    <td style="text-align: center">@room.value.Price</td>
+													<td style="text-align: center">@String.Format("{0:N0}", room.value.Price)</td>
 													<td style="text-align: center">
-														<div class="dropdown">
-															<a href="#" class="btn btn-sm
-                                                                @(
-                                                                    room.value.Status == "Available" ? "bg-success-light" :
-                                                                    room.value.Status == "Occupied" ? "bg-danger-light" :
-                                                                    "bg-secondary-light"
-                                                                )
-                                                                mr-2 dropdown-toggle"
-															   data-toggle="dropdown"
-															   aria-expanded="false">
-																@room.value.Status
-															</a>
-															<div class="dropdown-menu">
-																<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeStatus(this)">Available</a>
-																<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeStatus(this)">Occupied</a>
-															</div>
-														</div>
+														<span class="badge
+															@(
+																room.value.Status == "Available" ? "bg-success-light" :
+																room.value.Status == "Occupied" ? "bg-danger-light" :
+																"bg-secondary-light"
+															)">
+															@room.value.Status
+														</span>
 													</td>
 													<td class="text-right">
 														<div class="dropdown dropdown-action">
@@ -105,18 +109,12 @@ s
 									<div class="form-group">
 										<label><b>Room Number</b></label>
 										<div class="input-group">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-door-open"></i></span>
-											</div>
 											<input class="form-control" type="text" name="RoomNumber" placeholder="Enter Room Number" required>
 										</div>
 									</div>
 									<div class="form-group">
 										<label><b>Room Type</b></label>
 										<div class="input-group">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-bed"></i></span>
-											</div>
 											<select class="form-control" name="room_type" required>
 												<option value="" disabled selected>Select</option>
 												<option value="Single">Single</option>
@@ -129,21 +127,13 @@ s
 									<div class="form-group">
 										<label><b>Hourly Rate</b></label>
 										<div class="input-group">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-											</div>
-											<input class="form-control no-spinner" type="number" name="Price" inputmode="numeric" placeholder="Enter Hourly Rate" required>
-											<div class="input-group-append">
-												<span class="input-group-text">VND</span>
-											</div>
-										</div>
+											<input class="form-control no-spinner" name="HourlyRate" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
+										</div>										
 									</div>
+
 									<div class="form-group">
 										<label><b>Status</b></label>
 										<div class="input-group">
-											<div class="input-group-prepend">
-												<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-											</div>
 											<select class="form-control" name="status" required>
 												<option value="" disabled selected>Select</option>
 												<option value="Available">Available</option>
@@ -178,22 +168,16 @@ s
 									<div class="row formtype">
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room Number</label>
+												<label><b>Room Number</b></label>
 												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-door-open"></i></span>
-													</div>
 													<input class="form-control" type="text" name="room_number" placeholder="Enter Room Number" required>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Room Type</label>
+												<label><b>Room Type</b></label>
 												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-bed"></i></span>
-													</div>
 													<select class="form-control" name="room_type" required>
 														<option value="" disabled selected>Select</option>
 														<option value="Single">Single</option>
@@ -206,25 +190,16 @@ s
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Hourly Rate</label>
+												<label><b>Hourly Rate</b></label>
 												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-money-bill-wave"></i></span>
-													</div>
-													<input class="form-control no-spinner" type="number" name="price" inputmode="numeric" placeholder="Enter Hourly Rate" required>
-													<div class="input-group-append">
-														<span class="input-group-text">VND</span>
-													</div>
+													<input class="form-control no-spinner" name="HourlyRateEdit" type="number" inputmode="numeric" placeholder="Enter Hourly Rate">
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
-												<label>Status</label>
+												<label><b>Status</b></label>
 												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-													</div>
 													<select class="form-control" name="status" required>
 														<option value="" disabled selected>Select</option>
 														<option value="Available">Available</option>

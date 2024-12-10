@@ -169,7 +169,5 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the room.", details = ex.Message });
             }
         }
-
-
     }
 }

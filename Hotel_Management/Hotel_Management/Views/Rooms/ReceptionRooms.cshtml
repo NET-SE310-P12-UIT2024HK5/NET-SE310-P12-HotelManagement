@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model List<Data.Models.Rooms>
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -23,7 +25,6 @@
 					<div class="row align-items-center">
 						<div class="col">
 							<h3 class="page-title mt-5">Rooms</h3>
-							@* <a href="/Rooms/Create" class="btn btn-primary float-right viewbutton ">Add Room</a> *@
 						</div>
 					</div>
 				</div>
@@ -32,61 +33,48 @@
 						<div class="card card-table">
 							<div class="card-body booking_card">
 								<div class="table-responsive">
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<div class="input-group">
+												<div class="input-group-prepend">
+													<span class="input-group-text">
+														<i class="fas fa-search"></i>
+													</span>
+												</div>
+												<input type="text" id="roomSearch" class="form-control" placeholder="Search by room number...">
+											</div>
+										</div>
+									</div>
 									<table class="datatable table table-stripped table-hover table-center mb-0">
 										<thead>
 											<tr>
-												<th style="width: 25%;">Room ID/#.</th>
-												<th style="width: 25%; text-align: center;">Room Type</th>
-												<th style="width: 25%; text-align: center;">Unit Price</th>
-												<th style="width: 25%; text-align: center;">Status</th>											
+												<th style="width: 20%; text-align: center;">No.</th>
+												<th style="width: 20%; text-align: center;">Room Number</th>
+												<th style="width: 20%; text-align: center;">Room Type</th>
+												<th style="width: 20%; text-align: center;">Price</th>
+												<th style="width: 20%; text-align: center;">Status</th>											
 											</tr>
 										</thead>
 										<tbody>
-											<tr>
-												<td style="text-align: center;">1</td>
-												<td style="text-align: center;">Single</td>
-												<td style="text-align: center;">250,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-success-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Available</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align: center;">2</td>
-												<td style="text-align: center;">Double</td>
-												<td style="text-align: center;">500,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-danger-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Occupied</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-														</div>
-													</div>
-												</td>
-											</tr>
-											<tr>
-												<td style="text-align: center;">3</td>
-												<td style="text-align: center;">King/Queen</td>
-												<td style="text-align: center;">750,000</td>
-												<td style="text-align: center;">
-													<div class="dropdown">
-														<a href="#" class="btn btn-sm bg-warning-light mr-2 dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Under Maintainance/Cleaning</a>
-														<div class="dropdown-menu">
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Available" onclick="changeRoomStatus(this)">Available</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Occupied" onclick="changeRoomStatus(this)">Occupied</a>
-															<a class="dropdown-item" href="javascript:void(0);" data-status="Under Maintainance/Cleaning" onclick="changeRoomStatus(this)">Under Maintainance/Cleaning</a>
-														</div>
-													</div>
-												</td>
-											</tr>										
+											@foreach (var room in Model.Select((value, index) => new { value, index }))
+											{
+												<tr>
+													<td style="text-align: center">@(@room.index + 1)</td>
+													<td style="text-align: center">@room.value.RoomNumber</td>
+													<td style="text-align: center">@room.value.RoomType</td>
+													<td style="text-align: center">@String.Format("{0:N0}", room.value.Price)</td>
+													<td style="text-align: center">
+														<span class="badge
+															@(
+																room.value.Status == "Available" ? "bg-success-light" :
+																room.value.Status == "Occupied" ? "bg-danger-light" :
+																"bg-secondary-light"
+															)">
+															@room.value.Status
+														</span>
+													</td>												
+												</tr>
+											}
 										</tbody>
 									</table>
 								</div>
