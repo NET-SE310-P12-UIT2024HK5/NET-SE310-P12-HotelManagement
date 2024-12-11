@@ -183,6 +183,30 @@ namespace Hotel_Management_API.Controllers
             }
         }
 
+        // Phương thức GET để lấy chi tiết một mục Food and Beverage theo ID
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetFoodAndBeverageById(int id)
+        {
+            try
+            {
+                // Tìm item theo ID
+                var item = await _context.FoodAndBeverageServices
+                    .FirstOrDefaultAsync(item => item.ServiceID == id);
 
+                // Kiểm tra nếu không tìm thấy
+                if (item == null)
+                {
+                    return NotFound(new { message = "Item not found" });
+                }
+
+                // Trả về thông tin item
+                return Ok(item);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching food and beverage item: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while fetching the item" });
+            }
+        }
     }
 }

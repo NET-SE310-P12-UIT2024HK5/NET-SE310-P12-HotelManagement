@@ -222,6 +222,41 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        public async Task<IActionResult> DeleteFoodAndBeverage(int id)
+        {
+            try
+            {
+                // Gửi yêu cầu DELETE đến API
+                var response = await _httpClient.DeleteAsync($"https://localhost:7287/FoodandBeverage/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Đọc nội dung lỗi để debug
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"API Error: {response.StatusCode}, Error: {errorContent}");
+
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Không thể xóa. Mã lỗi: {response.StatusCode}, Chi tiết: {errorContent}"
+                    });
+                }
+
+                // Nếu xóa thành công
+                return Json(new { success = true, message = "Xóa thành công" });
+            }
+            catch (Exception ex)
+            {
+                // Ghi log chi tiết lỗi
+                _logger.LogError(ex, "Lỗi không mong muốn khi xóa");
+                return Json(new
+                {
+                    success = false,
+                    message = $"Có lỗi xảy ra: {ex.Message}"
+                });
+            }
+        }
+
         public IActionResult Edit()
         {
             return View();

@@ -210,12 +210,6 @@ namespace Hotel_Management_API.Controllers
                     return BadRequest(new { message = "Check-in date must be before check-out date." });
                 }
 
-                // Kiểm tra xem ngày check-in không được là ngày trong quá khứ
-                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
-                {
-                    return BadRequest(new { message = "Check-in date cannot be in the past." });
-                }
-
                 // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
                 var conflictBooking = await _context.Booking
                     .Where(b => b.RoomID == bookingDTO.RoomID && b.BookingID != id) // Exclude the current booking
