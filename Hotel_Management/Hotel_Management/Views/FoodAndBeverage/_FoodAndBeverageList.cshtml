@@ -7,7 +7,7 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var item in Model)
         {
-            <div class="col mb-2">
+            <div class="col mb-2" id="card-@item.ServiceID">
                 <div class="card bg-light rounded p-3">
                     <img src="ffff" class="card-img-top rounded-top" style="height: 150px; object-fit: cover;" alt="@item.ItemName">
                     <div class="card-body p-3">

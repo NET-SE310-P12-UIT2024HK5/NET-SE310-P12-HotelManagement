@@ -333,7 +333,7 @@ $(document).ready(function () {
             $('#editBookingModal select[name="RoomID"]').val(booking.roomID);
             $('#editBookingModal input[name="CheckInDate"]').val(formatDate(new Date(booking.checkInDate)));
             $('#editBookingModal input[name="CheckOutDate"]').val(formatDate(new Date(booking.checkOutDate)));
-            $('#editBookingModal select[name="Status"]').val(booking.status.toLowerCase());
+            $('#editBookingModal select[name="Status"]').val(booking.status);
         }
     });
 
@@ -940,3 +940,24 @@ $(document).ready(function () {
         filterTable();
     });
 });
+
+/*================================= Hàm xử lí cho Booking ===================================*/
+function deleteItem(serviceId) {
+    if (confirm("Bạn có chắc chắn muốn xóa mục này không?")) {
+        $.ajax({
+            url: '/FoodAndBeverage/DeleteFoodAndBeverage', // Chính xác route
+            type: 'POST', // Đổi thành POST
+            data: { id: serviceId }, // Truyền id đúng format
+            success: function (response) {
+                // Thêm xử lý khi xóa thành công
+                alert("Xóa thành công!");
+                // Reload trang hoặc remove phần tử khỏi danh sách
+                location.reload(); // Hoặc load lại danh sách
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+                alert("Có lỗi xảy ra khi xóa: " + xhr.responseText);
+            }
+        });
+    }
+}
