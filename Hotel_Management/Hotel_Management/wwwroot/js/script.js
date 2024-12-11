@@ -942,22 +942,45 @@ $(document).ready(function () {
 });
 
 /*================================= Hàm xử lí cho Booking ===================================*/
+// deleteItem.js
 function deleteItem(serviceId) {
-    if (confirm("Bạn có chắc chắn muốn xóa mục này không?")) {
-        $.ajax({
-            url: '/FoodAndBeverage/DeleteFoodAndBeverage', // Chính xác route
-            type: 'POST', // Đổi thành POST
-            data: { id: serviceId }, // Truyền id đúng format
-            success: function (response) {
-                // Thêm xử lý khi xóa thành công
-                alert("Xóa thành công!");
-                // Reload trang hoặc remove phần tử khỏi danh sách
-                location.reload(); // Hoặc load lại danh sách
-            },
-            error: function (xhr, status, error) {
-                console.error(xhr.responseText);
-                alert("Có lỗi xảy ra khi xóa: " + xhr.responseText);
-            }
-        });
-    }
+    // Hiển thị hộp thoại xác nhận bằng SweetAlert
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You will not be able to undo this action!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Gửi yêu cầu xóa qua Ajax
+            $.ajax({
+                url: '/FoodAndBeverage/DeleteFoodAndBeverage', // Chính xác route
+                type: 'POST', // Đổi thành POST
+                data: { id: serviceId }, // Truyền id đúng format
+                success: function (response) {
+                    // Hiển thị thông báo xóa thành công bằng SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted',
+                        text: 'Object has been deleted successfully.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload the page
+                    });
+                },
+                error: function (xhr, status, error) {
+                    // Hiển thị thông báo lỗi bằng SweetAlert
+                    Swal.fire(
+                        'Lỗi!',
+                        'Có lỗi xảy ra khi xóa: ' + xhr.responseText,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
 }
