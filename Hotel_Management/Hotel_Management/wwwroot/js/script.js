@@ -893,7 +893,7 @@ function confirmInvoiceDelete(invoiceId) {
 $(document).ready(function () {
     // Function to filter the datatable
     function filterTable() {
-        const bookingId = $('input[type="number"]').val();
+        const bookingId = $('#searchBookingInvoice').val();
         const fromDate = $('#fromDate').val();
         const toDate = $('#toDate').val();
 
@@ -936,7 +936,7 @@ $(document).ready(function () {
     }
 
     // Event listeners for the input fields
-    $('input[type="number"], #fromDate, #toDate').on('input change', function () {
+    $('#searchBookingInvoice, #fromDate, #toDate').on('input change', function () {
         filterTable();
     });
 });
