@@ -48,6 +48,12 @@ namespace Hotel_Management.Controllers
 		public async Task<IActionResult> ReceptionBooking()
 		{
             var bookings = await GetBookingsAsync();
+
+            var customers = await GetCustomersAsync();
+            var rooms = await GetRoomsAsync();
+            ViewBag.Customers = customers;
+            ViewBag.Rooms = rooms;
+
             return View(bookings); // Truyền danh sách booking vào view
         }
 
