@@ -1159,3 +1159,218 @@ $('#editFoodForm').on('submit', function (e) {
         }
     });
 });
+
+/*let currentOrder = [];
+function addToOrder(item) {
+    // Convert JSON string back to an object
+    const parsedItem = typeof item === 'string' ? JSON.parse(item) : item;
+    const existingItem = currentOrder.find(i => i.ServiceID === parsedItem.ServiceID);
+    if (existingItem) {
+        existingItem.quantity = (existingItem.quantity || 1) + 1;
+    } else {
+        currentOrder.push({
+            ...parsedItem,
+            quantity: 1,
+            name: parsedItem.ItemName,  // Map ItemName to name
+            price: parsedItem.ItemPrice  // Map ItemPrice to price
+        });
+    }
+    updateOrderDisplay();
+}
+
+function updateOrderDisplay() {
+    const orderItemsDiv = document.getElementById('orderItems');
+    const orderTotalElement = document.getElementById('orderTotal');
+    let total = 0;
+    orderItemsDiv.innerHTML = currentOrder.map(item => {
+        const itemTotal = item.price * (item.quantity || 1);
+        total += itemTotal;
+        // Định dạng giá tiền sang VNĐ
+        const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemTotal);
+        return `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <div>
+                    <span class="fw-bold">${item.name}</span> x ${item.quantity}
+                </div>
+                <div>
+                    ${formattedPrice}
+                    <button class="btn btn-sm btn-danger ms-2" onclick="removeFromOrder(${item.ServiceID})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    // Hiển thị tổng giá trị đơn hàng
+    orderTotalElement.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
+}
+
+function removeFromOrder(itemId) {
+    currentOrder = currentOrder.filter(item => item.ServiceID !== itemId);
+    updateOrderDisplay();
+}
+
+function submitOrder() {
+    if (currentOrder.length === 0) {
+        alert('Please add items to your order first');
+        return;
+    }
+    // Typically, you would send the order to the server here
+    console.log('Submitting order:', currentOrder);
+    alert('Order submitted successfully!');
+    currentOrder = [];
+    updateOrderDisplay();
+}*/
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Đảm bảo các hàm được định nghĩa toàn cục
+    window.orderItems = [];
+    window.addToOrder = addToOrder;
+    window.removeFromOrder = removeFromOrder;
+    window.submitOrder = submitOrder;
+});
+
+// Hàm thêm sản phẩm vào đơn hàng
+function addToOrder(item) {
+    // Log to check input data
+    console.log('Adding item:', item);
+
+    // Normalize the item object properties to match the exact case
+    const normalizedItem = {
+        ServiceID: item.serviceID || item.ServiceID,
+        ItemName: item.itemName || item.ItemName,
+        ItemPrice: item.itemPrice || item.ItemPrice
+    };
+
+    // Check if item exists and has a valid ServiceID
+    if (!normalizedItem.ServiceID) {
+        console.error('Invalid item', item);
+        return;
+    }
+
+    // Check if the product already exists in the order
+    const existingItemIndex = window.orderItems.findIndex(orderItem => orderItem.ServiceID === normalizedItem.ServiceID);
+
+    if (existingItemIndex !== -1) {
+        // If the product already exists, increase quantity
+        window.orderItems[existingItemIndex].quantity += 1;
+    } else {
+        // If it's a new product, add to the list with quantity 1
+        window.orderItems.push({
+            ServiceID: normalizedItem.ServiceID,
+            ItemName: normalizedItem.ItemName,
+            ItemPrice: normalizedItem.ItemPrice,
+            quantity: 1
+        });
+    }
+
+    // Update order display interface
+    updateOrderSummary();
+}
+
+// Hàm cập nhật giao diện đơn hàng
+function updateOrderSummary() {
+    const orderItemsContainer = document.getElementById('orderItems');
+    const orderTotalElement = document.getElementById('orderTotal');
+
+    // Xóa các mục cũ
+    orderItemsContainer.innerHTML = '';
+
+    // Tổng giá trị đơn hàng
+    let total = 0;
+
+    // Hiển thị từng mục trong đơn hàng
+    window.orderItems.forEach((item, index) => {
+        const itemTotal = item.ItemPrice * item.quantity;
+        total += itemTotal;
+
+        const itemRow = document.createElement('div');
+        itemRow.className = 'd-flex justify-content-between align-items-center mb-2';
+        itemRow.innerHTML = `
+            <div>
+                <span>${item.ItemName || 'Unnamed Item'}</span>
+                <span class="ml-2 text-muted">x${item.quantity}</span>
+            </div>
+            <div>
+                <span>${formatCurrency(itemTotal)}</span>
+                <button class="btn btn-sm btn-outline-danger ml-2" onclick="removeFromOrder(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+
+        orderItemsContainer.appendChild(itemRow);
+    });
+
+    // Cập nhật tổng giá trị
+    orderTotalElement.textContent = formatCurrency(total);
+}
+
+// Hàm xóa sản phẩm khỏi đơn hàng
+function removeFromOrder(index) {
+    window.orderItems.splice(index, 1);
+    updateOrderSummary();
+}
+
+// Hàm định dạng tiền tệ
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+}
+
+// Hàm gửi đơn hàng
+function submitOrder() {
+    const bookingSelect = document.getElementById('bookingSelect');
+    const selectedBooking = bookingSelect.value;
+
+    if (!selectedBooking) {
+        alert('Vui lòng chọn booking trước khi gửi đơn hàng');
+        return;
+    }
+
+    if (window.orderItems.length === 0) {
+        alert('Đơn hàng trống');
+        return;
+    }
+
+    // TODO: Implement order submission to backend
+    console.log('Submitting order:', {
+        bookingId: selectedBooking,
+        items: window.orderItems
+    });
+
+    alert('Đơn hàng đã được ghi nhận');
+
+    // Reset đơn hàng sau khi gửi
+    window.orderItems = [];
+    updateOrderSummary();
+}
+
+// Sự kiện click cho nút phân trang
+document.addEventListener('DOMContentLoaded', () => {
+    const paginationLinks = document.querySelectorAll('.page-link');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            loadPage(page);
+        });
+    });
+});
+
+// Hàm load trang mới bằng AJAX
+function loadPage(page) {
+    $.ajax({
+        url: '/FoodAndBeverage/ReceptionFoodAndBeverage',
+        type: 'GET',
+        data: { page: page },
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        success: function (result) {
+            $('#foodAndBeverageList').replaceWith(result);
+        },
+        error: function (xhr) {
+            console.error('Lỗi tải trang:', xhr);
+        }
+    });
+}
