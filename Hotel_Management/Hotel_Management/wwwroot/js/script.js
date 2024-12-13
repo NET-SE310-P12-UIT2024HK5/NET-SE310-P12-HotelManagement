@@ -229,7 +229,7 @@ $(document).ready(function () {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            if (checkInDate <= today) {
+            if (checkInDate < today) {
                 $('#checkInDate').addClass('is-invalid');
                 Swal.fire({
                     icon: 'error',

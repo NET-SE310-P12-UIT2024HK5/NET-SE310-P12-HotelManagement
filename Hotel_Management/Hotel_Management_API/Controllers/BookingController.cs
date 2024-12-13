@@ -112,7 +112,7 @@ namespace Hotel_Management_API.Controllers
                 }
 
                 // Kiểm tra ngày check-in không được là ngày trong quá khứ
-                if (bookingDTO.CheckInDate.Date <= DateTime.Now.Date)
+                if (bookingDTO.CheckInDate.Date < DateTime.Now.Date)
                 {
                     return BadRequest(new { message = "Check-in date cannot be in the past." });
                 }
