@@ -38,70 +38,6 @@ namespace Hotel_Management.Controllers
             return View("Error"); // Nếu role không hợp lệ
         }
 
-        /*public async Task<IActionResult> AdminFoodAndBeverage()
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync("https://localhost:7287/FoodandBeverage");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    // Log chi tiết mã trạng thái
-                    _logger.LogError($"API Error: {response.StatusCode}");
-                    return View("Error", new ErrorViewModel
-                    {
-                        Message = $"Unable to fetch data. Status code: {response.StatusCode}"
-                    });
-                }
-
-                var res = await response.Content.ReadAsStringAsync();
-
-                // Log nội dung response để kiểm tra
-                _logger.LogInformation($"API Response: {res}");
-
-                var foodAndBeverageList = JsonConvert.DeserializeObject<List<FoodAndBeverageServices>>(res);
-
-                // Kiểm tra nếu danh sách rỗng
-                if (foodAndBeverageList == null || !foodAndBeverageList.Any())
-                {
-                    _logger.LogWarning("No food and beverage items found");
-                    return View("Error", new ErrorViewModel
-                    {
-                        Message = "No food and beverage items found"
-                    });
-                }
-
-                return View(foodAndBeverageList);
-            }
-            catch (JsonException jsonEx)
-            {
-                // Lỗi chuyển đổi JSON
-                _logger.LogError($"JSON Deserialize Error: {jsonEx.Message}");
-                return View("Error", new ErrorViewModel
-                {
-                    Message = $"Error parsing data: {jsonEx.Message}"
-                });
-            }
-            catch (HttpRequestException httpEx)
-            {
-                // Lỗi kết nối HTTP
-                _logger.LogError($"HTTP Request Error: {httpEx.Message}");
-                return View("Error", new ErrorViewModel
-                {
-                    Message = $"Network error: {httpEx.Message}"
-                });
-            }
-            catch (Exception ex)
-            {
-                // Ghi log chi tiết lỗi
-                _logger.LogError(ex, "Unexpected error in AdminFoodAndBeverage");
-                return View("Error", new ErrorViewModel
-                {
-                    Message = $"An unexpected error occurred: {ex.Message}"
-                });
-            }
-        }*/
-
         public async Task<IActionResult> AdminFoodAndBeverage(int page = 1)
         {
             try
@@ -222,6 +158,39 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        public async Task<IActionResult> CreateFoodAndBeverage([FromBody] FoodAndBeverageServices foodAndBeverageServices)
+        {
+            try
+            {
+                if (foodAndBeverageServices == null)
+                {
+                    return BadRequest(new { message = "Invalid Food and Beverage data." });
+                }
+
+                // Gửi yêu cầu đến API
+                var response = await _httpClient.PostAsJsonAsync("https://localhost:7287/FoodandBeverage", foodAndBeverageServices);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new { message = "Food and beverage created successfully." });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new { message = errorResponse });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while creating customer.");
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError(ex.InnerException, "Inner exception while creating customer.");
+                }
+                return StatusCode(500, new { message = "An error occurred while creating the customer.", details = ex.InnerException?.Message });
+            }
+        }
+
         public async Task<IActionResult> DeleteFoodAndBeverage(int id)
         {
             try
@@ -257,9 +226,86 @@ namespace Hotel_Management.Controllers
             }
         }
 
-        public IActionResult Edit()
+        public async Task<IActionResult> EditFoodAndBeverage(int id)
         {
-            return View();
+            try
+            {
+                // Gửi yêu cầu GET đến API để lấy chi tiết mục
+                var response = await _httpClient.GetAsync($"https://localhost:7287/FoodandBeverage/{id}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"API Error: {response.StatusCode}");
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Không thể lấy thông tin. Mã lỗi: {response.StatusCode}"
+                    });
+                }
+
+                var res = await response.Content.ReadAsStringAsync();
+                var foodItem = JsonConvert.DeserializeObject<FoodAndBeverageServices>(res);
+
+                if (foodItem == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Không tìm thấy mục"
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    item = foodItem
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi không mong muốn khi lấy thông tin để chỉnh sửa");
+                return Json(new
+                {
+                    success = false,
+                    message = $"Có lỗi xảy ra: {ex.Message}"
+                });
+            }
+        }
+
+        public async Task<IActionResult> UpdateFoodAndBeverage([FromBody] FoodAndBeverageServices foodAndBeverageServices)
+        {
+            try
+            {
+                // Gửi yêu cầu PUT đến API
+                var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/FoodandBeverage/{foodAndBeverageServices.ServiceID}", foodAndBeverageServices);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok(new
+                    {
+                        success = true,
+                        message = "Cập nhật thành công"
+                    });
+                }
+                else
+                {
+                    var errorResponse = await response.Content.ReadAsStringAsync();
+                    return StatusCode((int)response.StatusCode, new
+                    {
+                        success = false,
+                        message = errorResponse
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi cập nhật");
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = $"Có lỗi xảy ra: {ex.Message}"
+                });
+            }
         }
     }
 }
