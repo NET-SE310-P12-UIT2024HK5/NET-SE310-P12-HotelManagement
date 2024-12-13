@@ -942,7 +942,6 @@ $(document).ready(function () {
 });
 
 /*================================= Hàm xử lí cho Booking ===================================*/
-// deleteItem.js
 function deleteItem(serviceId) {
     // Hiển thị hộp thoại xác nhận bằng SweetAlert
     Swal.fire({
@@ -958,9 +957,9 @@ function deleteItem(serviceId) {
         if (result.isConfirmed) {
             // Gửi yêu cầu xóa qua Ajax
             $.ajax({
-                url: '/FoodAndBeverage/DeleteFoodAndBeverage', // Chính xác route
-                type: 'POST', // Đổi thành POST
-                data: { id: serviceId }, // Truyền id đúng format
+                url: '/FoodAndBeverage/DeleteFoodAndBeverage',
+                type: 'POST',
+                data: { id: serviceId },
                 success: function (response) {
                     // Hiển thị thông báo xóa thành công bằng SweetAlert
                     Swal.fire({
@@ -984,3 +983,179 @@ function deleteItem(serviceId) {
         }
     });
 }
+
+$(document).ready(function () {
+    // Xử lý thêm mới Food and Beverage
+    $('#addFoodForm').on('submit', function (e) {
+        e.preventDefault();
+
+        // Validate client-side
+        var isValid = true;
+        var errorMessages = [];
+
+        // Kiểm tra tên
+        var foodName = $('#foodName').val().trim();
+        if (!foodName) {
+            isValid = false;
+            errorMessages.push("Tên mặt hàng không được để trống");
+        }
+
+        // Kiểm tra category
+        var category = $('#category').val();
+        if (!category) {
+            isValid = false;
+            errorMessages.push("Vui lòng chọn danh mục");
+        }
+
+        // Kiểm tra giá
+        var price = $('#price').val();
+        if (!price || isNaN(price) || parseFloat(price) < 0) {
+            isValid = false;
+            errorMessages.push("Giá không hợp lệ");
+        }
+
+        // Nếu có lỗi, hiển thị thông báo
+        if (!isValid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi Nhập Liệu',
+                html: errorMessages.map(msg => `<p>${msg}</p>`).join(''),
+                confirmButtonText: 'Đóng'
+            });
+            return;
+        }
+
+        // Chuẩn bị dữ liệu
+        var foodData = {
+            itemName: foodName,
+            category: category,
+            itemPrice: parseFloat(price),
+            description: $('#description').val() || '',
+            isAvailable: $('#status').val() === 'true'
+        };
+
+        // Gửi AJAX request
+        $.ajax({
+            url: '/FoodAndBeverage/CreateFoodAndBeverage',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(foodData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: 'Đã thêm mặt hàng thực phẩm mới.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Làm mới danh sách hoặc reload trang
+                    location.reload();
+                });
+            },
+            error: function (xhr, status, error) {
+                // Xử lý các lỗi khác nhau
+                var errorMessage = 'Có lỗi xảy ra khi thêm mặt hàng.';
+
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    // Xử lý lỗi validation từ server
+                    var serverErrors = xhr.responseJSON.errors;
+                    var errorList = [];
+
+                    for (var field in serverErrors) {
+                        errorList.push(serverErrors[field].join(', '));
+                    }
+
+                    errorMessage = errorList.join('<br>');
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    html: errorMessage,
+                    confirmButtonText: 'Đóng'
+                });
+            }
+        });
+    });
+});
+
+function editItem(serviceId) {
+    $.ajax({
+        url: '/FoodAndBeverage/EditFoodAndBeverage/' + serviceId,
+        method: 'GET',
+        success: function (response) {
+            if (response.success) {
+                // Populate modal with item details
+                $('#editServiceID').val(response.item.serviceID);
+                $('#editFoodName').val(response.item.itemName);
+                $('#editCategory').val(response.item.category);
+                $('#editPrice').val(response.item.itemPrice);
+                $('#editDescription').val(response.item.description);
+                $('#editStatus').val(response.item.isAvailable.toString());
+
+                // Show modal
+                $('#editFoodModal').modal('show');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message
+                });
+            }
+        },
+        error: function (xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An unexpected error occurred'
+            });
+        }
+    });
+}
+
+// Handle form submission for editing
+$('#editFoodForm').on('submit', function (e) {
+    e.preventDefault();
+
+    var formData = {
+        ServiceID: $('#editServiceID').val(),
+        ItemName: $('#editFoodName').val(),
+        Category: $('#editCategory').val(),
+        ItemPrice: $('#editPrice').val(),
+        Description: $('#editDescription').val(),
+        IsAvailable: $('#editStatus').val() === 'true'
+    };
+
+    $.ajax({
+        url: '/FoodAndBeverage/UpdateFoodAndBeverage',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: response.message
+                }).then(() => {
+                    // Reload the page or update the list
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: response.message
+                });
+            }
+        },
+        error: function (xhr) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'An unexpected error occurred'
+            });
+        }
+    });
+});

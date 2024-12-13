@@ -20,7 +20,7 @@
                         else
                         {
                             <div class="btn-group w-100" role="group">
-                                <a href="@Url.Action("Edit", "FoodAndBeverage", new { id = item.ServiceID })" class="btn btn-info btn-sm">
+                                <a href="javascript:void(0);" class="btn btn-info btn-sm" onclick="editItem(@item.ServiceID)">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button class="btn btn-danger btn-sm" onclick="deleteItem(@item.ServiceID)">
