@@ -35,7 +35,7 @@ app.UseRouting();
 app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthorization();
-app.UseMiddleware<RoleMiddleWare>();
+app.UseMiddleware<RoleMiddleware>();
 
 
 app.MapControllerRoute(
