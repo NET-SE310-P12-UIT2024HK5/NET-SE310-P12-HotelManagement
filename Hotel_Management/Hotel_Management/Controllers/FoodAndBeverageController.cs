@@ -126,6 +126,7 @@ namespace Hotel_Management.Controllers
                     });
                 }
 
+                var bookings = await GetBookingAsync();
                 // Phân trang
                 int totalItems = foodAndBeverageList.Count;
                 int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
@@ -138,6 +139,7 @@ namespace Hotel_Management.Controllers
                 ViewBag.TotalPages = totalPages;
                 ViewBag.TotalItems = totalItems;
                 ViewBag.IsReception = true;
+                ViewBag.Bookings = bookings;
 
                 // Kiểm tra nếu là AJAX request
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -305,6 +307,30 @@ namespace Hotel_Management.Controllers
                     success = false,
                     message = $"Có lỗi xảy ra: {ex.Message}"
                 });
+            }
+        }
+
+        private async Task<List<Booking>> GetBookingAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("https://localhost:7287/FoodandBeverage/booking");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Lỗi khi gọi API: {response.StatusCode}");
+                    return new List<Booking>();
+                }
+
+                var jsonString = await response.Content.ReadAsStringAsync();
+                var bookings = JsonConvert.DeserializeObject<List<Booking>>(jsonString);
+
+                return bookings;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Lỗi khi lấy danh sách Customer: {ex.Message}");
+                return new List<Booking>();
             }
         }
     }

@@ -1160,68 +1160,6 @@ $('#editFoodForm').on('submit', function (e) {
     });
 });
 
-/*let currentOrder = [];
-function addToOrder(item) {
-    // Convert JSON string back to an object
-    const parsedItem = typeof item === 'string' ? JSON.parse(item) : item;
-    const existingItem = currentOrder.find(i => i.ServiceID === parsedItem.ServiceID);
-    if (existingItem) {
-        existingItem.quantity = (existingItem.quantity || 1) + 1;
-    } else {
-        currentOrder.push({
-            ...parsedItem,
-            quantity: 1,
-            name: parsedItem.ItemName,  // Map ItemName to name
-            price: parsedItem.ItemPrice  // Map ItemPrice to price
-        });
-    }
-    updateOrderDisplay();
-}
-
-function updateOrderDisplay() {
-    const orderItemsDiv = document.getElementById('orderItems');
-    const orderTotalElement = document.getElementById('orderTotal');
-    let total = 0;
-    orderItemsDiv.innerHTML = currentOrder.map(item => {
-        const itemTotal = item.price * (item.quantity || 1);
-        total += itemTotal;
-        // Định dạng giá tiền sang VNĐ
-        const formattedPrice = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(itemTotal);
-        return `
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                    <span class="fw-bold">${item.name}</span> x ${item.quantity}
-                </div>
-                <div>
-                    ${formattedPrice}
-                    <button class="btn btn-sm btn-danger ms-2" onclick="removeFromOrder(${item.ServiceID})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-    // Hiển thị tổng giá trị đơn hàng
-    orderTotalElement.textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total);
-}
-
-function removeFromOrder(itemId) {
-    currentOrder = currentOrder.filter(item => item.ServiceID !== itemId);
-    updateOrderDisplay();
-}
-
-function submitOrder() {
-    if (currentOrder.length === 0) {
-        alert('Please add items to your order first');
-        return;
-    }
-    // Typically, you would send the order to the server here
-    console.log('Submitting order:', currentOrder);
-    alert('Order submitted successfully!');
-    currentOrder = [];
-    updateOrderDisplay();
-}*/
-
 document.addEventListener('DOMContentLoaded', function () {
     // Đảm bảo các hàm được định nghĩa toàn cục
     window.orderItems = [];

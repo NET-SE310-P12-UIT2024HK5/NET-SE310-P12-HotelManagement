@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Data.Models.FoodAndBeverageServices>
+﻿@model List<Data.Models.FoodAndBeverageServices>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,9 +49,11 @@
                                 <div class="form-group mb-4">
                                     <label for="bookingSelect" class="form-label">Select Booking:</label>
                                     <select class="form-control" id="bookingSelect" required>
-                                        <option value="" disabled selected>-- Select a Booking --</option>
-                                        <option value="">1</option>
-                                        <option value="">2</option>
+                                        <option value="" disabled selected>Select Room</option>
+                                        @foreach (var bookings in ViewBag.Bookings)
+                                        {
+                                            <option value="@bookings.BookingID">@bookings.BookingID</option>
+                                        }
                                     </select>
                                 </div>
                             </div>

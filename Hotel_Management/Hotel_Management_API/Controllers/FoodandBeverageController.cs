@@ -208,5 +208,21 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, new { message = "An error occurred while fetching the item" });
             }
         }
+
+        // Lấy danh sách Customer
+        [HttpGet("booking")]
+        public async Task<IActionResult> GetBooking()
+        {
+            try
+            {
+                var customers = await _context.Booking.ToListAsync();
+                return Ok(customers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy danh sách Booking");
+                return StatusCode(500, $"Lỗi: {ex.Message}");
+            }
+        }
     }
 }
