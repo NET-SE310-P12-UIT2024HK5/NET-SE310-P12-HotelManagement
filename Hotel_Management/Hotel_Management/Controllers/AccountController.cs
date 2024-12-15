@@ -1,69 +1,80 @@
-﻿using Data.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Hotel_Management.Controllers
+namespace Hotel_Management_MVC.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IConfiguration _configuration;
-        private readonly IUserService _userService;
-
-        public AccountController(IConfiguration configuration, IUserService userService)
-        {
-            _configuration = configuration;
-            _userService = userService;
-        }
-
-        // GET: Login page
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        // POST: Login page
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var user = await _userService.ValidateUserAsync(username, password);
-
-            if (user == null)
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ModelState.AddModelError("", "Invalid username or password.");
+                ViewBag.Error = "Username and Password are required.";
                 return View();
             }
 
-            var token = GenerateJwtToken(user);
+            // Gọi API để xác thực
+            var client = new HttpClient();
+            var apiUrl = "https://localhost:7287/api/Account/login"; // Đổi URL API của bạn
 
-            // Thêm token vào response headers hoặc lưu trữ trong cookie
-            Response.Cookies.Append("JWT", token);
-
-            return RedirectToAction("Index", "Home"); // Điều hướng đến trang chính sau khi đăng nhập
-        }
-
-        private string GenerateJwtToken(User user)
-        {
-            var claims = new[]
+            var loginRequest = new
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Role, user.Role) // Role của người dùng
+                Username = username,
+                Password = password
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                _configuration["JwtSettings:Issuer"],
-                _configuration["JwtSettings:Audience"],
-                claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds);
+            var response = await client.PostAsJsonAsync(apiUrl, loginRequest);
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+                // Lưu token vào session/cookie nếu cần
+                HttpContext.Session.SetString("Token", result.Token);
+
+                // Điều hướng tùy theo Role
+                if (result.Role == "Admin")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (result.Role == "Reception")
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            ViewBag.Error = "Invalid username or password.";
+            return View();
         }
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult Logout()
+		{
+			// Xóa session
+			HttpContext.Session.Clear();
+
+			// Xóa cache của trình duyệt
+			Response.Headers["Cache-Control"] = "no-store, no-cache, must-revalidate";
+			Response.Headers["Pragma"] = "no-cache";
+			Response.Headers["Expires"] = "-1";
+
+			// Chuyển hướng về trang đăng nhập
+			return RedirectToAction("Login", "Account");
+		}
+
+	}
+
+	public class LoginResponse
+    {
+        public string Token { get; set; }
+        public string Role { get; set; }
+        public string FullName { get; set; }
     }
 }

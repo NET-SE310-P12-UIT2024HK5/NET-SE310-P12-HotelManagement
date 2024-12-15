@@ -1,30 +1,4 @@
-﻿/*namespace Hotel_Management.Middleware
-{    public class RoleMiddleWare
-    {
-        private readonly RequestDelegate _next;
-
-        public RoleMiddleWare(RequestDelegate next)
-        {
-            _next = next;
-        }
-
-        public async Task InvokeAsync(HttpContext context)
-        {
-            // Gán role tạm thời (có thể lấy từ session hoặc JWT)
-            *//*context.Items["Role"] = "Admin";*//*
-            context.Items["Role"] = "Reception";
-            // Truyền Role sang ViewData để sử dụng trong Razor view
-            context.Items["ViewData"] = new Dictionary<string, object>
-	        {
-		        { "Role", context.Items["Role"] }
-	        };
-			await _next(context);
-        }
-    }
-}
-*/
-
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace Hotel_Management.Middleware
@@ -40,24 +14,45 @@ namespace Hotel_Management.Middleware
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+            string role = null;
 
+            // Kiểm tra role trong session trước
+            var token = context.Session.GetString("Token");
             if (!string.IsNullOrEmpty(token))
             {
                 try
                 {
                     var claimsPrincipal = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
-                    var role = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-                    context.Items["Role"] = role; // Lưu role vào HttpContext
+                    role = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Xử lý lỗi nếu token không hợp lệ
-                    context.Items["Role"] = "Unauthorized"; // Có thể trả về Unauthorized nếu không parse được token
+                    context.Items["Role"] = "Unauthorized";
                 }
             }
 
-            // Tiếp tục qua middleware tiếp theo
+            // Nếu không có trong session, kiểm tra token từ header
+            if (string.IsNullOrEmpty(role))
+            {
+                token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
+                if (!string.IsNullOrEmpty(token))
+                {
+                    try
+                    {
+                        var claimsPrincipal = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
+                        role = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                    }
+                    catch
+                    {
+                        context.Items["Role"] = "Unauthorized";
+                    }
+                }
+            }
+
+            // Lưu role vào HttpContext.Items để dùng trong các phần khác
+            context.Items["Role"] = role ?? "Unauthorized";
+
+            // Tiếp tục pipeline
             await _next(context);
         }
     }
