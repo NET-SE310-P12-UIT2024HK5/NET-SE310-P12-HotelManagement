@@ -1,4 +1,4 @@
-using Hotel_Management.Middleware;
+﻿using Hotel_Management.Middleware;
 using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,15 +6,26 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Thêm HttpClient để gọi API
 builder.Services.AddHttpClient();
 
+// Thêm Cors
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("https://localhost:7132") 
+            .WithOrigins("https://localhost:7132") // Đổi URL này thành URL API của bạn nếu khác
             .AllowAnyHeader()
-            .AllowAnyMethod());    
+            .AllowAnyMethod());
+});
+
+// Thêm Distributed Memory Cache và Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(2); // Thời gian hết hạn của session
+    options.Cookie.HttpOnly = true; // Cookie chỉ sử dụng qua HTTP, không dùng qua JS
+    options.Cookie.IsEssential = true; // Đảm bảo cookie không bị chặn
 });
 
 var app = builder.Build();
@@ -23,7 +34,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -32,14 +42,21 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Bật Cors
 app.UseCors("AllowSpecificOrigin");
 
-app.UseAuthorization();
+// Sử dụng Session
+app.UseSession();
+
+// Middleware phân quyền dựa trên JWT
 app.UseMiddleware<RoleMiddleware>();
 
+// Authorization (sau middleware để phân quyền chính xác)
+app.UseAuthorization();
 
+// Map routes
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
