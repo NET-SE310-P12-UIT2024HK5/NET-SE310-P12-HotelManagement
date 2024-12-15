@@ -106,8 +106,8 @@ INSERT INTO Roles (RoleName) VALUES
 
 -- Insert Users
 INSERT INTO Users (Username, Password, FullName, Email, PhoneNumber, RoleID) VALUES
-('admin01', 'hashed_password_123', 'John Doe', 'admin@hotel.com', '0123456789', 1),
-('reception01', 'hashed_password_456', 'Jane Smith', 'reception@hotel.com', '0987654321', 2);
+('admin01', '123123', 'John Doe', 'admin@hotel.com', '0123456789', 1),
+('reception01', '123123', 'Jane Smith', 'reception@hotel.com', '0987654321', 2);
 
 -- Insert Customers
 INSERT INTO Customer (FullName, PhoneNumber, CCCD, Email) VALUES
