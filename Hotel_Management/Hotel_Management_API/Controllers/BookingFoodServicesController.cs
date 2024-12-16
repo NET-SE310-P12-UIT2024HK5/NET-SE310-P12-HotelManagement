@@ -11,6 +11,7 @@ namespace Hotel_Management_API.Controllers
 	{
 		private readonly DatabaseContext _context;
 		private readonly ILogger<BookingFoodServicesController> _logger;
+
 		public BookingFoodServicesController(DatabaseContext context, ILogger<BookingFoodServicesController> logger)
 		{
 			_context = context;
@@ -28,16 +29,30 @@ namespace Hotel_Management_API.Controllers
 		public IActionResult GetById(int id)
 		{
 			var service = _context.BookingFoodServices
+				.Include(s => s.BookingFoodServiceDetails)
 				.FirstOrDefault(s => s.BookingFoodServiceID == id);
-			if (service == null) return NotFound();
+
+			if (service == null)
+			{
+				_logger.LogWarning("BookingFoodService with ID {Id} not found.", id);
+				return NotFound();
+			}
 			return Ok(service);
 		}
 
 		[HttpPost]
 		public IActionResult Create([FromBody] BookingFoodServices bookingFoodService)
 		{
+			if (bookingFoodService == null)
+			{
+				_logger.LogWarning("Invalid BookingFoodService data received.");
+				return BadRequest("Invalid data.");
+			}
+
 			_context.BookingFoodServices.Add(bookingFoodService);
 			_context.SaveChanges();
+
+			_logger.LogInformation("BookingFoodService created with ID {Id}", bookingFoodService.BookingFoodServiceID);
 			return CreatedAtAction(nameof(GetById), new { id = bookingFoodService.BookingFoodServiceID }, bookingFoodService);
 		}
 
@@ -45,12 +60,18 @@ namespace Hotel_Management_API.Controllers
 		public IActionResult Update(int id, [FromBody] BookingFoodServices bookingFoodService)
 		{
 			var existing = _context.BookingFoodServices.FirstOrDefault(s => s.BookingFoodServiceID == id);
-			if (existing == null) return NotFound();
+			if (existing == null)
+			{
+				_logger.LogWarning("BookingFoodService with ID {Id} not found.", id);
+				return NotFound();
+			}
 
 			existing.TotalPrice = bookingFoodService.TotalPrice;
 			existing.OrderTime = bookingFoodService.OrderTime;
 
 			_context.SaveChanges();
+			_logger.LogInformation("BookingFoodService with ID {Id} updated.", id);
+
 			return NoContent();
 		}
 
@@ -58,58 +79,17 @@ namespace Hotel_Management_API.Controllers
 		public IActionResult Delete(int id)
 		{
 			var existing = _context.BookingFoodServices.FirstOrDefault(s => s.BookingFoodServiceID == id);
-			if (existing == null) return NotFound();
+			if (existing == null)
+			{
+				_logger.LogWarning("BookingFoodService with ID {Id} not found.", id);
+				return NotFound();
+			}
 
 			_context.BookingFoodServices.Remove(existing);
 			_context.SaveChanges();
+
+			_logger.LogInformation("BookingFoodService with ID {Id} deleted.", id);
 			return NoContent();
 		}
-
-		[HttpPost]
-		public IActionResult CreateBookingFoodService([FromBody] SubmitOrderModel model)
-		{
-			if (model == null || model.OrderItems == null || !model.OrderItems.Any())
-			{
-				return BadRequest("Invalid data.");
-			}
-
-			try
-			{
-				// Tạo BookingFoodService
-				var bookingFoodService = new BookingFoodServices
-				{
-					BookingID = model.BookingID,
-					TotalPrice = model.OrderItems.Sum(item => item.Quantity * _context.FoodAndBeverageServices
-																	 .FirstOrDefault(f => f.ServiceID == item.ServiceID)?.ItemPrice ?? 0),
-					OrderTime = DateTime.Now
-				};
-
-				_context.BookingFoodServices.Add(bookingFoodService);
-				_context.SaveChanges();
-
-				// Tạo BookingFoodServiceDetails
-				foreach (var orderItem in model.OrderItems)
-				{
-					var detail = new BookingFoodServiceDetails
-					{
-						BookingFoodServiceID = bookingFoodService.BookingFoodServiceID,
-						ServiceID = orderItem.ServiceID,
-						Quantity = orderItem.Quantity
-					};
-
-					_context.BookingFoodServiceDetails.Add(detail);
-				}
-
-				_context.SaveChanges();
-
-				return Ok(new { message = "Order created successfully." });
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error while creating booking food service.");
-				return StatusCode(500, "An unexpected error occurred.");
-			}
-		}
-
 	}
 }
