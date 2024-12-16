@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Hotel_Management/Hotel_Management_API/appsettings.json
