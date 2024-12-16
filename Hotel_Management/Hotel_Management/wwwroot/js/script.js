@@ -1161,72 +1161,53 @@ $('#editFoodForm').on('submit', function (e) {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Đảm bảo các hàm được định nghĩa toàn cục
     window.orderItems = [];
     window.addToOrder = addToOrder;
     window.removeFromOrder = removeFromOrder;
     window.submitOrder = submitOrder;
 });
 
-// Hàm thêm sản phẩm vào đơn hàng
+// Thêm món ăn vào đơn hàng
 function addToOrder(item) {
-    // Log to check input data
-    console.log('Adding item:', item);
-
-    // Normalize the item object properties to match the exact case
     const normalizedItem = {
-        ServiceID: item.serviceID || item.ServiceID,
-        ItemName: item.itemName || item.ItemName,
-        ItemPrice: item.itemPrice || item.ItemPrice
+        ServiceID: item.ServiceID || item.serviceID,
+        ItemName: item.ItemName || item.itemName,
+        ItemPrice: item.ItemPrice || item.itemPrice
     };
 
-    // Check if item exists and has a valid ServiceID
     if (!normalizedItem.ServiceID) {
-        console.error('Invalid item', item);
+        console.error("Invalid item:", item);
         return;
     }
 
-    // Check if the product already exists in the order
-    const existingItemIndex = window.orderItems.findIndex(orderItem => orderItem.ServiceID === normalizedItem.ServiceID);
+    const existingItemIndex = window.orderItems.findIndex(i => i.ServiceID === normalizedItem.ServiceID);
 
     if (existingItemIndex !== -1) {
-        // If the product already exists, increase quantity
         window.orderItems[existingItemIndex].quantity += 1;
     } else {
-        // If it's a new product, add to the list with quantity 1
-        window.orderItems.push({
-            ServiceID: normalizedItem.ServiceID,
-            ItemName: normalizedItem.ItemName,
-            ItemPrice: normalizedItem.ItemPrice,
-            quantity: 1
-        });
+        window.orderItems.push({ ...normalizedItem, quantity: 1 });
     }
 
-    // Update order display interface
     updateOrderSummary();
 }
 
-// Hàm cập nhật giao diện đơn hàng
+// Cập nhật giao diện đơn hàng
 function updateOrderSummary() {
-    const orderItemsContainer = document.getElementById('orderItems');
-    const orderTotalElement = document.getElementById('orderTotal');
+    const orderItemsContainer = document.getElementById("orderItems");
+    const orderTotalElement = document.getElementById("orderTotal");
 
-    // Xóa các mục cũ
-    orderItemsContainer.innerHTML = '';
-
-    // Tổng giá trị đơn hàng
+    orderItemsContainer.innerHTML = "";
     let total = 0;
 
-    // Hiển thị từng mục trong đơn hàng
     window.orderItems.forEach((item, index) => {
         const itemTotal = item.ItemPrice * item.quantity;
         total += itemTotal;
 
-        const itemRow = document.createElement('div');
-        itemRow.className = 'd-flex justify-content-between align-items-center mb-2';
+        const itemRow = document.createElement("div");
+        itemRow.className = "d-flex justify-content-between align-items-center mb-2";
         itemRow.innerHTML = `
             <div>
-                <span>${item.ItemName || 'Unnamed Item'}</span>
+                <span>${item.ItemName}</span>
                 <span class="ml-2 text-muted">x${item.quantity}</span>
             </div>
             <div>
@@ -1236,52 +1217,71 @@ function updateOrderSummary() {
                 </button>
             </div>
         `;
-
         orderItemsContainer.appendChild(itemRow);
     });
 
-    // Cập nhật tổng giá trị
     orderTotalElement.textContent = formatCurrency(total);
 }
 
-// Hàm xóa sản phẩm khỏi đơn hàng
+// Xóa món ăn khỏi đơn hàng
 function removeFromOrder(index) {
     window.orderItems.splice(index, 1);
     updateOrderSummary();
 }
 
-// Hàm định dạng tiền tệ
-function formatCurrency(amount) {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-}
-
-// Hàm gửi đơn hàng
-function submitOrder() {
-    const bookingSelect = document.getElementById('bookingSelect');
+// Gửi đơn hàng
+async function submitOrder() {
+    const bookingSelect = document.getElementById("bookingSelect");
     const selectedBooking = bookingSelect.value;
-
     if (!selectedBooking) {
-        alert('Vui lòng chọn booking trước khi gửi đơn hàng');
+        alert("Vui lòng chọn một booking.");
         return;
     }
-
     if (window.orderItems.length === 0) {
-        alert('Đơn hàng trống');
+        alert("Đơn hàng trống!");
         return;
     }
+    const orderData = {
+        BookingID: parseInt(selectedBooking),
+        OrderItems: window.orderItems.map(item => ({
+            ServiceID: item.ServiceID,
+            Quantity: item.quantity
+        }))
+    };
 
-    // TODO: Implement order submission to backend
-    console.log('Submitting order:', {
-        bookingId: selectedBooking,
-        items: window.orderItems
-    });
+    try {
+        // Thay đổi route thành "/FoodAndBeverage/SubmitOrder"
+        const response = await fetch("/FoodAndBeverage/SubmitOrder", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderData)
+        });
 
-    alert('Đơn hàng đã được ghi nhận');
+        // Thêm log để debug
+        console.log('Response status:', response.status);
 
-    // Reset đơn hàng sau khi gửi
-    window.orderItems = [];
-    updateOrderSummary();
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.message || "Đơn hàng đã được gửi thành công!");
+            window.orderItems = [];
+            updateOrderSummary();
+        } else {
+            alert(`Lỗi: ${result.message}`);
+        }
+    } catch (error) {
+        console.error("Error submitting order:", error);
+        alert("Lỗi không mong muốn khi gửi đơn hàng: " + error);
+    }
 }
+// Định dạng tiền tệ
+function formatCurrency(amount) {
+    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+}
+
+
 
 // Sự kiện click cho nút phân trang
 document.addEventListener('DOMContentLoaded', () => {

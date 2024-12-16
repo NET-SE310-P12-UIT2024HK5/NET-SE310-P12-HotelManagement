@@ -333,5 +333,55 @@ namespace Hotel_Management.Controllers
                 return new List<Booking>();
             }
         }
-    }
+
+		[HttpPost]
+		public async Task<IActionResult> SubmitOrder([FromBody] SubmitOrderModel orderRequest)
+		{
+			try
+			{
+				if (orderRequest == null || orderRequest.OrderItems == null || !orderRequest.OrderItems.Any())
+				{
+					return BadRequest(new
+					{
+						success = false,
+						message = "Dữ liệu đơn hàng không hợp lệ."
+					});
+				}
+
+				var response = await _httpClient.PostAsJsonAsync("https://localhost:7287/BookingFoodServiceDetails/SubmitOrder", orderRequest);
+
+				if (response.IsSuccessStatusCode)
+				{
+					var result = await response.Content.ReadAsStringAsync();
+					return Ok(new
+					{
+						success = true,
+						message = "Đơn hàng đã được gửi thành công!",
+						data = result
+					});
+				}
+				else
+				{
+					var errorContent = await response.Content.ReadAsStringAsync();
+					_logger.LogError("API Error: {ErrorContent}", errorContent);
+					return StatusCode((int)response.StatusCode, new
+					{
+						success = false,
+						message = errorContent
+					});
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error while submitting order");
+				return StatusCode(500, new
+				{
+					success = false,
+					message = $"Lỗi không mong muốn: {ex.Message}"
+				});
+			}
+		}
+
+
+	}
 }
