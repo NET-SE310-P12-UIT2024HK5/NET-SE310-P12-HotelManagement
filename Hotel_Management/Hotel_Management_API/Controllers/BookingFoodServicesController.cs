@@ -91,5 +91,27 @@ namespace Hotel_Management_API.Controllers
 			_logger.LogInformation("BookingFoodService with ID {Id} deleted.", id);
 			return NoContent();
 		}
+
+		[HttpGet("by-booking/{bookingId}")]
+		public IActionResult GetByBookingId(int bookingId)
+		{
+			// Lấy BookingFoodService cùng các chi tiết liên quan
+			var service = _context.BookingFoodServices
+				.Include(bfs => bfs.BookingFoodServiceDetails)          // Bao gồm danh sách các chi tiết
+				.ThenInclude(detail => detail.FoodAndBeverageService)  // Bao gồm thông tin dịch vụ chi tiết (nếu cần)
+				.FirstOrDefault(s => s.BookingID == bookingId);     // Lọc theo ID
+
+			// Kiểm tra nếu không tìm thấy
+			if (service == null)
+			{
+				_logger.LogWarning("BookingFoodService with ID {Id} not found.", bookingId);
+				return NotFound(new { message = $"BookingFoodService with ID {bookingId} not found." });
+			}
+
+			// Trả về thông tin chi tiết
+			_logger.LogInformation("Details Count: {count}", service?.BookingFoodServiceDetails?.Count);
+			return Ok(service);
+		}
+
 	}
 }
