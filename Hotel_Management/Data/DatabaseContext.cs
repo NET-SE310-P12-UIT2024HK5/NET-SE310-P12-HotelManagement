@@ -65,16 +65,34 @@ namespace Data
 			modelBuilder.Entity<BookingFoodServices>(entity =>
 			{
 				entity.HasKey(e => e.BookingFoodServiceID);
+
+				entity.HasMany(e => e.BookingFoodServiceDetails)
+		              .WithOne(d => d.BookingFoodServices)
+		              .HasForeignKey(d => d.BookingFoodServiceID)
+		              .OnDelete(DeleteBehavior.Restrict);
+
+				entity.HasOne(d => d.Booking)
+		              .WithMany()
+		              .HasForeignKey(d => d.BookingID)
+		              .OnDelete(DeleteBehavior.Restrict);
 			});
 			modelBuilder.Entity<BookingFoodServiceDetails>(entity =>
 			{
 				entity.HasKey(e => e.BookingFoodServiceDetailID);
 
+				// Quan hệ tới FoodAndBeverageServices
 				entity.HasOne(d => d.FoodAndBeverageService)
 					.WithMany()
 					.HasForeignKey(d => d.ServiceID)
 					.OnDelete(DeleteBehavior.Restrict);
+
+				// Quan hệ tới BookingFoodServices
+				entity.HasOne(d => d.BookingFoodServices)
+					.WithMany(bfs => bfs.BookingFoodServiceDetails) // Đảm bảo rằng BookingFoodServices có BookingFoodServiceDetails
+					.HasForeignKey(d => d.BookingFoodServiceID)
+					.OnDelete(DeleteBehavior.Restrict);
 			});
+
 		}
-    }
+	}
 }

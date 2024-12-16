@@ -1,4 +1,6 @@
-﻿namespace Data.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Data.Models
 {
 	public class BookingFoodServiceDetails
 	{
@@ -7,7 +9,8 @@
 		public int ServiceID { get; set; }
 		public int Quantity { get; set; }
 		// Navigation properties
-		public BookingFoodServices BookingFoodService { get; set; }
+		[JsonIgnore]
+		public BookingFoodServices BookingFoodServices { get; set; }
 		public FoodAndBeverageServices FoodAndBeverageService { get; set; }
 	}
 }
