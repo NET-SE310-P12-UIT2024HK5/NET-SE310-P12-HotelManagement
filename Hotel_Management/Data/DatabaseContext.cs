@@ -14,10 +14,13 @@ namespace Data
 
         public DbSet<Roles> Roles { get; set; }
         public DbSet<Users> Users { get; set; }
-        // Bạn có thể khai báo thêm DbSet cho các bảng khác nếu cần
 
-        // Khởi tạo DatabaseContext với DbContextOptions (dùng trong Dependency Injection)
-        public DatabaseContext(DbContextOptions<DatabaseContext> options)
+		public DbSet<BookingFoodServices> BookingFoodServices { get; set; }
+		public DbSet<BookingFoodServiceDetails> BookingFoodServiceDetails { get; set; }
+		// Bạn có thể khai báo thêm DbSet cho các bảng khác nếu cần
+
+		// Khởi tạo DatabaseContext với DbContextOptions (dùng trong Dependency Injection)
+		public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
         {
         }
@@ -59,6 +62,19 @@ namespace Data
                     .HasForeignKey(d => d.RoleID)
                     .OnDelete(DeleteBehavior.Restrict);
             });
-        }
+			modelBuilder.Entity<BookingFoodServices>(entity =>
+			{
+				entity.HasKey(e => e.BookingFoodServiceID);
+			});
+			modelBuilder.Entity<BookingFoodServiceDetails>(entity =>
+			{
+				entity.HasKey(e => e.BookingFoodServiceDetailID);
+
+				entity.HasOne(d => d.FoodAndBeverageService)
+					.WithMany()
+					.HasForeignKey(d => d.ServiceID)
+					.OnDelete(DeleteBehavior.Restrict);
+			});
+		}
     }
 }
