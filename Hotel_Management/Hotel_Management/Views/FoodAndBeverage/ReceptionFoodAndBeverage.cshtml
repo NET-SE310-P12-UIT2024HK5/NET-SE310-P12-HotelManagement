@@ -32,14 +32,30 @@
                     <!-- Menu List Column - 60% -->
                     <div class="col-lg-8">
                         <div class="card card-table">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4 class="card-title"><b>Menu List</b></h4>
+                                <!-- Nút Toggle giữa danh sách và kết quả tìm kiếm -->
+                                <button id="toggleButton" class="btn btn-secondary" onclick="toggleView()">Search Mode</button>
+
+                                <!-- Ô tìm kiếm chỉ hiện khi ở Search Mode -->
+                                <div id="searchContainer" class="input-group" style="width: 300px; display: none;">
+                                    <input type="number" id="searchBookingId" class="form-control no-spinner" placeholder="Enter Booking ID">
+                                    <button class="btn btn-primary" onclick="searchByBookingId()">Search</button>
+                                </div>
                             </div>
                             <div class="card-body booking_card">
-                                @await Html.PartialAsync("_FoodandBeverageList", Model)
+                                <!-- Kết quả sẽ được hiển thị tại đây -->
+                                <div id="foodAndBeverageList">
+                                    @await Html.PartialAsync("_FoodandBeverageList", Model)
+                                </div>
+
+                                <div id="searchResults" style="display: none;">
+                                    <!-- Kết quả tìm kiếm sẽ được hiển thị ở đây -->
+                                </div>
                             </div>
                         </div>
                     </div>
+
 
                     <!-- Order Summary Column - 40% -->
                     <div class="col-lg-4">
@@ -48,13 +64,14 @@
                                 <h4 class="card-title"><b>Current Order</b></h4>
                                 <div class="form-group mb-4">
                                     <label for="bookingSelect" class="form-label">Select Booking:</label>
-                                    <select class="form-control" id="bookingSelect" required>
+                                    <select class="form-control" id="bookingSelect" onchange="fetchBookingDetails(this.value)" required>
                                         <option value="" disabled selected>Select Room</option>
                                         @foreach (var bookings in ViewBag.Bookings)
                                         {
                                             <option value="@bookings.BookingID">@bookings.BookingID</option>
                                         }
                                     </select>
+
                                 </div>
                             </div>
                             <div class="card-body" id="orderSummary">
@@ -89,5 +106,8 @@
     <script src="~/assets/js/chart.morris.js"></script>
     <script src="~/assets/js/script.js"></script>
     <script src="~/js/script.js"></script>
+    <script>
+       
+    </script>
 </body>
 </html>

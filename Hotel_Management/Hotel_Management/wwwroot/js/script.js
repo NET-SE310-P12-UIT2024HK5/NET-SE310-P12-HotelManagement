@@ -1312,3 +1312,107 @@ function loadPage(page) {
         }
     });
 }
+
+// Hàm xử lí Search Mode
+function toggleView() {
+    const toggleButton = document.getElementById('toggleButton');
+    const foodList = document.getElementById('foodAndBeverageList');
+    const searchResults = document.getElementById('searchResults');
+    const searchContainer = document.getElementById('searchContainer');
+
+    if (foodList.style.display === 'none') {
+        // Hiển thị Food List, ẩn Search Results và khung tìm kiếm
+        foodList.style.display = 'block';
+        searchResults.style.display = 'none';
+        searchContainer.style.display = 'none';
+        toggleButton.textContent = 'Search Mode';
+    } else {
+        // Hiển thị Search Results và khung tìm kiếm, ẩn Food List
+        foodList.style.display = 'none';
+        searchResults.style.display = 'block';
+        searchContainer.style.display = 'flex'; // Hiển thị dưới dạng flex để giữ đúng định dạng
+        toggleButton.textContent = 'Food List Mode';
+    }
+}
+
+
+function searchByBookingId() {
+    const bookingId = document.getElementById('searchBookingId').value;
+
+    if (!bookingId) {
+        alert('Vui lòng nhập Booking ID');
+        return;
+    }
+
+    fetch(`/FoodAndBeverage/SearchByBookingId?bookingId=${bookingId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                displaySearchResults(result.data);
+            } else {
+                alert(result.message || 'Không tìm thấy dịch vụ');
+            }
+        })
+        .catch(error => {
+            console.error('Lỗi:', error);
+            alert('Có lỗi xảy ra khi tìm kiếm');
+        });
+}
+
+function displaySearchResults(data) {
+    const foodList = document.getElementById('foodAndBeverageList');
+    const searchResults = document.getElementById('searchResults');
+    const toggleButton = document.getElementById('toggleButton');
+
+    // Kiểm tra xem có chi tiết đặt dịch vụ không
+    if (!data.bookingFoodServiceDetails || data.bookingFoodServiceDetails.length === 0) {
+        searchResults.innerHTML = `
+                    <div class="alert alert-info">
+                        Không có dịch vụ thức ăn nào cho Booking ID này.
+                    </div>
+                `;
+    } else {
+        let resultsHtml = `
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Food/Beverage</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+        data.bookingFoodServiceDetails.forEach(detail => {
+            resultsHtml += `
+                        <tr>
+                            <td>${detail.foodAndBeverageService.itemName}</td>
+                            <td>${detail.quantity}</td>
+                            <td>${detail.foodAndBeverageService.itemPrice.toLocaleString()} ₫</td>
+                        </tr>
+                    `;
+        });
+
+        resultsHtml += `
+                        </tbody>
+                    </table>
+                    <div class="alert alert-info">
+                        Tổng giá: ${data.totalPrice.toLocaleString()} ₫
+                    </div>
+                `;
+
+        searchResults.innerHTML = resultsHtml;
+    }
+
+    // Hiển thị Search Results và ẩn Food List
+    foodList.style.display = 'none';
+    searchResults.style.display = 'block';
+    toggleButton.textContent = 'Food List Mode';
+}

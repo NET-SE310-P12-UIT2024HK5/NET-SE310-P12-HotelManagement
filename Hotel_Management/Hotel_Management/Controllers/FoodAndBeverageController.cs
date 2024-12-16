@@ -382,6 +382,51 @@ namespace Hotel_Management.Controllers
 			}
 		}
 
+        public async Task<IActionResult> SearchByBookingId(int bookingId)
+        {
+            try
+            {
+                // Gửi yêu cầu GET đến API để tìm kiếm theo Booking ID
+                var response = await _httpClient.GetAsync($"https://localhost:7287/BookingFoodServices/by-booking/{bookingId}");
 
-	}
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"API Error: {response.StatusCode}");
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Không thể tìm thấy dịch vụ. Mã lỗi: {response.StatusCode}"
+                    });
+                }
+
+                var res = await response.Content.ReadAsStringAsync();
+                var bookingFoodService = JsonConvert.DeserializeObject<BookingFoodServices>(res);
+
+                if (bookingFoodService == null)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Không tìm thấy dịch vụ đặt thức ăn cho Booking ID này"
+                    });
+                }
+
+                return Json(new
+                {
+                    success = true,
+                    data = bookingFoodService
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi không mong muốn khi tìm kiếm dịch vụ đặt thức ăn");
+                return Json(new
+                {
+                    success = false,
+                    message = $"Có lỗi xảy ra: {ex.Message}"
+                });
+            }
+        }
+
+    }
 }
