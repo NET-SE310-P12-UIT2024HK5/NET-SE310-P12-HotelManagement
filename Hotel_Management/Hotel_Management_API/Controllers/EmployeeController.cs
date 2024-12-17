@@ -89,16 +89,7 @@ namespace Hotel_Management_API.Controllers
             if (employee == null)
             {
                 return NotFound(new { message = "Employee not found." });
-            }
-
-            // Kiểm tra nếu EmployeeID có tồn tại trong bảng Booking
-            bool isEmployeeLinkedToBooking = _context.Booking.Any(b => b.UserID == id);
-            if (isEmployeeLinkedToBooking)
-            {
-                return Conflict(new { message = "This employee is associated with existing bookings and cannot be deleted." });
-            }
-
-            // Nếu không liên kết, thực hiện xóa
+            }           
             _context.Users.Remove(employee);
             _context.SaveChanges();
 
@@ -119,7 +110,7 @@ namespace Hotel_Management_API.Controllers
 
                 // Kiểm tra trùng Username với nhân viên khác
                 var duplicateEmployee = _context.Users
-                    .FirstOrDefault(e => e.Username == updatedEmployee.Username && e.UserID != id);
+                    .FirstOrDefault(e => e.Username == updatedEmployee.Username && e.UserID != id);            
 
                 if (duplicateEmployee != null)
                 {

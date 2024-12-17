@@ -1623,4 +1623,169 @@ document.getElementById("addFoodForm").addEventListener("submit", async function
     alert(result.message || "Thành công!");
 });
 
+/*================================= Hàm xử lí cho Employee ===================================*/
+$(document).ready(function () {
+    // Add Employee
+    $('#addEmployeeForm').on('submit', function (event) {
+        event.preventDefault();
+        
+        const employeeData = {
+            FullName: $('input[name="employee_name"]').val(),
+            PhoneNumber: $('input[name="phone_number"]').val(),
+            Email: $('input[name="email"]').val(),
+            EmployeeID: employeeId
+        };
+
+        // Send data via API
+        $.ajax({
+            url: '/Employee/CreateEmployee', // API URL
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(employeeData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Employee added successfully!'
+                }).then(() => {
+                    location.reload(); // Reload page
+                });
+            },
+            error: function (xhr) {
+                // Handle different types of errors
+                if (xhr.status === 409) {
+                    // Duplicate Employee ID error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An employee with this ID number already exists.'
+                    });
+                } else {
+                    // Other errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'An error occurred while adding the employee.'
+                    });
+                }
+            }
+        });
+    });
+
+    // Validate Employee ID input on input    
+
+    // Handle Edit button click
+    $('.edit-employee').on('click', function () {
+        var row = $(this).closest('tr');
+
+        // Fill modal with employee information
+        $('#editEmployeeModal input[name="employee_id"]').val(row.find('td:first').text());
+        $('#editEmployeeModal input[name="employee_name"]').val(row.find('td:nth-child(2)').text());
+        $('#editEmployeeModal input[name="phone_number"]').val(row.find('td:nth-child(3)').text());
+        $('#editEmployeeModal input[name="email"]').val(row.find('td:nth-child(4)').text());
+    });
+
+    // Handle form submit to update employee
+    $('#editEmployeeForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var employeeId = $('#editEmployeeModal input[name="employee_id"]').val();
+        var employeeData = {
+            EmployeeID: parseInt(employeeId),
+            FullName: $('#editEmployeeModal input[name="employee_name"]').val(),
+            PhoneNumber: $('#editEmployeeModal input[name="phone_number"]').val(),
+            Email: $('#editEmployeeModal input[name="email"]').val()
+        };
+
+        $.ajax({
+            url: '/Employee/UpdateEmployee/' + employeeId,
+            type: 'PUT',
+            contentType: 'application/json',
+            data: JSON.stringify(employeeData),
+            success: function (response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Employee information updated successfully.',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    location.reload(); // Reload page
+                });
+            },
+            error: function (xhr) {
+                if (xhr.status === 409) { // Duplicate Employee ID
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'An employee with this ID number already exists.',
+                        confirmButtonText: 'Close'
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: xhr.responseJSON.message || 'An error occurred while updating the employee information.',
+                        confirmButtonText: 'Close'
+                    });
+                }
+            }
+        });
+    });
+
+    // Employee search by name
+    $('#employeeSearch').on('keyup', function () {
+        var value = $(this).val().toLowerCase();
+        $('.datatable tbody tr').filter(function () {
+            $(this).toggle($(this).children('td').eq(1).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    // Confirm and delete employee
+    function confirmEmployeeDelete(employeeId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to undo this action!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Employee/DeleteEmployee/' + employeeId,
+                    type: 'DELETE',
+                    success: function (response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted',
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload(); // Reload page
+                        });
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 409) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'The employee cannot be deleted because the employee has already booked.'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: 'An error occurred while deleting the employee.',
+                                confirmButtonText: 'Close'
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+});
+
 

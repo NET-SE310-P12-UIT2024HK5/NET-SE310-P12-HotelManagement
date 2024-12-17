@@ -41,10 +41,11 @@
 										<thead>
 											<tr>
 												<th style="width: 10%; text-align: center;">No.</th>
-												<th style="width: 20%; text-align: center;">Employee Name</th>
-												<th style="width: 20%; text-align: center;">Phone Number</th>
+												<th style="width: 15%; text-align: center;">Username</th>
+                                                <th style="width: 20%; text-align: center;">Full Name</th>
+												<th style="width: 15%; text-align: center;">Phone Number</th>
 												<th style="width: 20%; text-align: center;">Email</th>
-												<th style="width: 20%; text-align: center;">Employee ID</th>
+                                                <th style="width: 10%; text-align: center;">Role</th>
 												<th style="width: 10%; text-align: center;">Actions</th>
 											</tr>
 										</thead>
@@ -53,15 +54,25 @@
 											{
 												<tr>
 													<td class="text-center">@(@employee.index + 1)</td>
+													<td class="text-center">@employee.value.Username</td>
 													<td class="text-center">@employee.value.FullName</td>
 													<td class="text-center">@employee.value.PhoneNumber</td>
 													<td class="text-center">@employee.value.Email</td>
-													<td class="text-center">@employee.value.UserID</td>
+													<td class="text-center">
+														@if (employee.value.RoleID == 1)
+														{
+															<span>Admin</span>
+														}
+														else
+														{
+															<span>Employee</span>
+														}
+													</td>
 													<td class="text-right">
 														<div class="dropdown dropdown-action">
 															<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v ellipse_color"></i></a>
 															<div class="dropdown-menu dropdown-menu-right">
-																<a class="dropdown-item edit-room" href="javascript:void(0);" data-toggle="modal" data-target="#editEmployeeModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
+																<a class="dropdown-item edit-employee" href="javascript:void(0);" data-toggle="modal" data-target="#editEmployeeModal"><i class="fas fa-pencil-alt m-r-5"></i> Edit</a>
 																<a class="dropdown-item" href="javascript:void(0);" onclick="confirmEmployeeDelete(@employee.value.UserID)" data-id="@employee.value.UserID">
 																	<i class="fas fa-trash-alt m-r-5"></i> Delete
 																</a>
@@ -83,26 +94,26 @@
 							</div>
 							<div class="card-body">
 								<form id="addEmployeeForm" action="#" method="post">
+                                    <div class="form-group">
+                                        <label><b>Username</b></label>
+                                        <input type="text" class="form-control" name="username" required>
+                                    </div>
 									<div class="form-group">
 										<label><b>Employee Name</b></label>
 										<input type="text" class="form-control" name="employee_name" required>
 									</div>
-
 									<div class="form-group">
 										<label><b>Phone Number</b></label>
 										<input type="number" class="form-control no-spinner" inputmode="numeric" name="phone_number" required>
 									</div>
-
-									<div class="form-group">
-										<label><b>Employee ID</b></label>
-										<input type="number" class="form-control no-spinner" inputmode="numeric" name="employee_id" required>
-									</div>
-
 									<div class="form-group">
 										<label><b>Email</b></label>
-										<input type="text" class="form-control" name="email" required>
-									</div>
-
+										<input type="email" class="form-control" name="email" required>
+									</div>									
+                                    <div class="form-group">
+                                        <label><b>Password</b></label>
+                                        <input type="password" class="form-control" name="password" required>
+                                    </div>
 									<div class="container text-right">
 										<button type="submit" class="btn btn-primary">
 											<i class="fas fa-plus mr-2"></i>Add Employee
@@ -113,7 +124,6 @@
 						</div>
 					</div>
 				</div>
-
 				<!-- Modal Edit -->
 				<div id="editEmployeeModal" class="modal fade" role="dialog">
 					<div class="modal-dialog modal-dialog-centered">
@@ -124,63 +134,31 @@
 							</div>
 							<div class="modal-body">
 								<form id="editEmployeeForm">
-									<div class="row formtype">
-										<div class="col-md-6" style="display: none;">
-											<div class="form-group">
-												<label>Employee ID</label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-hashtag"></i></span>
-													</div>
-													<input name="employee_id" class="form-control" type="text" readonly required>
-												</div>
-											</div>
-										</div>
+									<div class="row formtype">							
 										<div class="col-md-6">
 											<div class="form-group">
-												<label><b>Employee ID</b></label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-id-card"></i></span>
-													</div>
-													<input name="employee_id" class="form-control no-spinner" type="text" placeholder="Enter Employee ID" required>
-												</div>
-											</div>
-										</div>
-
-										<div class="col-md-6">
-											<div class="form-group">
-												<label><b>Employee Name</b></label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fas fa-user"></i></span>
-													</div>
-													<input name="employee_name" class="form-control no-spinner" type="text" placeholder="Enter employee's name" required>
-												</div>
-											</div>
-										</div>
-										<div class="col-md-6">
-											<div class="form-group">
-												<label><b>Email</b></label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fa fa-envelope"></i></span>
-													</div>
-													<input name="email" class="form-control no-spinner" type="text" placeholder="Enter employee's email" required>
+												<label><b>Full Name</b></label>
+												<div class="input-group">													
+													<input name="user_fullname" class="form-control no-spinner" type="text" placeholder="Enter full name" required>
 												</div>
 											</div>
 										</div>
 										<div class="col-md-6">
 											<div class="form-group">
 												<label><b>Phone Number</b></label>
-												<div class="input-group">
-													<div class="input-group-prepend">
-														<span class="input-group-text"><i class="fa fa-mobile"></i></span>
-													</div>
+												<div class="input-group">													
 													<input name="phone_number" class="form-control no-spinner" type="text" placeholder="Enter phone number" required>
 												</div>
 											</div>
 										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label><b>Email</b></label>
+												<div class="input-group">													
+													<input name="email" class="form-control no-spinner" type="text" placeholder="Enter email" required>
+												</div>
+											</div>
+										</div>                                       
 									</div>
 									<div class="text-right">
 										<button type="submit" class="btn btn-primary btn-success">
