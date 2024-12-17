@@ -58,11 +58,8 @@ namespace Hotel_Management.Controllers
 
                 if (foodAndBeverageList == null || !foodAndBeverageList.Any())
                 {
-                    _logger.LogWarning("No food and beverage items found");
-                    return View("Error", new ErrorViewModel
-                    {
-                        Message = "No food and beverage items found"
-                    });
+                    
+                    return View();
                 }
 
                 // Phân trang
@@ -160,13 +157,21 @@ namespace Hotel_Management.Controllers
             }
         }
 
-        public async Task<IActionResult> CreateFoodAndBeverage([FromBody] FoodAndBeverageServices foodAndBeverageServices)
+        [HttpPost]
+        public async Task<IActionResult> CreateFoodAndBeverage([FromForm] FoodAndBeverageServices foodAndBeverageServices, [FromForm] IFormFile ItemImage)
         {
             try
             {
-                if (foodAndBeverageServices == null)
+                if (foodAndBeverageServices == null || ItemImage == null)
                 {
-                    return BadRequest(new { message = "Invalid Food and Beverage data." });
+                    return BadRequest(new { message = "Dữ liệu không hợp lệ." });
+                }
+
+                // Chuyển đổi hình ảnh thành mảng byte
+                using (var memoryStream = new MemoryStream())
+                {
+                    await ItemImage.CopyToAsync(memoryStream);
+                    foodAndBeverageServices.ItemImage = memoryStream.ToArray();
                 }
 
                 // Gửi yêu cầu đến API
@@ -184,12 +189,8 @@ namespace Hotel_Management.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while creating customer.");
-                if (ex.InnerException != null)
-                {
-                    _logger.LogError(ex.InnerException, "Inner exception while creating customer.");
-                }
-                return StatusCode(500, new { message = "An error occurred while creating the customer.", details = ex.InnerException?.Message });
+                _logger.LogError(ex, "Error while creating food and beverage.");
+                return StatusCode(500, new { message = "An error occurred while creating the item.", details = ex.Message });
             }
         }
 
@@ -274,10 +275,27 @@ namespace Hotel_Management.Controllers
             }
         }
 
-        public async Task<IActionResult> UpdateFoodAndBeverage([FromBody] FoodAndBeverageServices foodAndBeverageServices)
+        [HttpPost]
+        public async Task<IActionResult> UpdateFoodAndBeverage([FromForm] FoodAndBeverageServices foodAndBeverageServices, [FromForm] IFormFile ItemImage)
         {
             try
             {
+                // Validate input
+                if (foodAndBeverageServices == null)
+                {
+                    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+                }
+
+                // Kiểm tra và xử lý hình ảnh nếu được tải lên
+                if (ItemImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await ItemImage.CopyToAsync(memoryStream);
+                        foodAndBeverageServices.ItemImage = memoryStream.ToArray();
+                    }
+                }
+
                 // Gửi yêu cầu PUT đến API
                 var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/FoodandBeverage/{foodAndBeverageServices.ServiceID}", foodAndBeverageServices);
 
@@ -395,7 +413,7 @@ namespace Hotel_Management.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = $"Không thể tìm thấy dịch vụ. Mã lỗi: {response.StatusCode}"
+                        
                     });
                 }
 
@@ -407,7 +425,7 @@ namespace Hotel_Management.Controllers
                     return Json(new
                     {
                         success = false,
-                        message = "Không tìm thấy dịch vụ đặt thức ăn cho Booking ID này"
+                        
                     });
                 }
 

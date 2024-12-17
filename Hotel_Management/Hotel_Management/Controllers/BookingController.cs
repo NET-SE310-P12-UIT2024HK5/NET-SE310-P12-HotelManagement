@@ -170,8 +170,9 @@ namespace Hotel_Management.Controllers
             try
             {
                 var response = await _httpClient.DeleteAsync($"https://localhost:7287/Booking/{id}");
+				var res = await _httpClient.PutAsync("https://localhost:7287/Rooms/update-status", null);
 
-                if (response.IsSuccessStatusCode)
+				if (response.IsSuccessStatusCode)
                 {
                     return Ok(new { message = "Booking deleted successfully." });
                 }

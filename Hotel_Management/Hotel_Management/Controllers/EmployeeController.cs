@@ -21,15 +21,14 @@ namespace Hotel_Management.Controllers
             // Kiểm tra role và điều hướng đến view tương ứng
             if (role == "Admin")
             {
-                var employees = await GetEmployeesAsync();
-                if (employees == null)
-                {
-                    return View("Error");
-                }
-                return View(employees);
+                return RedirectToAction("Employee");
             }
-
             return View("Error"); // Nếu role không hợp lệ
+        }
+        public async Task<IActionResult> Employee()
+        {
+            var employees = await GetEmployeesAsync();
+            return View(employees);
         }
 
         public async Task<List<Users>> GetEmployeesAsync()
