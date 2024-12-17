@@ -275,10 +275,27 @@ namespace Hotel_Management.Controllers
             }
         }
 
-        public async Task<IActionResult> UpdateFoodAndBeverage([FromBody] FoodAndBeverageServices foodAndBeverageServices)
+        [HttpPost]
+        public async Task<IActionResult> UpdateFoodAndBeverage([FromForm] FoodAndBeverageServices foodAndBeverageServices, [FromForm] IFormFile ItemImage)
         {
             try
             {
+                // Validate input
+                if (foodAndBeverageServices == null)
+                {
+                    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ." });
+                }
+
+                // Kiểm tra và xử lý hình ảnh nếu được tải lên
+                if (ItemImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await ItemImage.CopyToAsync(memoryStream);
+                        foodAndBeverageServices.ItemImage = memoryStream.ToArray();
+                    }
+                }
+
                 // Gửi yêu cầu PUT đến API
                 var response = await _httpClient.PutAsJsonAsync($"https://localhost:7287/FoodandBeverage/{foodAndBeverageServices.ServiceID}", foodAndBeverageServices);
 

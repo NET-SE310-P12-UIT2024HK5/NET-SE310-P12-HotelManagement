@@ -1129,14 +1129,14 @@ $('#editFoodForm').on('submit', function (e) {
     var foodName = $('#editFoodName').val().trim();
     if (!foodName) {
         isValid = false;
-        errorMessages.push("Tên mặt hàng không được để trống");
+        errorMessages.push("The item name cannot be empty");
     }
 
     // Kiểm tra giá
     var price = $('#editPrice').val();
     if (!price || isNaN(price) || parseFloat(price) < 0) {
         isValid = false;
-        errorMessages.push("Giá không hợp lệ");
+        errorMessages.push("Invalid price");
     }
 
     // Nếu có lỗi, hiển thị thông báo
@@ -1145,7 +1145,7 @@ $('#editFoodForm').on('submit', function (e) {
             icon: 'error',
             title: 'Lỗi Nhập Liệu',
             html: errorMessages.map(msg => `<p>${msg}</p>`).join(''),
-            confirmButtonText: 'Đóng'
+            confirmButtonText: 'Close'
         });
         return;
     }
@@ -1176,7 +1176,7 @@ $('#editFoodForm').on('submit', function (e) {
             if (response.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Thành công!',
+                    title: 'Success!',
                     text: response.message
                 }).then(() => {
                     // Làm mới danh sách hoặc reload trang
@@ -1185,7 +1185,7 @@ $('#editFoodForm').on('submit', function (e) {
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi!',
+                    title: 'Error!',
                     text: response.message
                 });
             }
@@ -1194,7 +1194,7 @@ $('#editFoodForm').on('submit', function (e) {
             Swal.fire({
                 icon: 'error',
                 title: 'Lỗi',
-                text: 'Đã xảy ra lỗi không mong muốn'
+                text: 'An unexpected error occurred'
             });
         }
     });
