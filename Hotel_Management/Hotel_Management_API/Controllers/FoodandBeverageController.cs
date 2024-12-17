@@ -170,8 +170,13 @@ namespace Hotel_Management_API.Controllers
                 existingItem.Description = updatedItem.Description;
                 existingItem.IsAvailable = updatedItem.IsAvailable;
 
+                // Nếu có hình ảnh mới được gửi, cập nhật
+                if (updatedItem.ItemImage != null && updatedItem.ItemImage.Length > 0)
+                {
+                    existingItem.ItemImage = updatedItem.ItemImage;
+                }
+
                 // Lưu thay đổi vào database
-                _context.FoodAndBeverageServices.Update(existingItem);
                 await _context.SaveChangesAsync();
 
                 // Trả về mục đã được cập nhật

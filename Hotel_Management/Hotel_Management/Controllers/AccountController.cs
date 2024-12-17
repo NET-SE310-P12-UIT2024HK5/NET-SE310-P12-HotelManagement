@@ -21,7 +21,7 @@ namespace Hotel_Management_MVC.Controllers
 
             // Gọi API để xác thực
             var client = new HttpClient();
-            var apiUrl = "https://localhost:7287/api/Account/login"; // Đổi URL API của bạn
+            var apiUrl = "https://localhost:7287/api/Account/login"; 
 
             var loginRequest = new
             {
