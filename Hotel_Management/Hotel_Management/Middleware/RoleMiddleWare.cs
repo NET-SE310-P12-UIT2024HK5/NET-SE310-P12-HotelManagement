@@ -49,7 +49,8 @@ namespace Hotel_Management.Middleware
                     catch
                     {
                         context.Items["Role"] = "Unauthorized";
-                    }
+						context.Items["Username"] = "Unauthorized";
+					}
                 }
             }
 

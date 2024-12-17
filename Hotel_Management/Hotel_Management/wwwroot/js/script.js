@@ -304,7 +304,7 @@ $(document).ready(function () {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: errorMessage
+                    text: "Rooms is unavailable! Please choose another option"
                 });
             }
         });
