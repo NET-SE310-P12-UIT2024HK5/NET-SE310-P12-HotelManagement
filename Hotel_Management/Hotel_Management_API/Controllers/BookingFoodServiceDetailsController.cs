@@ -147,5 +147,49 @@ namespace Hotel_Management_API.Controllers
 				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
-	}
+
+        [HttpDelete("DeleteDetail/{detailId}")]
+        public IActionResult DeleteDetail(int detailId)
+        {
+            try
+            {
+                // Tìm chi tiết cần xóa
+                var detail = _context.BookingFoodServiceDetails
+                    .Include(d => d.BookingFoodServices)
+                    .Include(d => d.FoodAndBeverageService)
+                    .FirstOrDefault(d => d.BookingFoodServiceDetailID == detailId);
+
+                if (detail == null)
+                {
+                    _logger.LogWarning("BookingFoodServiceDetail with ID {Id} not found.", detailId);
+                    return NotFound();
+                }
+
+                // Tính lại tổng giá
+                var priceToSubtract = detail.FoodAndBeverageService.ItemPrice * detail.Quantity;
+                var bookingFoodService = detail.BookingFoodServices;
+                bookingFoodService.TotalPrice -= priceToSubtract;
+
+                // Xóa chi tiết
+                _context.BookingFoodServiceDetails.Remove(detail);
+                _context.SaveChanges();
+
+                _logger.LogInformation("BookingFoodServiceDetail with ID {Id} deleted. Updated total price to {TotalPrice}",
+                    detailId, bookingFoodService.TotalPrice);
+
+                return Ok(new
+                {
+                    message = "Chi tiết đã được xóa thành công.",
+                    totalPrice = bookingFoodService.TotalPrice,
+                    bookingFoodServiceId = bookingFoodService.BookingFoodServiceID
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi xóa chi tiết dịch vụ");
+                return StatusCode(500, "Có lỗi xảy ra khi xóa chi tiết.");
+            }
+        }
+
+    }
 }

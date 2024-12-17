@@ -1225,22 +1225,53 @@ function updateOrderSummary() {
 
 // Xóa món ăn khỏi đơn hàng
 function removeFromOrder(index) {
-    window.orderItems.splice(index, 1);
-    updateOrderSummary();
+    Swal.fire({
+        title: 'Bạn có chắc muốn xóa món này?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, xóa!',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.orderItems.splice(index, 1);
+            updateOrderSummary();
+
+            Swal.fire({
+                title: 'Đã xóa!',
+                text: 'Món ăn đã được xóa khỏi đơn hàng.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
 }
 
 // Gửi đơn hàng
 async function submitOrder() {
     const bookingSelect = document.getElementById("bookingSelect");
     const selectedBooking = bookingSelect.value;
+
     if (!selectedBooking) {
-        alert("Vui lòng chọn một booking.");
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Vui lòng chọn một booking.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
         return;
     }
+
     if (window.orderItems.length === 0) {
-        alert("Đơn hàng trống!");
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Đơn hàng trống!',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
         return;
     }
+
     const orderData = {
         BookingID: parseInt(selectedBooking),
         OrderItems: window.orderItems.map(item => ({
@@ -1250,7 +1281,6 @@ async function submitOrder() {
     };
 
     try {
-        // Thay đổi route thành "/FoodAndBeverage/SubmitOrder"
         const response = await fetch("/FoodAndBeverage/SubmitOrder", {
             method: "POST",
             headers: {
@@ -1259,27 +1289,42 @@ async function submitOrder() {
             body: JSON.stringify(orderData)
         });
 
-        // Thêm log để debug
-        console.log('Response status:', response.status);
-
         const result = await response.json();
 
         if (response.ok) {
-            alert(result.message || "Đơn hàng đã được gửi thành công!");
-            window.orderItems = [];
-            updateOrderSummary();
+            Swal.fire({
+                title: 'Thành công!',
+                text: result.message || 'Đơn hàng đã được gửi thành công!',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            }).then(() => {
+                window.orderItems = [];
+                updateOrderSummary();
+            });
         } else {
-            alert(`Lỗi: ${result.message}`);
+            Swal.fire({
+                title: 'Lỗi!',
+                text: result.message || 'Không thể gửi đơn hàng.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     } catch (error) {
         console.error("Error submitting order:", error);
-        alert("Lỗi không mong muốn khi gửi đơn hàng: " + error);
+        Swal.fire({
+            title: 'Lỗi!',
+            text: 'Có lỗi xảy ra khi gửi đơn hàng: ' + error.message,
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
     }
 }
+
 // Định dạng tiền tệ
 function formatCurrency(amount) {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
 }
+
 
 
 
@@ -1370,49 +1415,134 @@ function displaySearchResults(data) {
     const searchResults = document.getElementById('searchResults');
     const toggleButton = document.getElementById('toggleButton');
 
-    // Kiểm tra xem có chi tiết đặt dịch vụ không
     if (!data.bookingFoodServiceDetails || data.bookingFoodServiceDetails.length === 0) {
         searchResults.innerHTML = `
-                    <div class="alert alert-info">
-                        Không có dịch vụ thức ăn nào cho Booking ID này.
-                    </div>
-                `;
+            <div class="alert alert-info">
+                Không có dịch vụ thức ăn nào cho Booking ID này.
+            </div>
+        `;
     } else {
         let resultsHtml = `
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Food/Beverage</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Food/Beverage</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
         data.bookingFoodServiceDetails.forEach(detail => {
             resultsHtml += `
-                        <tr>
-                            <td>${detail.foodAndBeverageService.itemName}</td>
-                            <td>${detail.quantity}</td>
-                            <td>${detail.foodAndBeverageService.itemPrice.toLocaleString()} ₫</td>
-                        </tr>
-                    `;
+                <tr id="detail-${detail.bookingFoodServiceDetailID}">
+                    <td>${detail.foodAndBeverageService.itemName}</td>
+                    <td>${detail.quantity}</td>
+                    <td>${detail.foodAndBeverageService.itemPrice.toLocaleString()} ₫</td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deleteFoodServiceDetail(${detail.bookingFoodServiceDetailID}, ${data.bookingFoodServiceID})">
+                            <i class="fas fa-trash-alt m-r-5"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
         });
-
         resultsHtml += `
-                        </tbody>
-                    </table>
-                    <div class="alert alert-info">
-                        Tổng giá: ${data.totalPrice.toLocaleString()} ₫
-                    </div>
-                `;
-
+                </tbody>
+            </table>
+            <div class="alert alert-info">
+                Tổng giá: ${data.totalPrice.toLocaleString()} ₫
+            </div>
+        `;
         searchResults.innerHTML = resultsHtml;
     }
 
-    // Hiển thị Search Results và ẩn Food List
     foodList.style.display = 'none';
     searchResults.style.display = 'block';
     toggleButton.textContent = 'Food List Mode';
 }
+
+// Thêm hàm xử lý xóa chi tiết dịch vụ
+function deleteFoodServiceDetail(detailId, bookingFoodServiceId) {
+    // SweetAlert xác nhận trước khi xóa
+    Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa?',
+        text: "Thao tác này không thể hoàn tác!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Có, xóa nó!',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Người dùng nhấn "Có"
+            fetch(`/FoodAndBeverage/DeleteFoodServiceDetail?detailId=${detailId}`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Xóa dòng khỏi bảng ngay lập tức
+                        const rowToRemove = document.getElementById(`detail-${detailId}`);
+                        if (rowToRemove) {
+                            rowToRemove.remove();
+                        }
+
+                        // Hiển thị SweetAlert thành công
+                        Swal.fire({
+                            title: 'Xóa thành công!',
+                            text: 'Chi tiết dịch vụ đã được xóa.',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Cập nhật lại thông tin tổng giá mà không cần load lại trang
+                            fetch(`/FoodAndBeverage/SearchByBookingId?bookingId=${bookingFoodServiceId}`, {
+                                method: 'GET',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                                .then(response => response.json())
+                                .then(result => {
+                                    if (result.success) {
+                                        // Cập nhật lại tổng giá trong giao diện
+                                        const searchResults = document.getElementById('searchResults');
+                                        const totalPriceElement = searchResults.querySelector('.alert-info');
+                                        if (totalPriceElement) {
+                                            totalPriceElement.innerHTML = `Tổng giá: ${result.data.totalPrice.toLocaleString()} ₫`;
+                                        }
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Lỗi khi cập nhật tổng giá:', error);
+                                });
+                        });
+                    } else {
+                        // Xử lý trường hợp xóa không thành công
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: result.message || 'Không thể xóa chi tiết',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Có lỗi xảy ra khi xóa',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        }
+    });
+}
+
+
