@@ -113,5 +113,26 @@ namespace Hotel_Management_API.Controllers
 			return Ok(service);
 		}
 
-	}
+        [HttpDelete("detail/{detailId}")]
+        public IActionResult DeleteDetail(int detailId)
+        {
+            // Tìm BookingFoodServiceDetail theo detailId
+            var detail = _context.BookingFoodServiceDetails.FirstOrDefault(d => d.BookingFoodServiceDetailID == detailId);
+
+            // Kiểm tra nếu không tồn tại
+            if (detail == null)
+            {
+                _logger.LogWarning("BookingFoodServiceDetail with ID {Id} not found.", detailId);
+                return NotFound(new { message = $"BookingFoodServiceDetail with ID {detailId} not found." });
+            }
+
+            // Xóa chi tiết
+            _context.BookingFoodServiceDetails.Remove(detail);
+            _context.SaveChanges();
+
+            _logger.LogInformation("BookingFoodServiceDetail with ID {Id} deleted.", detailId);
+            return NoContent();
+        }
+
+    }
 }

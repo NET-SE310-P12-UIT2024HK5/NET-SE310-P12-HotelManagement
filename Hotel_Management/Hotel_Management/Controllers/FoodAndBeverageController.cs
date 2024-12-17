@@ -428,5 +428,49 @@ namespace Hotel_Management.Controllers
             }
         }
 
+        public async Task<IActionResult> DeleteFoodServiceDetail(int detailId)
+        {
+            try
+            {
+                // Gửi yêu cầu DELETE đến API
+                var response = await _httpClient.DeleteAsync($"https://localhost:7287/BookingFoodServiceDetails/DeleteDetail/{detailId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    _logger.LogError($"API Error: {response.StatusCode}, Error: {errorContent}");
+
+                    return Json(new
+                    {
+                        success = false,
+                        message = $"Không thể xóa. Mã lỗi: {response.StatusCode}, Chi tiết: {errorContent}"
+                    });
+                }
+
+                // Đọc nội dung phản hồi
+                var result = await response.Content.ReadAsStringAsync();
+                var deleteResult = JsonConvert.DeserializeObject<dynamic>(result);
+
+                // Nếu xóa thành công
+                return Json(new
+                {
+                    success = true,
+                    message = "Xóa thành công",
+                    totalPrice = deleteResult.totalPrice,
+                    bookingFoodServiceId = deleteResult.bookingFoodServiceId
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi không mong muốn khi xóa chi tiết dịch vụ");
+                return Json(new
+                {
+                    success = false,
+                    message = $"Có lỗi xảy ra: {ex.Message}"
+                });
+            }
+        }
+
+
     }
 }
