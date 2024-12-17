@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -47,15 +47,12 @@
 										<span>Role: Unknown</span>
 									}
 								</p>
-							</div>
 						</div>
-						<a class="dropdown-item" href="profile.html">My Profile</a> <a class="dropdown-item" href="settings.html">Account Settings</a>
+					</div>
 						<a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Logout</a>
 						<form id="logout-form" action="/Account/Logout" method="post" style="display: none;">
 							@Html.AntiForgeryToken()
-						</form>
-
-					</div>
+						</form>					
 				</li>
 			</ul>
 
