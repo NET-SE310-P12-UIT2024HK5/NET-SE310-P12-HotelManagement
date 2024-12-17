@@ -55,6 +55,7 @@ namespace Hotel_Management_API.Controllers
                         u.ItemPrice,
                         u.Category,
                         u.Description,
+                        u.ItemImage,
                         u.IsAvailable,
                     })
                     .ToListAsync();
@@ -224,5 +225,34 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, $"Lỗi: {ex.Message}");
             }
         }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadFoodAndBeverage([FromForm] FoodAndBeverageServices newItem, [FromForm] IFormFile ItemImage)
+        {
+            try
+            {
+                if (newItem == null || ItemImage == null)
+                {
+                    return BadRequest(new { message = "Dữ liệu không hợp lệ." });
+                }
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await ItemImage.CopyToAsync(memoryStream);
+                    newItem.ItemImage = memoryStream.ToArray();
+                }
+
+                _context.FoodAndBeverageServices.Add(newItem);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Thêm mới thành công!", newItem });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi thêm mới món ăn.");
+                return StatusCode(500, new { message = "Có lỗi xảy ra.", error = ex.Message });
+            }
+        }
+
     }
 }
