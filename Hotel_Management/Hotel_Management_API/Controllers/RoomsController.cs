@@ -169,5 +169,48 @@ namespace Hotel_Management_API.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the room.", details = ex.Message });
             }
         }
-    }
+
+		[HttpPut("update-status")]
+		public IActionResult UpdateRoomStatuses()
+		{
+			try
+			{
+				// Lấy tất cả các phòng
+				var rooms = _context.Rooms.ToList();
+
+				// Lấy các phòng đang được đặt (có booking còn hiệu lực)
+				var bookedRoomIds = _context.Booking
+					.Where(b => b.CheckInDate <= DateTime.Now && b.CheckOutDate >= DateTime.Now)
+					.Select(b => b.RoomID)
+					.Distinct()
+					.ToList();
+
+				// Cập nhật trạng thái cho từng phòng
+				foreach (var room in rooms)
+				{
+					room.Status = bookedRoomIds.Contains(room.RoomID) ? "Occupied" : "Available";
+				}
+
+				// Lưu các thay đổi
+				_context.SaveChanges();
+
+				return Ok(new
+				{
+					message = "Room statuses updated successfully",
+					totalRooms = rooms.Count,
+					bookedRooms = bookedRoomIds.Count
+				});
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error updating room statuses");
+				return StatusCode(500, new
+				{
+					message = "An error occurred while updating room statuses",
+					details = ex.Message
+				});
+			}
+		}
+
+	}
 }
