@@ -941,41 +941,41 @@ $(document).ready(function () {
     });
 });
 
-/*================================= Hàm xử lí cho Booking ===================================*/
+/*================================= Hàm xử lí cho Food and Beverage ===================================*/
 function deleteItem(serviceId) {
-    // Hiển thị hộp thoại xác nhận bằng SweetAlert
+    // Show confirmation dialog using SweetAlert
     Swal.fire({
         title: 'Are you sure?',
-        text: 'You will not be able to undo this action!',
+        text: 'This action cannot be undone!',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it',
+        confirmButtonText: 'Yes, delete it!',
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Gửi yêu cầu xóa qua Ajax
+            // Send delete request via Ajax
             $.ajax({
                 url: '/FoodAndBeverage/DeleteFoodAndBeverage',
                 type: 'POST',
                 data: { id: serviceId },
                 success: function (response) {
-                    // Hiển thị thông báo xóa thành công bằng SweetAlert
+                    // Show success message using SweetAlert
                     Swal.fire({
                         icon: 'success',
-                        title: 'Deleted',
-                        text: 'Object has been deleted successfully.',
+                        title: 'Deleted!',
+                        text: 'The item has been deleted successfully.',
                         confirmButtonText: 'OK'
                     }).then(() => {
                         location.reload(); // Reload the page
                     });
                 },
                 error: function (xhr, status, error) {
-                    // Hiển thị thông báo lỗi bằng SweetAlert
+                    // Show error message using SweetAlert
                     Swal.fire(
-                        'Lỗi!',
-                        'Có lỗi xảy ra khi xóa: ' + xhr.responseText,
+                        'Error!',
+                        'An error occurred while deleting: ' + xhr.responseText,
                         'error'
                     );
                 }
@@ -984,8 +984,8 @@ function deleteItem(serviceId) {
     });
 }
 
+
 $(document).ready(function () {
-    // Xử lý thêm mới Food and Beverage
     $('#addFoodForm').on('submit', function (e) {
         e.preventDefault();
 
@@ -997,54 +997,62 @@ $(document).ready(function () {
         var foodName = $('#foodName').val().trim();
         if (!foodName) {
             isValid = false;
-            errorMessages.push("Tên mặt hàng không được để trống");
+            errorMessages.push("The item name cannot be empty");
         }
 
         // Kiểm tra category
         var category = $('#category').val();
         if (!category) {
             isValid = false;
-            errorMessages.push("Vui lòng chọn danh mục");
+            errorMessages.push("The item name cannot be empty");
         }
 
         // Kiểm tra giá
         var price = $('#price').val();
         if (!price || isNaN(price) || parseFloat(price) < 0) {
             isValid = false;
-            errorMessages.push("Giá không hợp lệ");
+            errorMessages.push("The item name cannot be empty");
+        }
+
+        // Kiểm tra hình ảnh
+        var imageFile = $('#ItemImage')[0].files[0];
+        if (!imageFile) {
+            isValid = false;
+            errorMessages.push("Please select an image");
         }
 
         // Nếu có lỗi, hiển thị thông báo
         if (!isValid) {
             Swal.fire({
                 icon: 'error',
-                title: 'Lỗi Nhập Liệu',
+                title: 'Input Error',
                 html: errorMessages.map(msg => `<p>${msg}</p>`).join(''),
-                confirmButtonText: 'Đóng'
+                confirmButtonText: 'Close'
             });
             return;
         }
 
-        // Chuẩn bị dữ liệu
-        var foodData = {
-            itemName: foodName,
-            category: category,
-            itemPrice: parseFloat(price),
-            description: $('#description').val() || '',
-            isAvailable: $('#status').val() === 'true'
-        };
+        // Chuẩn bị FormData
+        var formData = new FormData();
+        formData.append('ItemName', foodName);
+        formData.append('Category', category);
+        formData.append('ItemPrice', price);
+        formData.append('Description', $('#description').val() || '');
+        formData.append('IsAvailable', $('#status').val());
+        formData.append('ItemImage', imageFile);
 
         // Gửi AJAX request
         $.ajax({
             url: '/FoodAndBeverage/CreateFoodAndBeverage',
             type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(foodData),
+            processData: false,  // Không xử lý dữ liệu
+            contentType: false,  // Để trình duyệt tự động set Content-Type
+            data: formData,
             success: function (response) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Thành công!',
-                    text: 'Đã thêm mặt hàng thực phẩm mới.',
+                    title: 'Success!',
+                    text: 'A new food item has been added',
                     confirmButtonText: 'OK'
                 }).then(() => {
                     // Làm mới danh sách hoặc reload trang
@@ -1053,27 +1061,23 @@ $(document).ready(function () {
             },
             error: function (xhr, status, error) {
                 // Xử lý các lỗi khác nhau
-                var errorMessage = 'Có lỗi xảy ra khi thêm mặt hàng.';
-
+                var errorMessage = 'An error occurred while adding the item';
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     // Xử lý lỗi validation từ server
                     var serverErrors = xhr.responseJSON.errors;
                     var errorList = [];
-
                     for (var field in serverErrors) {
                         errorList.push(serverErrors[field].join(', '));
                     }
-
                     errorMessage = errorList.join('<br>');
                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                 }
-
                 Swal.fire({
                     icon: 'error',
-                    title: 'Lỗi!',
+                    title: 'Error!',
                     html: errorMessage,
-                    confirmButtonText: 'Đóng'
+                    confirmButtonText: 'Close'
                 });
             }
         });
@@ -1093,7 +1097,6 @@ function editItem(serviceId) {
                 $('#editPrice').val(response.item.itemPrice);
                 $('#editDescription').val(response.item.description);
                 $('#editStatus').val(response.item.isAvailable.toString());
-
                 // Show modal
                 $('#editFoodModal').modal('show');
             } else {
@@ -1118,34 +1121,71 @@ function editItem(serviceId) {
 $('#editFoodForm').on('submit', function (e) {
     e.preventDefault();
 
-    var formData = {
-        ServiceID: $('#editServiceID').val(),
-        ItemName: $('#editFoodName').val(),
-        Category: $('#editCategory').val(),
-        ItemPrice: $('#editPrice').val(),
-        Description: $('#editDescription').val(),
-        IsAvailable: $('#editStatus').val() === 'true'
-    };
+    // Validate client-side
+    var isValid = true;
+    var errorMessages = [];
 
+    // Kiểm tra tên
+    var foodName = $('#editFoodName').val().trim();
+    if (!foodName) {
+        isValid = false;
+        errorMessages.push("Tên mặt hàng không được để trống");
+    }
+
+    // Kiểm tra giá
+    var price = $('#editPrice').val();
+    if (!price || isNaN(price) || parseFloat(price) < 0) {
+        isValid = false;
+        errorMessages.push("Giá không hợp lệ");
+    }
+
+    // Nếu có lỗi, hiển thị thông báo
+    if (!isValid) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Lỗi Nhập Liệu',
+            html: errorMessages.map(msg => `<p>${msg}</p>`).join(''),
+            confirmButtonText: 'Đóng'
+        });
+        return;
+    }
+
+    // Chuẩn bị FormData
+    var formData = new FormData();
+    formData.append('ServiceID', $('#editServiceID').val());
+    formData.append('ItemName', foodName);
+    formData.append('Category', $('#editCategory').val());
+    formData.append('ItemPrice', price);
+    formData.append('Description', $('#editDescription').val() || '');
+    formData.append('IsAvailable', $('#editStatus').val());
+
+    // Thêm hình ảnh nếu có
+    var imageFile = $('#editItemImage')[0].files[0];
+    if (imageFile) {
+        formData.append('ItemImage', imageFile);
+    }
+
+    // Gửi AJAX request
     $.ajax({
         url: '/FoodAndBeverage/UpdateFoodAndBeverage',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(formData),
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
         success: function (response) {
             if (response.success) {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Success',
+                    title: 'Thành công!',
                     text: response.message
                 }).then(() => {
-                    // Reload the page or update the list
+                    // Làm mới danh sách hoặc reload trang
                     location.reload();
                 });
             } else {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
+                    title: 'Lỗi!',
                     text: response.message
                 });
             }
@@ -1153,13 +1193,12 @@ $('#editFoodForm').on('submit', function (e) {
         error: function (xhr) {
             Swal.fire({
                 icon: 'error',
-                title: 'Error',
-                text: 'An unexpected error occurred'
+                title: 'Lỗi',
+                text: 'Đã xảy ra lỗi không mong muốn'
             });
         }
     });
 });
-
 document.addEventListener('DOMContentLoaded', function () {
     window.orderItems = [];
     window.addToOrder = addToOrder;
@@ -1226,19 +1265,19 @@ function updateOrderSummary() {
 // Xóa món ăn khỏi đơn hàng
 function removeFromOrder(index) {
     Swal.fire({
-        title: 'Bạn có chắc muốn xóa món này?',
+        title: 'Are you sure you want to remove this item ?',
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Có, xóa!',
-        cancelButtonText: 'Hủy'
+        confirmButtonText: 'Yes, remove it!',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
             window.orderItems.splice(index, 1);
             updateOrderSummary();
 
             Swal.fire({
-                title: 'Đã xóa!',
-                text: 'Món ăn đã được xóa khỏi đơn hàng.',
+                title: 'Removed!',
+                text: 'The item has been removed from the order',
                 icon: 'success',
                 timer: 1500,
                 showConfirmButton: false
@@ -1254,8 +1293,8 @@ async function submitOrder() {
 
     if (!selectedBooking) {
         Swal.fire({
-            title: 'Lỗi!',
-            text: 'Vui lòng chọn một booking.',
+            title: 'Error!',
+            text: 'Please select a booking',
             icon: 'error',
             confirmButtonText: 'OK'
         });
@@ -1264,8 +1303,8 @@ async function submitOrder() {
 
     if (window.orderItems.length === 0) {
         Swal.fire({
-            title: 'Lỗi!',
-            text: 'Đơn hàng trống!',
+            title: 'Error!',
+            text: 'The order is empty!',
             icon: 'error',
             confirmButtonText: 'OK'
         });
@@ -1293,8 +1332,8 @@ async function submitOrder() {
 
         if (response.ok) {
             Swal.fire({
-                title: 'Thành công!',
-                text: result.message || 'Đơn hàng đã được gửi thành công!',
+                title: 'Success!',
+                text: result.message || 'The order has been submitted successfully!',
                 icon: 'success',
                 confirmButtonText: 'OK'
             }).then(() => {
@@ -1303,8 +1342,8 @@ async function submitOrder() {
             });
         } else {
             Swal.fire({
-                title: 'Lỗi!',
-                text: result.message || 'Không thể gửi đơn hàng.',
+                title: 'Error!',
+                text: result.message || 'Failed to submit the order',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
@@ -1312,8 +1351,8 @@ async function submitOrder() {
     } catch (error) {
         console.error("Error submitting order:", error);
         Swal.fire({
-            title: 'Lỗi!',
-            text: 'Có lỗi xảy ra khi gửi đơn hàng: ' + error.message,
+            title: 'Error!',
+            text: 'An error occurred while submitting the order',
             icon: 'error',
             confirmButtonText: 'OK'
         });
@@ -1353,7 +1392,7 @@ function loadPage(page) {
             $('#foodAndBeverageList').replaceWith(result);
         },
         error: function (xhr) {
-            console.error('Lỗi tải trang:', xhr);
+            console.error('Error loading page:', xhr);
         }
     });
 }
@@ -1385,7 +1424,11 @@ function searchByBookingId() {
     const bookingId = document.getElementById('searchBookingId').value;
 
     if (!bookingId) {
-        alert('Vui lòng nhập Booking ID');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Notice',
+            text: 'Please enter a Booking ID'
+        });
         return;
     }
 
@@ -1401,14 +1444,23 @@ function searchByBookingId() {
             if (result.success) {
                 displaySearchResults(result.data);
             } else {
-                alert(result.message || 'Không tìm thấy dịch vụ');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Not Found',
+                    text: result.message || 'An error occurred while searching'
+                });
             }
         })
         .catch(error => {
             console.error('Lỗi:', error);
-            alert('Có lỗi xảy ra khi tìm kiếm');
+            Swal.fire({
+                icon: 'error',
+                title: 'System Error',
+                text: 'No services found'
+            });
         });
 }
+
 
 function displaySearchResults(data) {
     const foodList = document.getElementById('foodAndBeverageList');
@@ -1416,11 +1468,16 @@ function displaySearchResults(data) {
     const toggleButton = document.getElementById('toggleButton');
 
     if (!data.bookingFoodServiceDetails || data.bookingFoodServiceDetails.length === 0) {
-        searchResults.innerHTML = `
+        /*searchResults.innerHTML = `
             <div class="alert alert-info">
                 Không có dịch vụ thức ăn nào cho Booking ID này.
             </div>
-        `;
+        `;*/
+        Swal.fire({
+            icon: 'error',
+            title: 'Not Found',
+            text: result.message || 'Not Found'
+        });
     } else {
         let resultsHtml = `
             <table class="table table-striped">
@@ -1452,7 +1509,7 @@ function displaySearchResults(data) {
                 </tbody>
             </table>
             <div class="alert alert-info">
-                Tổng giá: ${data.totalPrice.toLocaleString()} ₫
+                Total Price: ${data.totalPrice.toLocaleString()} ₫
             </div>
         `;
         searchResults.innerHTML = resultsHtml;
@@ -1467,12 +1524,12 @@ function displaySearchResults(data) {
 function deleteFoodServiceDetail(detailId, bookingFoodServiceId) {
     // SweetAlert xác nhận trước khi xóa
     Swal.fire({
-        title: 'Bạn có chắc chắn muốn xóa?',
-        text: "Thao tác này không thể hoàn tác!",
+        title: 'Are you sure you want to delete ?',
+        text: "Are you sure you want to delete ?",
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Có, xóa nó!',
-        cancelButtonText: 'Hủy'
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
             // Người dùng nhấn "Có"
@@ -1494,8 +1551,8 @@ function deleteFoodServiceDetail(detailId, bookingFoodServiceId) {
 
                         // Hiển thị SweetAlert thành công
                         Swal.fire({
-                            title: 'Xóa thành công!',
-                            text: 'Chi tiết dịch vụ đã được xóa.',
+                            title: 'Deleted!',
+                            text: 'The service detail has been deleted',
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
@@ -1514,29 +1571,29 @@ function deleteFoodServiceDetail(detailId, bookingFoodServiceId) {
                                         const searchResults = document.getElementById('searchResults');
                                         const totalPriceElement = searchResults.querySelector('.alert-info');
                                         if (totalPriceElement) {
-                                            totalPriceElement.innerHTML = `Tổng giá: ${result.data.totalPrice.toLocaleString()} ₫`;
+                                            totalPriceElement.innerHTML = `Total Price: ${result.data.totalPrice.toLocaleString()} ₫`;
                                         }
                                     }
                                 })
                                 .catch(error => {
-                                    console.error('Lỗi khi cập nhật tổng giá:', error);
+                                    console.error('Error updating total price:', error);
                                 });
                         });
                     } else {
                         // Xử lý trường hợp xóa không thành công
                         Swal.fire({
-                            title: 'Lỗi!',
-                            text: result.message || 'Không thể xóa chi tiết',
+                            title: 'Error!',
+                            text: result.message || 'Unable to delete detail',
                             icon: 'error',
                             confirmButtonText: 'OK'
                         });
                     }
                 })
                 .catch(error => {
-                    console.error('Lỗi:', error);
+                    console.error('Error:', error);
                     Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Có lỗi xảy ra khi xóa',
+                        title: 'Error!',
+                        text: 'An error occurred while deleting',
                         icon: 'error',
                         confirmButtonText: 'OK'
                     });
@@ -1544,5 +1601,19 @@ function deleteFoodServiceDetail(detailId, bookingFoodServiceId) {
         }
     });
 }
+
+document.getElementById("addFoodForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    // Gửi yêu cầu POST với FormData
+    const response = await fetch('https://localhost:7287/FoodAndBeverage/UploadFoodAndBeverage', {
+        method: 'POST',
+        body: formData
+    });
+
+    const result = await response.json();
+    alert(result.message || "Thành công!");
+});
 
 

@@ -15,6 +15,7 @@ namespace Hotel_Management.Middleware
         public async Task InvokeAsync(HttpContext context)
         {
             string role = null;
+            string username = null;
 
             // Kiểm tra role trong session trước
             var token = context.Session.GetString("Token");
@@ -24,11 +25,13 @@ namespace Hotel_Management.Middleware
                 {
                     var claimsPrincipal = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
                     role = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-                }
+					username = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+				}
                 catch
                 {
                     context.Items["Role"] = "Unauthorized";
-                }
+					context.Items["Username"] = "Unauthorized";
+				}
             }
 
             // Nếu không có trong session, kiểm tra token từ header
@@ -41,7 +44,8 @@ namespace Hotel_Management.Middleware
                     {
                         var claimsPrincipal = new JwtSecurityTokenHandler().ReadToken(token) as JwtSecurityToken;
                         role = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-                    }
+						username = claimsPrincipal?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+					}
                     catch
                     {
                         context.Items["Role"] = "Unauthorized";
@@ -51,9 +55,10 @@ namespace Hotel_Management.Middleware
 
             // Lưu role vào HttpContext.Items để dùng trong các phần khác
             context.Items["Role"] = role ?? "Unauthorized";
+			context.Items["Username"] = username ?? "Unauthorized";
 
-            // Tiếp tục pipeline
-            await _next(context);
+			// Tiếp tục pipeline
+			await _next(context);
         }
     }
 }

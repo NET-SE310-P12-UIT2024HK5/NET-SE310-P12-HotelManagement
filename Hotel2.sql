@@ -73,8 +73,8 @@ CREATE TABLE FoodAndBeverageServices (
 CREATE TABLE BookingFoodServices (
     BookingFoodServiceID INT PRIMARY KEY IDENTITY(1,1),
     BookingID INT NOT NULL,
-    TotalPrice INT,
-    OrderTime DATETIME DEFAULT GETDATE(),
+    TotalPrice INT NOT NULL,
+    OrderTime DATETIME DEFAULT GETDATE() NOT NULL,
     FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
 );
 
