@@ -159,5 +159,28 @@ namespace Hotel_Management.Controllers
                 return StatusCode(500, new { message = "An error occurred while updating the room." });
             }
         }
-    }
+
+		public async Task<IActionResult> UpdateRoomStatuses()
+		{
+			try
+			{
+				var response = await _httpClient.PutAsync("https://localhost:7287/Rooms/update-status", null);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return Ok(new { message = "Room statuses updated successfully" });
+				}
+				else
+				{
+					var errorResponse = await response.Content.ReadAsStringAsync();
+					return StatusCode((int)response.StatusCode, new { message = errorResponse });
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error updating room statuses");
+				return StatusCode(500, new { message = "An error occurred while updating room statuses" });
+			}
+		}
+	}
 }

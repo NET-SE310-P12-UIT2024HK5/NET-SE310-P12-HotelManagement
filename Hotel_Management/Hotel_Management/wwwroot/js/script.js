@@ -1,4 +1,6 @@
-﻿/*================================= Hàm xử lí cho customer ===================================*/
+﻿const { error } = require("jquery");
+
+/*================================= Hàm xử lí cho customer ===================================*/
 $(document).ready(function () {
     // Hàm thêm khách hàng
     $('#addCustomerForm').on('submit', function (event) {
@@ -409,6 +411,9 @@ function deleteBooking(bookingId) {
             row.find('.dropdown-action').removeClass('disabled');
 
             let errorMessage = 'An error occurred while deleting the booking.';
+            if (xhr.status === 409) {
+                errorMessage = 'Reservations cannot be deleted because the reservation is in use with the service.';
+            }
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 errorMessage = xhr.responseJSON.message;
             }
@@ -420,6 +425,7 @@ function deleteBooking(bookingId) {
                 confirmButtonText: 'OK'
             });
         }
+
     });
 }
 
@@ -436,6 +442,7 @@ function confirmBookingDelete(bookingId) {
     }).then((result) => {
         if (result.isConfirmed) {
             deleteBooking(bookingId);
+
         }
     });
 }

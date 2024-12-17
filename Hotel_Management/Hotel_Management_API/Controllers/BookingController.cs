@@ -93,83 +93,98 @@ namespace Hotel_Management_API.Controllers
                 _logger.LogError(ex, "Lỗi khi lấy danh sách Room");
                 return StatusCode(500, $"Lỗi: {ex.Message}");
             }
-        }        
-
-        [HttpPost]
-        public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDTO)
-        {
-            try
-            {
-                if (bookingDTO == null)
-                {
-                    return BadRequest(new { message = "Booking data is required." });
-                }
-
-                // Kiểm tra ngày check-in và check-out
-                if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
-                {
-                    return BadRequest(new { message = "Check-in date must be before check-out date." });
-                }
-
-                // Kiểm tra ngày check-in không được là ngày trong quá khứ
-                if (bookingDTO.CheckInDate.Date < DateTime.Now.Date)
-                {
-                    return BadRequest(new { message = "Check-in date cannot be in the past." });
-                }
-
-                // Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
-                var existingBooking = await _context.Booking
-                    .Where(b => b.RoomID == bookingDTO.RoomID)
-                    .Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
-                    .FirstOrDefaultAsync();
-
-                if (existingBooking != null)
-                {
-                    return BadRequest(new
-                    {
-                        message = "This room is already booked for the selected dates.",
-                        conflictBooking = new
-                        {
-                            checkIn = existingBooking.CheckInDate,
-                            checkOut = existingBooking.CheckOutDate
-                        }
-                    });
-                }
-
-                // Tạo booking mới
-                var booking = new Booking
-                {
-                    CustomerID = bookingDTO.CustomerID,
-                    RoomID = bookingDTO.RoomID,
-                    CheckInDate = bookingDTO.CheckInDate,
-                    CheckOutDate = bookingDTO.CheckOutDate,
-                    Status = "Pending",
-                    UserID = 1  // Set this to appropriate value
-                };
-
-                _context.Booking.Add(booking);
-                await _context.SaveChangesAsync();
-
-                // Load related data
-                var createdBooking = await _context.Booking
-                    .Include(b => b.Customer)
-                    .Include(b => b.Room)
-                    .FirstOrDefaultAsync(b => b.BookingID == booking.BookingID);
-
-                return Ok(new { message = "Booking created successfully", data = createdBooking });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in CreateBooking");
-                return StatusCode(500, new
-                {
-                    message = "An error occurred while creating the booking.",
-                    details = ex.Message
-                });
-            }
         }
 
-        [HttpDelete("{id}")]
+		[HttpPost]
+		public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDTO)
+		{
+			try
+			{
+				if (bookingDTO == null)
+				{
+					return BadRequest(new { message = "Booking data is required." });
+				}
+
+				// Kiểm tra ngày check-in và check-out
+				if (bookingDTO.CheckInDate > bookingDTO.CheckOutDate)
+				{
+					return BadRequest(new { message = "Check-in date must be before check-out date." });
+				}
+
+				// Kiểm tra ngày check-in không được là ngày trong quá khứ
+				if (bookingDTO.CheckInDate.Date < DateTime.Now.Date)
+				{
+					return BadRequest(new { message = "Check-in date cannot be in the past." });
+				}
+
+				// Kiểm tra xem phòng có được đặt trong khoảng thời gian này không
+				var existingBooking = await _context.Booking
+					.Where(b => b.RoomID == bookingDTO.RoomID)
+					.Where(b => (bookingDTO.CheckInDate < b.CheckOutDate) && (bookingDTO.CheckOutDate > b.CheckInDate))
+					.FirstOrDefaultAsync();
+
+				if (existingBooking != null)
+				{
+					return BadRequest(new
+					{
+						message = "This room is already booked for the selected dates.",
+						conflictBooking = new
+						{
+							checkIn = existingBooking.CheckInDate,
+							checkOut = existingBooking.CheckOutDate
+						}
+					});
+				}
+
+				// Tìm phòng để cập nhật trạng thái
+				var room = await _context.Rooms.FindAsync(bookingDTO.RoomID);
+				if (room == null)
+				{
+					return BadRequest(new { message = "Room not found." });
+				}
+
+				// Cập nhật trạng thái phòng thành Occupied
+				room.Status = "Occupied";
+
+				// Tạo booking mới
+				var booking = new Booking
+				{
+					CustomerID = bookingDTO.CustomerID,
+					RoomID = bookingDTO.RoomID,
+					CheckInDate = bookingDTO.CheckInDate,
+					CheckOutDate = bookingDTO.CheckOutDate,
+					Status = "Pending",
+					UserID = 1  // Set this to appropriate value
+				};
+
+				_context.Booking.Add(booking);
+				await _context.SaveChangesAsync();
+
+				// Load related data
+				var createdBooking = await _context.Booking
+					.Include(b => b.Customer)
+					.Include(b => b.Room)
+					.FirstOrDefaultAsync(b => b.BookingID == booking.BookingID);
+
+				return Ok(new
+				{
+					message = "Booking created successfully",
+					data = createdBooking,
+					roomStatus = room.Status
+				});
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error in CreateBooking");
+				return StatusCode(500, new
+				{
+					message = "An error occurred while creating the booking.",
+					details = ex.Message
+				});
+			}
+		}
+
+		[HttpDelete("{id}")]
         public IActionResult DeleteBooking(int id)
         {
             // Kiểm tra xem Customer có tồn tại hay không
@@ -179,8 +194,16 @@ namespace Hotel_Management_API.Controllers
                 return NotFound(new { message = "Booking not found." });
             }
 
-            // Nếu không liên kết, thực hiện xóa
-            _context.Booking.Remove(booking);
+			// Kiểm tra nếu BookingID có tồn tại trong bảng Booking
+			bool isBookingLinkedToService = _context.BookingFoodServices.Any(b => b.BookingID == id);
+			if (isBookingLinkedToService)
+			{
+				return Conflict(new { message = "This booking is associated with existing bookings and cannot be deleted." });
+			}
+
+
+			// Nếu không liên kết, thực hiện xóa
+			_context.Booking.Remove(booking);
             _context.SaveChanges();
 
             return Ok(new { message = "Booking deleted successfully." });
