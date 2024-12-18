@@ -160,7 +160,7 @@ namespace Hotel_Management.Controllers
             }
         }
 
-		public async Task<IActionResult> UpdateRoomStatuses()
+		/*public async Task<IActionResult> UpdateRoomStatuses()
 		{
 			try
 			{
@@ -181,6 +181,6 @@ namespace Hotel_Management.Controllers
 				_logger.LogError(ex, "Error updating room statuses");
 				return StatusCode(500, new { message = "An error occurred while updating room statuses" });
 			}
-		}
+		}*/
 	}
 }
