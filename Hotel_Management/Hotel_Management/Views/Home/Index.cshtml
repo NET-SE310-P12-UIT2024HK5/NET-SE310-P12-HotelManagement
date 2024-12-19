@@ -99,7 +99,7 @@
                                         <i class="fas fa-money-bill-wave"></i>
                                     </span>
                                     <div class="dash-count">
-                                        <h3>$@Model.RevenueStats.TotalRevenue.ToString("N0")</h3>
+                                        <h3>@Model.RevenueStats.TotalRevenue.ToString("N0")</h3>
                                     </div>
                                 </div>
                                 <div class="dash-widget-info">
@@ -193,7 +193,10 @@
                                                     <td>@booking.CheckInDate.ToShortDateString()</td>
                                                     <td>@booking.CheckOutDate.ToShortDateString()</td>
                                                     <td>
-                                                        <span class="badge badge-pill @(booking.Status == "Active" ? "bg-success" : "bg-warning")">
+                                                        <span class="badge badge-pill
+                                                            @(booking.Status == "Confirm" ? "bg-success" :
+                                                              booking.Status == "Pending" ? "bg-warning" :
+                                                              booking.Status == "Cancelled" ? "bg-danger" : "")">
                                                             @booking.Status
                                                         </span>
                                                     </td>

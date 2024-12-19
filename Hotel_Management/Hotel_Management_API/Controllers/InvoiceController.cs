@@ -84,6 +84,29 @@ namespace Hotel_Management_API.Controllers
             return Ok(roomPrice);
         }
 
+        [HttpGet("fb-total/{bookingId}")]
+        public ActionResult<decimal> GetFBTotal(int bookingId)
+        {
+            try
+            {
+                var totalPrice = _context.BookingFoodServices
+                    .Where(bfs => bfs.BookingID == bookingId)
+                    .Select(bfs => bfs.TotalPrice)
+                    .FirstOrDefault();
+
+                if (totalPrice == default)
+                {
+                    return NotFound();
+                }
+
+                return Ok(totalPrice);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }     
+
         [HttpPost]
         public IActionResult CreateInvoice([FromBody] Invoice invoice)
         {

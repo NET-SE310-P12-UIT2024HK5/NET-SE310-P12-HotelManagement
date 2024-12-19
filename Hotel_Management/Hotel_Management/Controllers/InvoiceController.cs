@@ -99,7 +99,6 @@ namespace Hotel_Management.Controllers
         {
             try
             {
-                _logger.LogInformation("Received Booking ID: {BookingID}", bookingId);
                 var response = await _httpClient.GetAsync($"https://localhost:7287/Invoice/getroomprice/{bookingId}");
                 if (!response.IsSuccessStatusCode)
                 {
@@ -115,6 +114,30 @@ namespace Hotel_Management.Controllers
                 return 0;
             }
         }
+
+        public async Task<int> GetFBTotal(int bookingId)
+        {
+            try
+            {
+                _logger.LogInformation("Getting F&B total for Booking ID: {BookingID}", bookingId);
+                var response = await _httpClient.GetAsync($"https://localhost:7287/Invoice/fb-total/{bookingId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Error retrieving F&B total from API. Status Code: {StatusCode}, Reason: {ReasonPhrase}",
+                        response.StatusCode, response.ReasonPhrase);
+                    return 0;
+                }
+
+                var fbTotal = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<int>(fbTotal);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving F&B total from API.");
+                return 0;
+            }
+        }       
 
         public async Task<IActionResult> CreateInvoice([FromBody] Invoice invoice)
         {
