@@ -106,7 +106,7 @@
                                                                 <i class="fas fa-ellipsis-v ellipse_color"></i>
                                                             </a>
                                                             <div class="dropdown-menu dropdown-menu-right">
-                                                                <a class="dropdown-item edit-invoice" href="javascript:void(0);" data-toggle="modal" data-target="#editInvoiceModal" onclick="populateEditInvoiceModal(@invoice.value.InvoiceID, @invoice.value.BookingID, @invoice.value.TotalAmount, '@invoice.value.PaymentStatus', '@invoice.value.PaymentDate')">
+                                                                <a class="dropdown-item edit-invoice" href="javascript:void(0);" data-toggle="modal" data-target="#editInvoiceModal" onclick="populateEditInvoiceModal(@invoice.value.InvoiceID, @invoice.value.BookingID, @invoice.value.Duration, @invoice.value.TotalAmount, @invoice.value.PaymentStatus, @invoice.value.PaymentDate)">
                                                                     <i class="fas fa-pencil-alt m-r-5"></i> Edit
                                                                 </a>
                                                                 <a class="dropdown-item" href="javascript:void(0);" onclick="confirmInvoiceDelete(@invoice.value.InvoiceID)">
@@ -158,6 +158,12 @@
                                         <label><b>Duration</b></label>
                                         <div class="input-group">
                                             <input class="form-control no-spinner" type="number" id="Duration" name="Duration" inputmode="numeric" placeholder="Enter Duration" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="FBTotal"><b>Services Fee</b></label>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control no-spinner" type="number" id="FBTotal" name="FBTotal" inputmode="numeric" readonly>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -217,15 +223,7 @@
                                                     <input type="date" class="form-control" name="payment_date" required>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">        
-                                            <div class="form-group">
-                                                <label><b>Hourly Rate</b></label>
-                                                <div class="input-group">
-                                                    <input class="form-control no-spinner" type="number" id="HourlyRate" name="HourlyRate" inputmode="numeric" required>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </div>                                       
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label><b>Duration</b></label>
@@ -233,21 +231,20 @@
                                                     <input class="form-control no-spinner" type="number" id="Duration" name="Duration" inputmode="numeric" placeholder="Enter Duration" required>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>                                        
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label><b>Total Amount</b></label>
                                                 <div class="input-group">
-                                                    <input class="form-control no-spinner" type="number" name="total_amount" inputmode="numeric" placeholder="Enter Total Amount" required readonly>                                                  
+                                                    <input class="form-control no-spinner" type="number" id="editTotalAmount" name="total_amount" inputmode="numeric" placeholder="Enter Total Amount" required>
                                                 </div>
-                                                <input type="hidden" name="total_amount">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label><b>Status</b></label>
                                                 <div class="input-group">
-                                                    <select class="form-control" name="payment_status" required>
+                                                    <select class="form-control" name="payment_status" id="editPaymentStatus" required>
                                                         <option value="Pending" selected>Pending</option>
                                                         <option value="Paid">Paid</option>
                                                     </select>
