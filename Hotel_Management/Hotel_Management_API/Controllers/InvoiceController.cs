@@ -121,13 +121,7 @@ namespace Hotel_Management_API.Controllers
                 if (invoice.BookingID <= 0 || invoice.TotalAmount <= 0)
                 {
                     return BadRequest(new { message = "Booking ID and total amount are required." });
-                }
-
-                var existingInvoice = _context.Invoice.FirstOrDefault(i => i.BookingID == invoice.BookingID);
-                if (existingInvoice != null)
-                {
-                    return Conflict(new { message = "An invoice with this booking ID already exists." });
-                }
+                }                
 
                 // Add invoice to the database
                 _context.Invoice.Add(invoice);
