@@ -811,51 +811,64 @@ $(document).ready(function () {
     $('#BookingID').on('change', function () {
         const bookingId = $(this).val();
         if (bookingId) {
-            console.log(`Received Booking ID: ${bookingId}`);
+            // Lấy room price
             $.ajax({
                 url: `https://localhost:7287/Invoice/getroomprice/${bookingId}`,
                 type: 'GET',
                 success: function (roomPrice) {
-                    console.log(`Room Price: ${roomPrice}`);
                     $('#HourlyRate').val(roomPrice);
+                    calculateTotalAmount();
                 },
                 error: function (xhr, status, error) {
-                    console.error(`Error retrieving room price from API. Status Code: ${xhr.status}, Reason: ${xhr.statusText}`);
+                    console.error('Error getting room price:', error);
+                }
+            });
+
+            // Lấy F&B total price qua InvoiceController
+            $.ajax({
+                url: `https://localhost:7287/Invoice/fb-total/${bookingId}`,
+                type: 'GET',
+                success: function (fbTotal) {
+                    $('#FBTotal').val(fbTotal);
+                    calculateTotalAmount();
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error getting F&B total:', error);
+                    $('#FBTotal').val(0);
                 }
             });
         }
     });
-});
 
-$(document).ready(function () {
     function calculateTotalAmount() {
-        const hourlyRate = parseInt($('#HourlyRate').val());
-        const duration = parseInt($('#Duration').val());
-        if (!isNaN(hourlyRate) && !isNaN(duration)) {
-            const totalAmount = hourlyRate * duration;
-            $('#TotalAmount').val(totalAmount);
-        }
+        const hourlyRate = parseFloat($('#HourlyRate').val()) || 0;
+        const duration = parseFloat($('#Duration').val()) || 0;
+        const fbTotal = parseFloat($('#FBTotal').val()) || 0;
+
+        const totalAmount = (hourlyRate * duration) + fbTotal;
+        $('#TotalAmount').val(totalAmount);
     }
 
-    $('#HourlyRate, #Duration').on('input', function () {
+    $('#HourlyRate, #Duration, #FBTotal').on('input', function () {
         calculateTotalAmount();
     });
 });
 
 
 
-function populateEditInvoiceModal(invoiceId, bookingId, duration, totalAmount, paymentStatus, paymentDate) {
-    // Set the values in the edit modal
-    $('#editInvoiceModal input[name="invoice_id"]').val(invoiceId);
-    $('#editInvoiceModal select[name="booking_id"]').val(bookingId);
-    $('#editInvoiceModal input[name="Duration"]').val(duration);
-    $('#editInvoiceModal input[name="total_amount"]').val(totalAmount);
-    $('#editInvoiceModal select[name="payment_status"]').val(paymentStatus);
-    $('#editInvoiceModal input[name="payment_date"]').val(new Date(paymentDate).toISOString().split('T')[0]);
+//function populateEditInvoiceModal(invoiceId, bookingId, duration, totalAmount, paymentStatus, paymentDate) {
+//    // Set the values in the edit modal
+    
+//    $('#editInvoiceModal select[name="booking_id"]').val(bookingId);
+//    $('#editInvoiceModal input[name="payment_date"]').val(paymentDate);
+//    $('#editInvoiceModal input[name="Duration"]').val(duration);
+//    $('#editInvoiceModal input[id="editTotalAmount"]').val(totalAmount);
+//    $('#editInvoiceModal select[name="editPaymentStatus"]').val(paymentStatus);
+    
 
-    // Show the modal
-    $('#editInvoiceModal').modal('show');
-}
+//    // Show the modal
+//    $('#editInvoiceModal').modal('show');
+//}
 
 function confirmInvoiceDelete(invoiceId) {
     Swal.fire({
@@ -1620,5 +1633,3 @@ document.getElementById("addFoodForm").addEventListener("submit", async function
     const result = await response.json();
     alert(result.message || "Thành công!");
 });
-
-
