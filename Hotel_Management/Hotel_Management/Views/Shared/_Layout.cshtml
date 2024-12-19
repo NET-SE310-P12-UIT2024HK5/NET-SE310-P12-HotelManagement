@@ -84,12 +84,6 @@
 						<li class="menu"> <a href="/Booking/Index"><i class="fas fa-suitcase"></i> <span> Booking </span></a></li>
 						<li class="menu"> <a href="/FoodAndBeverage/Index"><i class="fas fa-utensils"></i> <span> Food And Beverage </span></a></li>
 						<li class="menu"> <a href="/Customer/Index"><i class="fas fa-user"></i> <span> Customers </span></a></li>
-
-						@if (Context.Items["Role"]?.ToString() == "Admin")
-						{
-							<li class="menu"> <a href="/Employee/Index"><i class="fas fa-suitcase"></i> <span> Employee </span></a></li>
-						}
-
 						<li class="menu"> <a href="/Rooms/Index"><i class="fas fa-key"></i> <span> Rooms </span></a></li>
 						<li class="menu"> <a href="/Invoice/Index"><i class="far fa-money-bill-alt"></i> <span> Invoice </span></a></li>
 					</ul>
