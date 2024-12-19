@@ -1,32 +1,290 @@
-﻿@model List<Data.Models.WeatherForecast>
-
+﻿@model Data.Models.DashboardViewModel
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-	<title>Hotel Dashboard Template</title>
-	<link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.png">
-	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
-	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
-	<link rel="stylesheet" href="~/assets/css/feathericon.min.css">
-	<link rel="stylehseet" href="https://cdn.oesmith.co.uk/morris-0.5.1.css">
-	<link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
-	<link rel="stylesheet" href="~/assets/css/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>Hotel Management</title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/assets/img/favicon.png">
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/datatables/datatables.min.css">
+    <link rel="stylesheet" href="~/assets/css/feathericon.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/morris/morris.css">
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
-	<div class="main-wrapper">
+    <div class="main-wrapper">
+        <div class="page-wrapper">
+            <div class="content container-fluid">
+                <div class="page-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <div class="mt-5">
+                                
 
-	</div>
-	<script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-	<script src="~/assets/js/jquery-3.5.1.min.js"></script>
-	<script src="~/assets/js/popper.min.js"></script>
-	<script src="~/assets/js/bootstrap.min.js"></script>
-	<script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-	<script src="~/assets/plugins/raphael/raphael.min.js"></script>
-	<script src="~/assets/plugins/morris/morris.min.js"></script>
-	<script src="~/assets/js/chart.morris.js"></script>
-	<script src="~/assets/js/script.js"></script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Statistics Cards -->
+                    <div class="col-xl-3 col-sm-6 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="dash-widget-header">
+                                    <span class="dash-widget-icon text-primary">
+                                        <i class="fas fa-hotel"></i>
+                                    </span>
+                                    <div class="dash-count">
+                                        <h3>@Model.RoomStats.TotalRooms</h3>
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6 class="text-muted">Total Rooms</h6>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-primary w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="dash-widget-header">
+                                    <span class="dash-widget-icon text-success">
+                                        <i class="fas fa-bed"></i>
+                                    </span>
+                                    <div class="dash-count">
+                                        <h3>@Model.RoomStats.OccupiedRooms</h3>
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6 class="text-muted">Occupied Rooms</h6>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-success w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="dash-widget-header">
+                                    <span class="dash-widget-icon text-warning">
+                                        <i class="fas fa-calendar-check"></i>
+                                    </span>
+                                    <div class="dash-count">
+                                        <h3>@Model.BookingStats.TotalBookings</h3>
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6 class="text-muted">Total Bookings</h6>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-warning w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-sm-6 col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="dash-widget-header">
+                                    <span class="dash-widget-icon text-danger">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                    </span>
+                                    <div class="dash-count">
+                                        <h3>$@Model.RevenueStats.TotalRevenue.ToString("N0")</h3>
+                                    </div>
+                                </div>
+                                <div class="dash-widget-info">
+                                    <h6 class="text-muted">Total Revenue</h6>
+                                    <div class="progress progress-sm">
+                                        <div class="progress-bar bg-danger w-50"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Revenue Chart -->
+                    <div class="col-md-12 col-lg-6">
+                        <div class="card card-chart">
+                            <div class="card-header">
+                                <h4 class="card-title">Revenue Trend</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="revenueChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Booking Chart -->
+                    <div class="col-md-12 col-lg-6">
+                        <div class="card card-chart">
+                            <div class="card-header">
+                                <h4 class="card-title">Monthly Bookings</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="bookingChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Room Type Distribution -->
+                <div class="row">
+                    <div class="col-md-12 col-lg-6">
+                        <div class="card card-chart">
+                            <div class="card-header">
+                                <h4 class="card-title">Room Type Distribution</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="roomTypeChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Room Status -->
+                    <div class="col-md-12 col-lg-6">
+                        <div class="card card-chart">
+                            <div class="card-header">
+                                <h4 class="card-title">Room Status</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="roomStatusChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-table">
+                            <div class="card-header">
+                                <h4 class="card-title">Recent Bookings</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Booking ID</th>
+                                                <th>Customer</th>
+                                                <th>Room</th>
+                                                <th>Check In</th>
+                                                <th>Check Out</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var booking in Model.RecentBookings)
+                                            {
+                                                <tr>
+                                                    <td>@booking.BookingID</td>
+                                                    <td>@booking.Customer?.FullName</td>
+                                                    <td>@booking.Room?.RoomNumber</td>
+                                                    <td>@booking.CheckInDate.ToShortDateString()</td>
+                                                    <td>@booking.CheckOutDate.ToShortDateString()</td>
+                                                    <td>
+                                                        <span class="badge badge-pill @(booking.Status == "Active" ? "bg-success" : "bg-warning")">
+                                                            @booking.Status
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="~/assets/plugins/datatables/datatables.min.js"></script>
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="~/assets/plugins/raphael/raphael.min.js"></script>
+    <script src="~/assets/plugins/morris/morris.min.js"></script>
+    <script src="~/assets/js/chart.morris.js"></script>
+    <script src="~/assets/js/script.js"></script>
+    <script src="~/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Revenue Chart
+            var revenueData = @Html.Raw(Json.Serialize(Model.RevenueStats.MonthlyRevenueTrend.Select(x => new
+            {
+                month = x.Month.ToString("MMM yyyy"),
+                revenue = x.Amount
+            })));
+
+            Morris.Line({
+                element: 'revenueChart',
+                data: revenueData,
+                xkey: 'month',
+                ykeys: ['revenue'],
+                labels: ['Revenue'],
+                lineColors: ['#ff0000'],
+                lineWidth: 2
+            });
+
+            // Booking Chart
+            var bookingData = @Html.Raw(Json.Serialize(Model.BookingStats.MonthlyBookingTrend.Select(x => new
+            {
+                date = x.Date.ToString("yyyy-MM-dd"),
+                bookings = x.Count
+            })));
+
+            Morris.Line({
+                element: 'bookingChart',
+                data: bookingData,
+                xkey: 'date',
+                ykeys: ['bookings'],
+                labels: ['Bookings'],
+                lineColors: ['#ffa500'],
+                lineWidth: 2
+            });
+
+            // Room Type Distribution Chart
+            var roomTypeData = @Html.Raw(Json.Serialize(Model.RoomStats.RoomTypeDistribution.Select(x => new
+            {
+                label = x.Key,
+                value = x.Value
+            })));
+
+            Morris.Donut({
+                element: 'roomTypeChart',
+                data: roomTypeData,
+                colors: ['#7b1fa2', '#e91e63', '#2196f3', '#ff9800']
+            });
+
+            // Room Status Chart
+            var roomStatusData = [
+                { label: 'Occupied', value: @Model.RoomStats.OccupiedRooms },
+                { label: 'Available', value: @Model.RoomStats.AvailableRooms }
+            ];
+
+            Morris.Donut({
+                element: 'roomStatusChart',
+                data: roomStatusData,
+                colors: ['#dc3545', '#28a745']
+            });
+        });
+    </script>
 </body>
 </html>
