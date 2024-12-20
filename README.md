@@ -1,5 +1,4 @@
-# NET-SE310-P12-HotelManagement
-Repository cho phần đồ án cuối kỳ - ứng dụng quản lý khách sạn môn Công nghệ .NET - SE310.P12 của thầy Nguyễn Trịnh Đông và cô Huỳnh Hồ Thị Mộng Trinh
+<h1 align="center"><b>SE310.P12 - Công nghệ .NET - Quản lý khách sạn</b></h>
 
 <p align="center">
   <a href="https://www.uit.edu.vn/" title="Trường Đại học Công nghệ Thông tin" style="border: none;">
@@ -7,9 +6,7 @@ Repository cho phần đồ án cuối kỳ - ứng dụng quản lý khách s�
   </a>
 </p>
 
-<h1 align="center"><b>SE310.P12 - Công nghệ .NET</b></h>
-
-## Nhóm xx:
+## Nhóm 25:
 |**STT**|**MSSV**|     **Họ và tên**   |       **Email**      |
 |-------|--------|---------------------|----------------------|
 |   1   |22521312|    Trần Nhật Tân    |22521312@gm.uit.edu.vn|
@@ -19,6 +16,6 @@ Repository cho phần đồ án cuối kỳ - ứng dụng quản lý khách s�
 * **Tên môn học:** Công nghệ .NET
 * **Mã môn học:** SE310
 * **Mã lớp:** SE310.P12
-* **Giảng viên**: Nguyễn Trịnh Đông
+* **Giảng viên**: Nguyễn Trịnh Đông - Huỳnh Hồ Thị Mộng Trinh
 
-## Đồ án cuối kì môn công nghệ .NET (SE310.P12) 
+## Đồ án cuối kì môn công nghệ .NET (SE310.P12) - Quản lý khách sạn
